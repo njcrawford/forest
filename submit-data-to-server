@@ -1,3 +1,5 @@
+//found at http://davidwalsh.name/execute-http-post-php-curl
+
 //extract data from the post
 extract($_POST);
 
