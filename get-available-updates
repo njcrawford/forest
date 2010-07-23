@@ -1,0 +1,1 @@
+apt-get dist-upgrade -Vs |grep ^Inst | cut -d " " -f 2
