@@ -2,4 +2,4 @@
 apt-get dist-upgrade -Vs |grep ^Inst | cut -d " " -f 2
 
 #for centos
-yum check-update | cut -d " " -f 1
+yum check-update | grep -v "Loaded plugins:\|Loading mirror speeds\| \* \|^$" | cut -d " " -f 1
