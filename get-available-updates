@@ -1,5 +1,10 @@
+#!/bin/sh
+if [ -f /etc/lsb-release ] ; then
 #for ubuntu
 apt-get dist-upgrade -Vs |grep ^Inst | cut -d " " -f 2
-
+elif [ -f /etc/redhat-release ] ; then
 #for centos
 yum check-update | grep -v "Loaded plugins:\|Loading mirror speeds\| \* \|^$" | cut -d " " -f 1
+else
+echo "Can't determine distrobution"
+fi
