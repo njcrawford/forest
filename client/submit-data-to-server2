@@ -1,6 +1,7 @@
 #!/bin/sh
 
 posturl="http://localhost/forest/collect.php"
-postdata1="system_id=test_system&available_updates=a_test_package,another_test_package"
+#postdata1="system_id=test_system&available_updates=a_test_package,another_test_package"
+postdata1="system_id=`hostname`&available_updates=`./get-available-updates | sed 's/ \+/,/g'`"
 
 curl -d "$postdata1" $posturl
