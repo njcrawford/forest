@@ -1,7 +1,30 @@
 #!/bin/sh
 
-posturl="http://localhost/forest/collect.php"
+# This function does not output anything if there are no packages to update or
+# if the distribution cannot be detected.
+get_available_updates ()
+{
+	if [ -f /etc/lsb-release ] ; then
+		#for ubuntu
+		updates=`apt-get dist-upgrade -Vs |grep ^Inst | cut -d " " -f 2`
+		echo $updates
+	elif [ -f /etc/redhat-release ] ; then
+		#for centos
+		updates=`yum check-update | grep -v "Loaded plugins:\|Loading mirror speeds\| \* \|^$" | cut -d " " -f 1`
+		echo $updates
+	fi
+}
+
+spaces_to_commas ()
+{
+	echo $1 | sed 's/ \+/,/g'
+}
+
+posturl="http://admin-vm/forest/collect.php"
 #postdata1="system_id=test_system&available_updates=a_test_package,another_test_package"
-postdata1="system_id=`hostname`&available_updates=`./get-available-updates | sed 's/ \+/,/g'`"
+formatted_updates=`get_available_updates`
+formatted_updates=`spaces_to_commas "$formatted_updates"`
+postdata1="system_id=`hostname`&available_updates=$formatted_updates"
 
 curl -d "$postdata1" $posturl
+#echo "$postdata1"
