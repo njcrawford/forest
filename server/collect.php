@@ -16,14 +16,20 @@ mysql_select_db($db_name);
 if(isset($_POST[$post_data_name]) && !empty($_POST['system_name']))
 {
 	$data_ok = true;
+	$system_id_ok = false;
 	$system_name = $_POST['system_name'];
 	$result = mysql_query("select * from systems where name = '" . $_POST['system_name'] . "'");
 	if($result)
 	{
 		$row = mysql_fetch_assoc($result);
 		$system_id = $row['id'];
+		if(!empty($system_id))
+		{
+			$system_id_ok = true;
+		}
 	}
-	else
+
+	if(!$system_id_ok)
 	{
 		$result = mysql_query("insert into systems values(null, '" . $_POST['system_name'] . "', null)");
 		if($result)
