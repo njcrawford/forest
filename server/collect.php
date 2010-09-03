@@ -40,7 +40,7 @@ if(isset($_POST[$post_data_name]) && !empty($_POST['system_name']))
 		}
 		else
 		{
-			die "Mysql error: " . mysql_error();
+			die("Mysql error: " . mysql_error());
 		}
 	}
 #	echo "system_id: " . $system_id . "<br />";
