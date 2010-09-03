@@ -24,7 +24,8 @@ posturl="http://admin-vm/forest/collect.php"
 #postdata1="system_id=test_system&available_updates=a_test_package,another_test_package"
 formatted_updates=`get_available_updates`
 formatted_updates=`spaces_to_commas "$formatted_updates"`
-postdata1="system_id=`hostname`&available_updates=$formatted_updates"
+postdata1="system_id=`hostname`"
+postdata2="available_updates=$formatted_updates"
 
-curl -d "$postdata1" $posturl
+curl --data-urlencode "$postdata1" --data-urlencode "$postdata2" $posturl
 #echo "$postdata1"
