@@ -17,12 +17,15 @@ $db_name = "forest";
 mysql_connect($db_server, $db_user, $db_password);
 mysql_select_db($db_name);
 
-$result = mysql_query("select system_id, count(package_name) as packages from " . $updates_table . " group by system_id");
+$result = mysql_query("select * from systems");
 
 $row = mysql_fetch_assoc($result);
 while($row)
 {
-	echo "<tr><td>" . $row['system_id'] . "</td><td>" . $row['packages'] . "</td></tr>";
+	$result2 = mysql_query("select count(package_name) as packages from updates where system_id = '" . $row['id'] . "'");
+	$row2 = mysql_fetch_assoc($result2);
+	
+	echo "<tr><td>" . $row['name'] . "</td><td>" . $row2['packages'] . "</td></tr>";
 
 	$row = mysql_fetch_assoc($result);
 }

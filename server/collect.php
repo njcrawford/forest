@@ -12,12 +12,34 @@ mysql_connect($db_server, $db_user, $db_password);
 mysql_select_db($db_name);
 
 //look through post data and see if there's anything to save
-if(!empty($_POST[$post_data_name]))
+//use isset because we want to know if there are no updates available
+if(isset($_POST[$post_data_name]) && !empty($_POST['system_name']))
 {
 	$data_ok = true;
-	$system_id = $_POST['system_id'];
+	$system_name = $_POST['system_name'];
+	$result = mysql_query("select * from systems where name = '" . $_POST['system_name'] . "'");
+	if($result)
+	{
+		$row = mysql_fetch_assoc($result);
+		$system_id = $row['id'];
+	}
+	else
+	{
+		$result = mysql_query("insert into systems values(null, '" . $_POST['system_name'] . "', null)");
+		if($result)
+		{
+			$result = mysql_query("select LAST_INSERT_ID() as id");
+			$row = mysql_fetch_assoc($result);
+			$system_id = $row['id'];
+		}
+		else
+		{
+			die "Mysql error: " . mysql_error();
+		}
+	}
 #	echo "system_id: " . $system_id . "<br />";
 	// Forget about old updates before adding new ones
+	mysql_query("update systems set last_checkin = NOW() where id = '" . $system_id . "'");
 	mysql_query("delete from " . $updates_table . " where system_id = '" . $system_id . "'");
 	$packages = explode(",", $_POST[$post_data_name]);
 	foreach($packages as $this_package)
@@ -28,8 +50,7 @@ if(!empty($_POST[$post_data_name]))
 			(
 				null,
 				'" . $system_id . "',
-				'" . $this_package . "',
-				NOW()
+				'" . $this_package . "'
 			)");
 		if(!$result)
 		{
