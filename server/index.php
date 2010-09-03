@@ -4,7 +4,7 @@
 </head>
 <body>
 <table>
-<tr><td>System ID</td><td>Updates Available</td></td>
+<tr><td>System ID</td><td>Updates Available</td><td>Last Checkin</td></tr>
 <?php
 
 $updates_table = "updates";
@@ -25,7 +25,7 @@ while($row)
 	$result2 = mysql_query("select count(package_name) as packages from updates where system_id = '" . $row['id'] . "'");
 	$row2 = mysql_fetch_assoc($result2);
 	
-	echo "<tr><td>" . $row['name'] . "</td><td>" . $row2['packages'] . "</td></tr>";
+	echo "<tr><td>" . $row['name'] . "</td><td>" . $row2['packages'] . "</td><td>" . $row['last_checkin'] . "</td></tr>";
 
 	$row = mysql_fetch_assoc($result);
 }
