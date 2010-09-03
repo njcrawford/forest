@@ -4,6 +4,7 @@
 </head>
 <body>
 <table>
+<tr><td>System ID</td><td>Updates Available</td></td>
 <?php
 
 $updates_table = "updates";

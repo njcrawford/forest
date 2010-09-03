@@ -17,6 +17,8 @@ if(!empty($_POST[$post_data_name]))
 	$data_ok = true;
 	$system_id = $_POST['system_id'];
 #	echo "system_id: " . $system_id . "<br />";
+	// Forget about old updates before adding new ones
+	mysql_query("delete from " . $updates_table . " where system_id = '" . $system_id . "'");
 	$packages = explode(",", $_POST[$post_data_name]);
 	foreach($packages as $this_package)
 	{
