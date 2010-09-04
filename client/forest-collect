@@ -22,10 +22,14 @@ spaces_to_commas ()
 }
 
 posturl="http://admin-vm/forest/collect.php"
-formatted_updates=`get_available_updates`
-formatted_updates=`spaces_to_commas "$formatted_updates"`
 postdata1="system_name=`hostname`"
-postdata2="available_updates=$formatted_updates"
+formatted_updates=`get_available_updates`
+if [ "x$formatted_updates" != "x" ]; then
+	formatted_updates=`spaces_to_commas "$formatted_updates"`
+	postdata2="available_updates=$formatted_updates"
+else
+	postdata2="no_updates_available=true"
+fi
 
 curl --data-urlencode "$postdata1" --data-urlencode "$postdata2" $posturl
 #echo "$postdata1"
