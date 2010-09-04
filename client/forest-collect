@@ -31,5 +31,5 @@ else
 	postdata2="no_updates_available=true"
 fi
 
-curl --data-urlencode "$postdata1" --data-urlencode "$postdata2" $posturl
+curl --silent --data-urlencode "$postdata1" --data-urlencode "$postdata2" $posturl
 #echo "$postdata1"
