@@ -21,7 +21,7 @@ spaces_to_commas ()
 	echo $1 | sed 's/ \+/,/g'
 }
 
-posturl="http://admin-vm/forest/collect.php"
+posturl="http://servername/forest/collect.php"
 postdata1="system_name=`hostname`"
 formatted_updates=`get_available_updates`
 if [ "x$formatted_updates" != "x" ]; then

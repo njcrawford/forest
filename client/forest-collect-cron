@@ -1,2 +1,3 @@
 #!/bin/sh
+test -x /usr/sbin/forest-collect || exit 0
 /usr/sbin/forest-collect | grep -v "data ok"
