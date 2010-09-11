@@ -21,8 +21,9 @@ spaces_to_commas ()
 	echo $1 | sed 's/ \+/,/g'
 }
 
-#posturl="http://servername/forest/collect.php"
+# include config file
 . /etc/forest-client.conf
+
 postdata1="system_name=`hostname`"
 formatted_updates=`get_available_updates`
 if [ "x$formatted_updates" != "x" ]; then
@@ -32,5 +33,5 @@ else
 	postdata2="no_updates_available=true"
 fi
 
-curl --silent --data-urlencode "$postdata1" --data-urlencode "$postdata2" $posturl
+curl --silent --show-error --data-urlencode "$postdata1" --data-urlencode "$postdata2" $posturl
 #echo "$postdata1"

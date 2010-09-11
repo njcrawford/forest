@@ -1,6 +1,7 @@
 #!/bin/sh
 test -x /usr/sbin/forest-collect || exit 0
 returndata=`/usr/sbin/forest-collect | grep -v "data ok"`
+# grep returns 1 if it finds the search string, but that make cron complain
 if [ $? -gt 1 ]
 then
 	echo $returndata
