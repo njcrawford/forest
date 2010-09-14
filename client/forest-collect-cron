@@ -1,7 +1,12 @@
 #!/bin/sh
+
+# only run if the package is completely installed
 test -x /usr/sbin/forest-collect || exit 0
+
 returndata=`/usr/sbin/forest-collect | grep -v "data ok"`
-# grep returns 1 if it finds the search string, but that make cron complain
+# Grep returns 1 if it finds the search string, but that makes cron complain.
+# A return value of 2 or greater means there really was an error, so we want to
+# see the error message in that case.
 if [ $? -gt 1 ]
 then
 	echo $returndata
