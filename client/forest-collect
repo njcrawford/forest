@@ -33,5 +33,11 @@ else
 	postdata2="no_updates_available=true"
 fi
 
-curl --silent --show-error --data-urlencode "$postdata1" --data-urlencode "$postdata2" $posturl
-#echo "$postdata1"
+curldata=`curl --silent --show-error --data-urlencode "$postdata1" --data-urlencode "$postdata2" $posturl`
+
+#filter out success message and return value of grep for cron
+if [ "x$1" = "x--cron" ]; then
+	curldata=`echo "$curldata" | grep -v "data ok"`
+fi
+
+echo $curldata
