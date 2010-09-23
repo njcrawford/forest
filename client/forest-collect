@@ -21,6 +21,16 @@ spaces_to_commas ()
 	echo $1 | sed 's/ \+/,/g'
 }
 
+# Returns truw if a reboot is needed, false otherwise
+is_reboot_needed()
+{
+	if [ -f /var/run/reboot-required ]; then
+		echo "true"
+	else
+		echo "false"
+	fi
+}
+
 # include config file
 . /etc/forest-client.conf
 
@@ -33,7 +43,9 @@ else
 	postdata2="no_updates_available=true"
 fi
 
-curldata=`curl --silent --show-error --data-urlencode "$postdata1" --data-urlencode "$postdata2" $posturl`
+formatted_reboot="reboot_needed=`is_reboot_needed`"
+
+curldata=`curl --silent --show-error --data-urlencode "$postdata1" --data-urlencode "$postdata2" --data-urlencode "$formatted_reboot" $posturl`
 
 #filter out success message and return value of grep for cron
 if [ "x$1" = "x--cron" ]; then

@@ -14,6 +14,7 @@ mysql_select_db($db_name);
 if(!empty($_POST['system_name']))
 {
 	$system_id_ok = false;
+	$update_data_ok = false;
 	$system_name = $_POST['system_name'];
 	$result = mysql_query("select * from systems where name = '" . $_POST['system_name'] . "'");
 	if($result)
@@ -67,6 +68,7 @@ if(!empty($_POST['system_name']))
 		if($data_ok)
 		{
 			echo "data ok";
+			$update_data_ok = true;
 		}
 		else
 		{
@@ -79,10 +81,20 @@ if(!empty($_POST['system_name']))
 		mysql_query("update systems set last_checkin = NOW() where id = '" . $system_id . "'");
 		mysql_query("delete from " . $updates_table . " where system_id = '" . $system_id . "'");
 		echo "data ok";
+		$update_data_ok = true;
 	}
 	else
 	{
 		echo "data error";
+	}
+
+	if($update_data_ok)
+	{
+		if(!empty($_POST['reboot_required']))
+		{
+			$reboot_required = ($_POST['reboot_required'] == "true") ? "true" : "false";
+			mysql_query("update systems set reboot_required = '" . $reboot_required . "' where id = '" . $system_id . "'");
+		}
 	}
 }
 else
