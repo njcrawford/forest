@@ -29,7 +29,7 @@ if(!empty($_POST['system_name']))
 
 	if(!$system_id_ok)
 	{
-		$result = mysql_query("insert into systems values(null, '" . $_POST['system_name'] . "', null)");
+		$result = mysql_query("insert into systems (name) values('" . $_POST['system_name'] . "')");
 		if($result)
 		{
 			$result = mysql_query("select LAST_INSERT_ID() as id");
@@ -81,20 +81,17 @@ if(!empty($_POST['system_name']))
 		mysql_query("update systems set last_checkin = NOW() where id = '" . $system_id . "'");
 		mysql_query("delete from " . $updates_table . " where system_id = '" . $system_id . "'");
 		echo "data ok";
-		$update_data_ok = true;
 	}
 	else
 	{
 		echo "data error";
 	}
 
-	if($update_data_ok)
+	// the reboot_required section is optional for now
+	if(!empty($_POST['reboot_required']))
 	{
-		if(!empty($_POST['reboot_required']))
-		{
-			$reboot_required = ($_POST['reboot_required'] == "true") ? "true" : "false";
-			mysql_query("update systems set reboot_required = '" . $reboot_required . "' where id = '" . $system_id . "'");
-		}
+		$reboot_required = ($_POST['reboot_required'] == "true") ? "true" : "false";
+		mysql_query("update systems set reboot_required = '" . $reboot_required . "' where id = '" . $system_id . "'");
 	}
 }
 else
