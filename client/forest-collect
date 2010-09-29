@@ -1,14 +1,27 @@
 #!/bin/sh
 
+# This function returns the lowercase name of the linux distribution we're 
+# running on. Currently I only care about Ubuntu and CentOS, so that's all 
+# it detects.
+detect_distribution ()
+{
+	if [ -f /etc/lsb-release ] ; then
+		echo "ubuntu"
+	elif [ -f /etc/redhat-release ] ; then
+		echo "centos"
+	fi
+}
+
 # This function does not output anything if there are no packages to update or
 # if the distribution cannot be detected.
 get_available_updates ()
 {
-	if [ -f /etc/lsb-release ] ; then
+	distro=`detect_distribution`
+	if [ "x$distro" -eq "xubuntu" ] ; then
 		#for ubuntu
 		updates=`apt-get dist-upgrade -Vs |grep ^Inst | cut -d " " -f 2`
 		echo $updates
-	elif [ -f /etc/redhat-release ] ; then
+	elif [ "x$distro" -eq "xcentos" ] ; then
 		#for centos - NOT TESTED!!!
 		updates=`yum check-update | grep -v "Loaded plugins:\|Loading mirror speeds\| \* \|^$" | cut -d " " -f 1`
 		echo $updates
@@ -24,10 +37,15 @@ spaces_to_commas ()
 # Returns truw if a reboot is needed, false otherwise
 is_reboot_needed()
 {
-	if [ -f /var/run/reboot-required ]; then
-		echo "true"
+	distro=`detect_distribution`
+	if [ "x$distro" -eq "xubuntu" ]; then
+		if [ -f /var/run/reboot-required ]; then
+			echo "true"
+		else
+			echo "false"
+		fi
 	else
-		echo "false"
+		echo "unknown"
 	fi
 }
 

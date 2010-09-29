@@ -90,8 +90,18 @@ if(!empty($_POST['system_name']))
 	// the reboot_required section is optional for now
 	if(!empty($_POST['reboot_required']))
 	{
-		$reboot_required = ($_POST['reboot_required'] == "true") ? "true" : "false";
-		mysql_query("update systems set reboot_required = '" . $reboot_required . "' where id = '" . $system_id . "'");
+		switch($_POST['reboot_required'])
+		{
+			case "true":
+				$reboot_required = "'true'";
+				break;
+			case "false":
+				$reboot_required = "'false'";
+				break;
+			default:
+				$reboot_required = null;
+		}
+		mysql_query("update systems set reboot_required = " . $reboot_required . " where id = '" . $system_id . "'");
 	}
 }
 else
