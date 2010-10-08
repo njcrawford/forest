@@ -87,22 +87,21 @@ if(!empty($_POST['system_name']))
 		echo "data error";
 	}
 
+	$reboot_required = "null";
 	// the reboot_required section is optional for now
 	if(!empty($_POST['reboot_required']))
 	{
 		switch($_POST['reboot_required'])
 		{
 			case "true":
-				$reboot_required = "'true'";
+				$reboot_required = "'1'";
 				break;
 			case "false":
-				$reboot_required = "'false'";
+				$reboot_required = "'0'";
 				break;
-			default:
-				$reboot_required = null;
 		}
-		mysql_query("update systems set reboot_required = " . $reboot_required . " where id = '" . $system_id . "'");
 	}
+	mysql_query("update systems set reboot_required = " . $reboot_required . " where id = '" . $system_id . "'");
 }
 else
 {
