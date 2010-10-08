@@ -101,6 +101,7 @@ if(!empty($_POST['system_name']))
 				break;
 		}
 	}
+	// we want to update the reboot_required flag, even if it is null
 	mysql_query("update systems set reboot_required = " . $reboot_required . " where id = '" . $system_id . "'");
 }
 else
