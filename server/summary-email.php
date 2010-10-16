@@ -8,7 +8,7 @@ mysql_select_db("forest");
 // print name and number of updates
 $update_query = "select 
 			systems.name as system_name, 
-			count(package_name) as update_count 
+			count(updates.package_name) as update_count 
 		from 
 			systems, updates 
 		where 
@@ -18,10 +18,11 @@ $update_query = "select
 $update_result = mysql_query($update_query);
 if (mysql_num_rows($update_result) > 0)
 {
+	echo "Updates available on these systems:\n";
 	$update_row = mysql_fetch_assoc($update_result);
 	while($update_row)
 	{
-		echo $update_row['system_name'] . " " . $update_row['update_count'] . '\n';
+		echo $update_row['system_name'] . " (" . $update_row['update_count'] . ")\n";
 		$update_row = mysql_fetch_assoc($update_result);
 	}
 }
@@ -34,12 +35,13 @@ else
 // just print name
 $reboot_query = "select name from systems where reboot_required = 1";
 $reboot_result = mysql_query($reboot_query);
-if (mysql_num_rows($update_result) > 0)
+if (mysql_num_rows($reboot_result) > 0)
 {
+	echo "These systems need rebooted:\n";
 	$reboot_row = mysql_fetch_assoc($reboot_result);
 	while($reboot_row)
 	{
-		echo $reboot_row['name'] . '\n';
+		echo $reboot_row['name'] . "\n";
 		$reboot_row = mysql_fetch_assoc($reboot_result);
 	}
 }
@@ -48,12 +50,13 @@ if (mysql_num_rows($update_result) > 0)
 // print name and last check in time
 $awal_query = "select name, last_checkin from systems where last_checkin < DATE_SUB(NOW(), INTERVAL 36 HOUR)";
 $awal_result = mysql_query($awal_query);
-if (mysql_num_rows($update_result) > 0)
+if (mysql_num_rows($awal_result) > 0)
 {
+	echo "These systems have not checked in for more than 36 hours:\n";
 	$awal_row = mysql_fetch_assoc($awal_result);
 	while($awal_row)
 	{
-		echo $awal_row['name'] . " " . $awal_row['last_checkin'] . '\n';
+		echo $awal_row['name'] . " (" . $awal_row['last_checkin'] . ")\n";
 		$awal_row = mysql_fetch_assoc($awal_result);
 	}
 }
