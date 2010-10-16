@@ -87,8 +87,8 @@ if(!empty($_POST['system_name']))
 		echo "data error";
 	}
 
-	$reboot_required = "null";
 	// the reboot_required section is optional for now
+	$reboot_required = "null";
 	if(!empty($_POST['reboot_required']))
 	{
 		switch($_POST['reboot_required'])
