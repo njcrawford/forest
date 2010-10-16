@@ -25,7 +25,7 @@ DROP TABLE IF EXISTS `systems`;
 CREATE TABLE `systems` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` text,
-  `last_checkin` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `last_checkin` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `reboot_required` tinyint(1) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
