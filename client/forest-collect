@@ -70,4 +70,8 @@ if [ "x$1" = "x--cron" ]; then
 	curldata=`echo "$curldata" | grep -v "data ok"`
 fi
 
-echo $curldata
+
+
+if [ "x" != "x$curldata" ]; then
+	echo $curldata
+fi
