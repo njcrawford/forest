@@ -1,6 +1,8 @@
 #!/usr/bin/php
 <?php
 
+$output_message = "";
+
 mysql_connect("localhost", "forest_user", "forest_pass");
 mysql_select_db("forest");
 
@@ -18,17 +20,17 @@ $update_query = "select
 $update_result = mysql_query($update_query);
 if (mysql_num_rows($update_result) > 0)
 {
-	echo "Updates available on these systems:\n";
+	$output_message .= "Updates available on these systems:\n";
 	$update_row = mysql_fetch_assoc($update_result);
 	while($update_row)
 	{
-		echo $update_row['system_name'] . " (" . $update_row['update_count'] . ")\n";
+		$output_message .= $update_row['system_name'] . " (" . $update_row['update_count'] . ")\n";
 		$update_row = mysql_fetch_assoc($update_result);
 	}
 }
 else
 {
-	echo "No systems need updates\n";
+	$output_message .= "No systems need updates\n";
 }
 
 // get systems that need a reboot
@@ -37,11 +39,11 @@ $reboot_query = "select name from systems where reboot_required = 1";
 $reboot_result = mysql_query($reboot_query);
 if (mysql_num_rows($reboot_result) > 0)
 {
-	echo "These systems need rebooted:\n";
+	$output_message .= "These systems need rebooted:\n";
 	$reboot_row = mysql_fetch_assoc($reboot_result);
 	while($reboot_row)
 	{
-		echo $reboot_row['name'] . "\n";
+		$output_message .= $reboot_row['name'] . "\n";
 		$reboot_row = mysql_fetch_assoc($reboot_result);
 	}
 }
@@ -52,15 +54,16 @@ $awal_query = "select name, last_checkin from systems where last_checkin < DATE_
 $awal_result = mysql_query($awal_query);
 if (mysql_num_rows($awal_result) > 0)
 {
-	echo "These systems have not checked in for more than 36 hours:\n";
+	$output_message .= "These systems have not checked in for more than 36 hours:\n";
 	$awal_row = mysql_fetch_assoc($awal_result);
 	while($awal_row)
 	{
-		echo $awal_row['name'] . " (" . $awal_row['last_checkin'] . ")\n";
+		$output_message .= $awal_row['name'] . " (" . $awal_row['last_checkin'] . ")\n";
 		$awal_row = mysql_fetch_assoc($awal_result);
 	}
 }
 
 // send email
+mail("njcrawford@gmail.com", "Forest system report", $ouput_message, "From:forest@localhost");
 
 ?>
