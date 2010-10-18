@@ -64,6 +64,6 @@ if (mysql_num_rows($awal_result) > 0)
 }
 
 // send email
-mail("njcrawford@gmail.com", "Forest system report", $ouput_message, "From:forest@localhost");
+mail("njcrawford@gmail.com", "Forest system report", $output_message, "From:forest@localhost");
 
 ?>
