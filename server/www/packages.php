@@ -3,6 +3,7 @@
 <title>Forest</title>
 </head>
 <body>
+<a href="./">Back to summary page</a><br />
 <table>
 <?php
 
@@ -30,7 +31,7 @@ if(isset($_GET['name']))
 	{
 		$result2 = mysql_query("select name from systems where id = '" . $row['system_id'] . "'");
 	        $row2 = mysql_fetch_assoc($result2);
-		echo "<li>" . $row2['name'] . "</li>";
+		echo "<li><a href='systems.php?name=" . $row2['name'] . "'>" . $row2['name'] . "</a></li>";
 		$row = mysql_fetch_assoc($result);
 	}
 	echo "</ul></td></tr>";

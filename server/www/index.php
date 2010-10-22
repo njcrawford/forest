@@ -42,7 +42,7 @@ while($row)
 	$result2 = mysql_query("select count(package_name) as packages from updates where system_id = '" . $row['id'] . "'");
         $row2 = mysql_fetch_assoc($result2);
 
-	echo "<tr><td><a href='systems.php?name=" . $row['name'] . "'>" . $row['name'] . "</a></td><td>" . $row2['packages'] . "</td><td>" . $nice_reboot . "</td><td>" . $row['last_checkin'] . "</td></tr>";
+	echo "<tr><td><a href='systems.php?name=" . $row['name'] . "'>" . $row['name'] . "</a></td><td>" . $row2['packages'] . "</td><td>" . $nice_reboot . "</td><td>" . $row['last_checkin'] . "</td><td><a href='mark-accepted.php?accepted=true&system=" . $row['name'] . "'>Accept all</a></td></tr>";
 
 	$row = mysql_fetch_assoc($result);
 }
@@ -59,7 +59,7 @@ $result = mysql_query("select package_name, count(system_id) as systems from upd
 $row = mysql_fetch_assoc($result);
 while($row)
 {
-        echo "<tr><td><a href='packages.php?name=" . $row['package_name'] . "'>" . $row['package_name'] . "</a></td><td>" . $row['systems'] . "</td></tr>";
+        echo "<tr><td><a href='packages.php?name=" . $row['package_name'] . "'>" . $row['package_name'] . "</a></td><td>" . $row['systems'] . "</td><td><a href='mark-accepted.php?accepted=true&package=" . $row['package_name'] . "'>Accept all</a></tr>";
 
         $row = mysql_fetch_assoc($result);
 }

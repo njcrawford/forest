@@ -3,6 +3,7 @@
 <title>Forest</title>
 </head>
 <body>
+<a href="./">Back to summary page</a><br />
 <table>
 <?php
 
@@ -41,7 +42,7 @@ if(isset($_GET['name']))
 	echo "<tr><td colspan=4><ul>";
 	while($row2)
 	{
-		echo "<li>" . $row2['package_name'] . " " . $row2['version'] . "</li>";
+		echo "<li><a href='packages.php?name=" . $row2['package_name'] . "'>" . $row2['package_name'] . "</a> " . $row2['version'] . "</li>";
 		$row2 = mysql_fetch_assoc($result2);
 	}
 	echo "</ul></td></tr>";
