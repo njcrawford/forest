@@ -52,12 +52,12 @@ if(!empty($_POST['system_name']))
 		// build an SQL query to save info for all packages that need updated
 		foreach($packages as $this_package)
 		{
-			$result = mysql_query("insert into " . $updates_table . " values
+			$result = mysql_query("insert into " . $updates_table . " (system_id, package_name) values
 				(
-					null,
 					'" . $system_id . "',
 					'" . $this_package . "'
-				)");
+				)"
+			);
 			if(!$result)
 			{
 				$data_ok = false;

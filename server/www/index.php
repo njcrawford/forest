@@ -3,6 +3,7 @@
 <title>Forest</title>
 </head>
 <body>
+Updates available by system
 <table>
 <tr><td>System ID</td><td>Updates Available</td><td>Reboot Required</td><td>Last Checkin</td></tr>
 <?php
@@ -22,7 +23,7 @@ $result = mysql_query("select * from systems");
 $row = mysql_fetch_assoc($result);
 while($row)
 {
-	$result2 = mysql_query("select count(package_name) as packages from updates where system_id = '" . $row['id'] . "'");
+	$result2 = mysql_query("select * from updates where system_id = '" . $row['id'] . "'");
 	$row2 = mysql_fetch_assoc($result2);
 	
 	if($row['reboot_required'] == null)
@@ -37,11 +38,31 @@ while($row)
 	{
 		$nice_reboot = "No";
 	}
-	echo "<tr><td>" . $row['name'] . "</td><td>" . $row2['packages'] . "</td><td>" . $nice_reboot . "</td><td>" . $row['last_checkin'] . "</td></tr>";
+
+	$result2 = mysql_query("select count(package_name) as packages from updates where system_id = '" . $row['id'] . "'");
+        $row2 = mysql_fetch_assoc($result2);
+
+	echo "<tr><td><a href='systems.php?name=" . $row['name'] . "'>" . $row['name'] . "</a></td><td>" . $row2['packages'] . "</td><td>" . $nice_reboot . "</td><td>" . $row['last_checkin'] . "</td></tr>";
 
 	$row = mysql_fetch_assoc($result);
 }
 
+?>
+</table>
+<br />
+Updates available by package name
+<table>
+<tr><td>Name</td><td>Systems</td></tr>
+<?php
+$result = mysql_query("select package_name, count(system_id) as systems from updates group by package_name");
+
+$row = mysql_fetch_assoc($result);
+while($row)
+{
+        echo "<tr><td><a href='packages.php?name=" . $row['package_name'] . "'>" . $row['package_name'] . "</a></td><td>" . $row['systems'] . "</td></tr>";
+
+        $row = mysql_fetch_assoc($result);
+}
 ?>
 </table>
 </body>
