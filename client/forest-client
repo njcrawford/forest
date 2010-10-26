@@ -49,7 +49,8 @@ is_reboot_needed()
 	fi
 }
 
-# Pass in a space separated list of package to update
+# Invokes package manager to do updates on selected packages.
+# Takes a space separated list of packages.
 do_updates()
 {
 	distro=`detect_distribution`
@@ -66,13 +67,14 @@ do_updates()
 # include config file
 . /etc/forest-client.conf
 
+# build urls to use for posting and getting data
 post_url="$server_url/collect.php"
 accepted_url="$server_url/getaccepted.php?system=`hostname`"
 
 # check for accepted updates and apply them
-accepted=`curl --silent --show-error $accepted_url`
-if [ "x$accepted" != "x" ]; then
-	do_updates "$accepted"
+accepted_updates=`curl --silent --show-error $accepted_url`
+if [ "x$accepted_updates" != "x" ]; then
+	do_updates "$accepted_updates"
 fi
 
 # collect packages available for update and report them
@@ -89,13 +91,12 @@ formatted_reboot="reboot_required=`is_reboot_needed`"
 
 curldata=`curl --silent --show-error --data-urlencode "$postdata1" --data-urlencode "$postdata2" --data-urlencode "$formatted_reboot" $post_url`
 
-#filter out success message and return value of grep for cron
+# filter out success message and return value of grep for cron
 if [ "x$1" = "x--cron" ]; then
 	curldata=`echo "$curldata" | grep -v "data ok"`
 fi
 
-
-
+# output anything from curl that hasn't been filtered
 if [ "x" != "x$curldata" ]; then
 	echo $curldata
 fi
