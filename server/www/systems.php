@@ -19,14 +19,14 @@ mysql_select_db($db_name);
 
 if(isset($_GET['name']))
 {
-	$result = mysql_query("select * from systems where name = '" . $_GET['name'] . "'");
-	$row = mysql_fetch_assoc($result);
+	$systems_result = mysql_query("select * from systems where name = '" . $_GET['name'] . "'");
+	$systems_row = mysql_fetch_assoc($systems_result);
 
-	if($row['reboot_required'] == null)
+	if($systems_row['reboot_required'] == null)
 	{
 		$nice_reboot = "Unknown";
 	}
-	elseif($row['reboot_required'] == 1)
+	elseif($systems_row['reboot_required'] == 1)
 	{
 		$nice_reboot = "Yes";
 	}
@@ -35,19 +35,43 @@ if(isset($_GET['name']))
 		$nice_reboot = "No";
 	}
 
-	$result2 = mysql_query("select * from updates where system_id = '" . $row['id'] . "'");
-        $row2 = mysql_fetch_assoc($result2);
+	$updates_result = mysql_query("select * from updates where system_id = '" . $systems_row['id'] . "'");
+        $updates_row = mysql_fetch_assoc($updates_result);
 
-	echo "Name: " . $row['name'] . "<br />Updates: " . mysql_num_rows($result2) . "<br />Reboot Needed: " . $nice_reboot . "<br />Last Check-in: " . $row['last_checkin'] . "<br />";
+	echo "Name: " . $systems_row['name'] . "<br />Updates: " . mysql_num_rows($updates_result) . "<br />Reboot Needed: " . $nice_reboot . "<br />Last Check-in: " . $systems_row['last_checkin'] . "<br />";
 	echo "<tr><td colspan=4><ul>";
-	while($row2)
+	while($updates_row)
 	{
-		echo "<li><a href='packages.php?name=" . $row2['package_name'] . "'>" . $row2['package_name'] . "</a> " . $row2['version'] . "</li>";
-		$row2 = mysql_fetch_assoc($result2);
+		if($updates_row['accepted'] == 1)
+		{
+			$nice_accepted_value = "true";
+			$nice_button_name = "Accept";
+			$nice_checked = "checked=\"checked\"";
+		}
+		else
+		{
+			$nice_accepted_value = "false";
+			$nice_button_name = "Reject";
+			$nice_checked = "";
+		}
+?>
+		<li>
+			<input type="checkbox" <? echo $nice_checked ?>>
+			<a href="packages.php?name=<? echo $updates_row['package_name'] ?>"><? echo $updates_row['package_name'] ?></a>
+			<? echo $updates_row['version'] ?>
+	                <form method="post" action="mark-accepted.php">
+				<input type="hidden" name="accepted" value="<? echo $nice_accepted_value ?>">
+				<input type="hidden" name="system_id" value="<? echo $systems_row['id'] ?>">
+				<input type="hidden" name="package" value="<? echo $updates_row['package_name'] ?>">
+				<input type="submit" value="<? echo $nice_button_name ?>">
+			</form>
+		</li>
+<?php
+		$updates_row = mysql_fetch_assoc($updates_result);
 	}
 	echo "</ul></td></tr>";
 
-	$row = mysql_fetch_assoc($result);
+	$systems_row = mysql_fetch_assoc($systems_result);
 }
 else
 {
