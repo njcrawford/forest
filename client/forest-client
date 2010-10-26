@@ -67,8 +67,10 @@ post_url="$server_url/collect.php"
 accepted_url="$server_url/getaccepted.php?system=`hostname`"
 
 # check for accepted updates and apply them
-accepted=`curl $accepted_url`
-do_updates "$accepted"
+accepted=`curl --silent --show-error $accepted_url`
+if [ "x$accepted" != "x" ]; then
+	do_updates "$accepted"
+fi
 
 # collect packages available for update and report them
 postdata1="system_name=`hostname`"
