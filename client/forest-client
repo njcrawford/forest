@@ -49,9 +49,28 @@ is_reboot_needed()
 	fi
 }
 
+# Pass in a space separated list of package to update
+do_updates()
+{
+	distro=`detect_distribution`
+	if [ "x$distro" = "xubuntu" ]; then
+		apt-get install $1
+	elif [ "x$distro" = "xcentos" ]; then
+		yum update $1
+	fi
+}
+
 # include config file
 . /etc/forest-client.conf
 
+post_url="$server_url/collect.php"
+accepted_url="$server_url/getaccepted.php?system=`hostname`"
+
+# check for accepted updates and apply them
+accepted=`curl $accepted_url`
+do_updates $accepted
+
+# collect packages available for update and report them
 postdata1="system_name=`hostname`"
 formatted_updates=`get_available_updates`
 if [ "x$formatted_updates" != "x" ]; then
@@ -63,7 +82,7 @@ fi
 
 formatted_reboot="reboot_required=`is_reboot_needed`"
 
-curldata=`curl --silent --show-error --data-urlencode "$postdata1" --data-urlencode "$postdata2" --data-urlencode "$formatted_reboot" $posturl`
+curldata=`curl --silent --show-error --data-urlencode "$postdata1" --data-urlencode "$postdata2" --data-urlencode "$formatted_reboot" $post_url`
 
 #filter out success message and return value of grep for cron
 if [ "x$1" = "x--cron" ]; then

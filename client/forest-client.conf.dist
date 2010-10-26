@@ -1,1 +1,3 @@
-posturl="http://servername/forest/collect.php"
+# base url for server installation
+# must start with http and end with a /
+server_url="http://servername/forest/"
