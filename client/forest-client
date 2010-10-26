@@ -54,9 +54,12 @@ do_updates()
 {
 	distro=`detect_distribution`
 	if [ "x$distro" = "xubuntu" ]; then
-		apt-get install $1
+		results=`apt-get install $1`
+		if [ $? -ne 0 ]; then
+			echo $results
+		fi
 	elif [ "x$distro" = "xcentos" ]; then
-		yum update $1
+		results=`yum update $1`
 	fi
 }
 
