@@ -33,14 +33,14 @@ if(isset($_GET['name']))
 	        $systems_row = mysql_fetch_assoc($systems_result);
 		if($updates_row['accepted'] == 1)
 		{
-			$nice_accepted_value = "true";
-			$nice_button_name = "Accept";
+			$nice_accepted_value = "false";
+			$nice_button_name = "Reject";
 			$nice_checked = "checked=\"checked\"";
 		}
 		else
 		{
-			$nice_accepted_value = "false";
-			$nice_button_name = "Reject";
+			$nice_accepted_value = "true";
+			$nice_button_name = "Accept";
 			$nice_checked = "";
 		}
 ?>
