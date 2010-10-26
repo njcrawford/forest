@@ -20,7 +20,7 @@ mysql_select_db($db_name);
 if(isset($_GET['name']))
 {
 	$updates_result = mysql_query("select * from updates where package_name = '" . $_GET['name'] . "'");
-	$updates_row = mysql_fetch_assoc($result);
+	$updates_row = mysql_fetch_assoc($updates_result);
 
 //	$systems_result = mysql_query("select name from systems where id = '" . $row['system_id'] . "'");
 //        $systems_row = mysql_fetch_assoc($systems_result);
