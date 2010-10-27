@@ -73,6 +73,11 @@ accepted_url="$server_url/getaccepted.php?system=`hostname`"
 
 # check for accepted updates and apply them
 accepted_updates=`curl --silent --show-error $accepted_url`
+# quit here silently if curl can't connect
+if [ $? -ne 0 ]; then
+	exit 0
+fi
+# only try to apply updates if the list isn't empty
 if [ "x$accepted_updates" != "x" ]; then
 	do_updates "$accepted_updates"
 fi
