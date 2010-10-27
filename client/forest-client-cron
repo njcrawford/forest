@@ -1,5 +1,0 @@
-#!/bin/sh
-
-# only run if the package is completely installed
-test -x /usr/sbin/forest-client || exit 0
-/usr/sbin/forest-client --cron
