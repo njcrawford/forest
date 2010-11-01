@@ -8,8 +8,14 @@ $db_user = "forest_user";
 $db_password = "forest_pass";
 $db_name = "forest";
 
-mysql_connect($db_server, $db_user, $db_password);
-mysql_select_db($db_name);
+if(!mysql_connect($db_server, $db_user, $db_password))
+{
+	die("Could not connect to db");
+}
+if(!mysql_select_db($db_name))
+{
+	die("Could not select db");
+}
 
 if(!empty($_POST['system_name']))
 {

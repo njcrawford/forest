@@ -63,7 +63,9 @@ if (mysql_num_rows($awal_result) > 0)
 	}
 }
 
+$email_to = "root";
+include '/etc/forest-server.conf';
 // send email
-mail("njcrawford@gmail.com", "Forest system report", $output_message, "From:forest@localhost");
+mail($email_to, "Forest system report", $output_message, "From:forest@localhost");
 
 ?>
