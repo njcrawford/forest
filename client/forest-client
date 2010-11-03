@@ -55,7 +55,7 @@ do_updates()
 {
 	distro=`detect_distribution`
 	if [ "x$distro" = "xubuntu" ]; then
-		results=`apt-get install $1`
+		results=`apt-get -q -y install $1`
 		if [ $? -ne 0 ]; then
 			echo $results
 		fi
@@ -96,7 +96,7 @@ formatted_reboot="reboot_required=`is_reboot_needed`"
 
 curldata=`curl --silent --show-error --data-urlencode "$postdata1" --data-urlencode "$postdata2" --data-urlencode "$formatted_reboot" $post_url`
 
-# filter out success message and return value of grep for cron
+# filter out success messege and return value of grep to avoid cron warning messages
 if [ "x$1" = "x--cron" ]; then
 	curldata=`echo "$curldata" | grep -v "data ok"`
 fi
