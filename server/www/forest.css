@@ -1,17 +1,16 @@
+/* Nice 1px lines between all the cells in a table */
 table {
 	border-width: 1px;
 	border-spacing: 0px;
 	border-style: outset;
 	border-color: gray;
 	border-collapse: collapse;
-	background-color: white;
 }
 table th {
 	border-width: 1px;
 	padding: 1px;
 	border-style: inset;
 	border-color: gray;
-	background-color: white;
 	text-align: center;
 	padding: 5px;
 }
@@ -20,20 +19,21 @@ table td {
 	padding: 1px;
 	border-style: inset;
 	border-color: gray;
-	background-color: white;
 	text-align: center;
 	padding: 5px;
 }
+/* Don't center the name field of tables */
 table td.name {
 	text-align: left;
 }
+
 /* Remove extra linefeed after forms */
 form {
 	display: inline;
 }
+
 /* Make all the link states the same color */
 a, a:link, a:hover, a:visited, a:active {
-/*	text-decoration: none;*/
 	color: blue;
 }
 
