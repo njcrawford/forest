@@ -5,7 +5,6 @@
 </head>
 <body>
 <a href="./">Back to summary page</a><br />
-<table>
 <?php
 
 $updates_table = "updates";
@@ -40,7 +39,7 @@ if(isset($_GET['name']))
         $updates_row = mysql_fetch_assoc($updates_result);
 
 	echo "Name: " . $systems_row['name'] . "<br />Updates: " . mysql_num_rows($updates_result) . "<br />Reboot Needed: " . $nice_reboot . "<br />Last Check-in: " . $systems_row['last_checkin'] . "<br />";
-	echo "<tr><td colspan=4><ul>";
+	echo "<ul>";
 	while($updates_row)
 	{
 		if($updates_row['accepted'] == 1)
@@ -70,7 +69,7 @@ if(isset($_GET['name']))
 <?php
 		$updates_row = mysql_fetch_assoc($updates_result);
 	}
-	echo "</ul></td></tr>";
+	echo "</ul>";
 
 	$systems_row = mysql_fetch_assoc($systems_result);
 }
@@ -80,6 +79,5 @@ else
 }
 
 ?>
-</table>
 </body>
 </html>

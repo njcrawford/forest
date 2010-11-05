@@ -5,7 +5,6 @@
 </head>
 <body>
 <a href="./">Back to summary page</a><br />
-<table>
 <?php
 
 $updates_table = "updates";
@@ -27,7 +26,7 @@ if(isset($_GET['name']))
 //        $systems_row = mysql_fetch_assoc($systems_result);
 
 	echo "Name: " . $updates_row['package_name'] . "<br />Systems: " . mysql_num_rows($updates_result) . "<br />";
-	echo "<tr><td colspan=4><ul>";
+	echo "<ul>";
 	while($updates_row)
 	{
 		$systems_result = mysql_query("select name from systems where id = '" . $updates_row['system_id'] . "'");
@@ -58,7 +57,7 @@ if(isset($_GET['name']))
 <?php
 		$updates_row = mysql_fetch_assoc($updates_result);
 	}
-	echo "</ul></td></tr>";
+	echo "</ul>";
 }
 else
 {
@@ -66,6 +65,5 @@ else
 }
 
 ?>
-</table>
 </body>
 </html>
