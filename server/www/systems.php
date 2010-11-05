@@ -1,6 +1,7 @@
 <html>
 <head>
-<title>Forest</title>
+<title>Updates by system - Forest</title>
+<link rel="stylesheet" type="text/css" href="forest.css" />
 </head>
 <body>
 <a href="./">Back to summary page</a><br />

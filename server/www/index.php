@@ -1,6 +1,7 @@
 <html>
 <head>
-<title>Forest</title>
+<title>Summary - Forest</title>
+<link rel="stylesheet" type="text/css" href="forest.css" />
 </head>
 <body>
 <?php
@@ -15,42 +16,6 @@ $db_name = "forest";
 mysql_connect($db_server, $db_user, $db_password);
 mysql_select_db($db_name);
 
-?>
-<style type="text/css">
-table {
-	border-width: 1px;
-	border-spacing: 0px;
-	border-style: outset;
-	border-color: gray;
-	border-collapse: collapse;
-	background-color: white;
-}
-table th {
-	border-width: 1px;
-	padding: 1px;
-	border-style: inset;
-	border-color: gray;
-	background-color: white;
-	text-align: center;
-	padding: 5px;
-}
-table td {
-	border-width: 1px;
-	padding: 1px;
-	border-style: inset;
-	border-color: gray;
-	background-color: white;
-	text-align: center;
-	padding: 5px;
-}
-table td.name {
-	text-align: left;
-}
-form {
-	display: inline;
-}
-</style>
-<?php
 $awol_result = mysql_query("select * from systems where last_checkin < DATE_SUB(NOW(), INTERVAL 36 HOUR)");
 if(mysql_num_rows($awol_result) > 0)
 {
