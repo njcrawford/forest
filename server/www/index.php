@@ -98,7 +98,8 @@ if(mysql_num_rows($systems_result) > 0)
 <h3>Updates available by system</h3>
 <br />
 <table>
-<tr><th>System Name</th><th>Updates Available/Accepted</th><th>Reboot Required</th><th>Last Checkin</th></tr>
+<tr><th rowspan="2">System Name</th><th colspan="2">Updates       </th><th rowspan="2">Reboot<br />Required</th><th rowspan="2">Last Checkin</th></tr>
+<tr>                                <th>Available</th><th>Accepted</th></tr>
 <?php
 	foreach($systems_final as $this_system)
 	{
@@ -107,7 +108,8 @@ if(mysql_num_rows($systems_result) > 0)
 		<td class="name">
 			<a href="systems.php?name=<? echo $this_system['name'] ?>"><? echo $this_system['name'] ?></a>
 		</td>
-		<td><? echo $this_system['packages'] . "/" . $this_system['accepted_count'] ?></td>
+		<td><? echo $this_system['packages'] ?></td>
+		<td><? echo $this_system['accepted_count'] ?></td>
 		<td><? echo $this_system['reboot_required'] ?></td>
 		<td><? echo $this_system['last_checkin'] ?></td>
 		<td>
@@ -140,7 +142,8 @@ if(mysql_num_rows($systems_result) > 0)
 <h3>Updates available by package name</h3>
 <br />
 <table>
-<tr><th>Name</th><th>Systems/Accepted</th></tr>
+<tr><th rowspan="2">Name</th><th colspan="2">Systems       </th></tr>
+<tr>                         <th>Available</th><th>Accepted</th></tr>
 <?php
 $systems_result = mysql_query("select package_name, count(system_id) as systems, sum(accepted) as accepted_count from updates group by package_name");
 $systems_row = mysql_fetch_assoc($systems_result);
@@ -151,7 +154,8 @@ while($systems_row)
 		<td class="name">
 			<a href="packages.php?name=<? echo $systems_row['package_name'] ?>"><? echo $systems_row['package_name'] ?></a>
 		</td>
-		<td><? echo $systems_row['systems'] . "/" . $systems_row['accepted_count'] ?></td>
+		<td><? echo $systems_row['systems'] ?></td>
+		<td><? echo $systems_row['accepted_count'] ?></td>
 		<td>
 <?php
 	if($systems_row['systems'] != $systems_row['accepted_count'])
