@@ -27,6 +27,13 @@ table td {
 table td.name {
 	text-align: left;
 }
+/* Remove extra linefeed after forms */
 form {
 	display: inline;
 }
+/* Make all the link states the same color */
+a, a:link, a:hover, a:visited, a:active {
+/*	text-decoration: none;*/
+	color: blue;
+}
+
