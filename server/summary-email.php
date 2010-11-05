@@ -33,6 +33,8 @@ else
 	$output_message .= "No systems need updates\n";
 }
 
+$output_message .= "\n";
+
 // get systems that need a reboot
 // just print name
 $reboot_query = "select name from systems where reboot_required = 1";
@@ -46,6 +48,7 @@ if (mysql_num_rows($reboot_result) > 0)
 		$output_message .= $reboot_row['name'] . "\n";
 		$reboot_row = mysql_fetch_assoc($reboot_result);
 	}
+	$output_message .= "\n";
 }
 
 // get systems that haven't checked in for a while
@@ -63,6 +66,7 @@ if (mysql_num_rows($awal_result) > 0)
 	}
 }
 
+// default to sending to root
 $email_to = "root";
 include '/etc/forest-server.conf';
 // send email
