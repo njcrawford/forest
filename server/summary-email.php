@@ -3,6 +3,13 @@
 
 $output_message = "";
 
+// default settings and read config file
+$email_to = "root";
+$server_link = "http://forest/forest/";
+include '/etc/forest-server.conf';
+
+$output_message .= $server_link . "\n\n";
+
 mysql_connect("localhost", "forest_user", "forest_pass");
 mysql_select_db("forest");
 
@@ -66,9 +73,6 @@ if (mysql_num_rows($awal_result) > 0)
 	}
 }
 
-// default to sending to root
-$email_to = "root";
-include '/etc/forest-server.conf';
 // send email
 mail($email_to, "Forest system report", $output_message, "From:forest@localhost");
 
