@@ -68,15 +68,16 @@ if(mysql_num_rows($systems_result) > 0)
 <?php
 	foreach($systems_final as $this_system)
 	{
+		$nice_checkin_class = ($this_system['last_checkin'] < (time() - 36 * 24 * 60 * 60)) ? " class=\"yellow\"" : "";
 ?>
 	<tr>
 		<td class="name">
 			<a href="systems.php?name=<? echo $this_system['name'] ?>"><? echo $this_system['name'] ?></a>
 		</td>
-		<td><? echo $this_system['packages'] ?></td>
-		<td><? echo $this_system['accepted_count'] ?></td>
-		<td><? echo $this_system['reboot_required'] ?></td>
-		<td><? echo $this_system['last_checkin'] ?></td>
+		<td><?php echo $this_system['packages'] ?></td>
+		<td><?php echo $this_system['accepted_count'] ?></td>
+		<td><?php echo $this_system['reboot_required'] ?></td>
+		<td<?php echo $nice_checkin_class ?>><?php echo $this_system['last_checkin'] ?></td>
 		<td>
 <?php
 		if($this_system['packages'] > 0 && $this_system['packages'] != $this_system['accepted_count'])
@@ -84,7 +85,7 @@ if(mysql_num_rows($systems_result) > 0)
 ?>
 			<form method="post" action="mark-accepted.php">
 				<input type="hidden" name="accepted" value="true">
-				<input type="hidden" name="system_id" value="<? echo $this_system['id'] ?>">
+				<input type="hidden" name="system_id" value="<?php echo $this_system['id'] ?>">
 				<input type="submit" value="Accept all">
 			</form>
 <?php

@@ -37,3 +37,8 @@ a, a:link, a:hover, a:visited, a:active {
 	color: blue;
 }
 
+/* Make the background of an element yellow */
+.yellow {
+	background-color: yellow;
+}
+
