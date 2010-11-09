@@ -37,8 +37,13 @@ a, a:link, a:hover, a:visited, a:active {
 	color: blue;
 }
 
-/* Make the background of an element yellow */
-.yellow {
+/* Make reboot required systems stand out */
+.reboot {
 	background-color: yellow;
+}
+
+/* Make AWOL systems stand out */
+.awol {
+	background-color: orange;
 }
 

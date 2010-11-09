@@ -68,8 +68,8 @@ if(mysql_num_rows($systems_result) > 0)
 <?php
 	foreach($systems_final as $this_system)
 	{
-		$nice_checkin_class = (strtotime($this_system['last_checkin']) < (time() - (36 * 60 * 60))) ? " class=\"yellow\"" : "";
-		$nice_reboot_class = ($this_system['reboot_required'] == "Yes") ? " class=\"yellow\"" : "";
+		$nice_checkin_class = (strtotime($this_system['last_checkin']) < (time() - (36 * 60 * 60))) ? " class=\"awol\"" : "";
+		$nice_reboot_class = ($this_system['reboot_required'] == "Yes") ? " class=\"reboot\"" : "";
 ?>
 	<tr>
 		<td class="name">
