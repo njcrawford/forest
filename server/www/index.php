@@ -69,6 +69,7 @@ if(mysql_num_rows($systems_result) > 0)
 	foreach($systems_final as $this_system)
 	{
 		$nice_checkin_class = (strtotime($this_system['last_checkin']) < (time() - (36 * 60 * 60))) ? " class=\"yellow\"" : "";
+		$nice_reboot_class = ($this_system['reboot_required'] == "Yes") ? " class=\"yellow\"" : "";
 ?>
 	<tr>
 		<td class="name">
@@ -76,7 +77,7 @@ if(mysql_num_rows($systems_result) > 0)
 		</td>
 		<td><?php echo $this_system['packages'] ?></td>
 		<td><?php echo $this_system['accepted_count'] ?></td>
-		<td><?php echo $this_system['reboot_required'] ?></td>
+		<td<?php echo $nice_reboot_class ?>><?php echo $this_system['reboot_required'] ?></td>
 		<td<?php echo $nice_checkin_class ?>><?php echo $this_system['last_checkin'] ?></td>
 		<td>
 <?php
