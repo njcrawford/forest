@@ -16,7 +16,7 @@ $db_name = "forest";
 mysql_connect($db_server, $db_user, $db_password);
 mysql_select_db($db_name);
 
-$awol_result = mysql_query("select * from systems where last_checkin < DATE_SUB(NOW(), INTERVAL 36 HOUR)");
+/*$awol_result = mysql_query("select * from systems where last_checkin < DATE_SUB(NOW(), INTERVAL 36 HOUR)");
 if(mysql_num_rows($awol_result) > 0)
 {
 	echo "<br /><h3>Systems that have not checked in for more than 36 hours</h3><br />";
@@ -29,7 +29,7 @@ if(mysql_num_rows($awol_result) > 0)
 		$awol_row = mysql_fetch_assoc($awol_result);
 	}
 	echo "</table>";
-}
+}*/
 
 $systems_final = array();
 
