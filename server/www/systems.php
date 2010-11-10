@@ -5,6 +5,10 @@ require "header.php";
 
 require "db.php";
 
+?>
+<a href="./">Back to summary page</a><br />
+<?php
+
 if(isset($_GET['name']))
 {
 	$systems_result = mysql_query("select * from systems where name = '" . $_GET['name'] . "'");

@@ -5,6 +5,10 @@ require "header.php";
 
 require "db.php";
 
+?>
+<a href="./">Back to summary page</a><br />
+<?php
+
 if(isset($_GET['name']))
 {
 	$updates_result = mysql_query("select * from updates where package_name = '" . $_GET['name'] . "'");
