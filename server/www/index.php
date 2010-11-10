@@ -52,7 +52,7 @@ if(mysql_num_rows($systems_result) > 0)
 <h3>Updates available by system</h3>
 <br />
 <table>
-<tr><th rowspan="2">System Name</th><th colspan="2">Updates       </th><th rowspan="2">Reboot<br />Required</th><th rowspan="2">Last Checkin</th><th rowspan="2" style="width:6em">&nbsp;</th></tr>
+<tr><th rowspan="2">System Name</th><th colspan="2">Updates       </th><th rowspan="2">Reboot<br />Required</th><th rowspan="2">Last Checkin</th><th rowspan="2" style="width:4em">&nbsp;</th></tr>
 <tr>                                <th>Available</th><th>Accepted</th></tr>
 <?php
 	foreach($systems_final as $this_system)
@@ -98,7 +98,7 @@ if(mysql_num_rows($systems_result) > 0)
 <h3>Updates available by package name</h3>
 <br />
 <table>
-<tr><th rowspan="2">Name</th><th colspan="2">Systems       </th></tr>
+<tr><th rowspan="2">Name</th><th colspan="2">Systems       </th><th rowspan="2" style="width:4em">&nbsp;</th></tr>
 <tr>                         <th>Available</th><th>Accepted</th></tr>
 <?php
 $systems_result = mysql_query("select package_name, count(system_id) as systems, sum(accepted) as accepted_count from updates group by package_name");

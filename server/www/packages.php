@@ -1,21 +1,9 @@
-<html>
-<head>
-<title>Updates by package name - Forest</title>
-<link rel="stylesheet" type="text/css" href="forest.css" />
-</head>
-<body>
-<a href="./">Back to summary page</a><br />
 <?php
 
-$updates_table = "updates";
+$page_title = "Updates by package name";
+include "header.php";
 
-$db_server = "localhost";
-$db_user = "forest_user";
-$db_password = "forest_pass";
-$db_name = "forest";
-
-mysql_connect($db_server, $db_user, $db_password);
-mysql_select_db($db_name);
+include "db.php";
 
 if(isset($_GET['name']))
 {
@@ -64,6 +52,4 @@ else
 	echo "No system specified";
 }
 
-?>
-</body>
-</html>
+include "footer.php";
