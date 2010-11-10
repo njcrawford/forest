@@ -47,3 +47,8 @@ a, a:link, a:hover, a:visited, a:active {
 	background-color: yellow;
 }
 
+/* Make version in the footer pretty */
+.footer-version {
+	text-align: center;
+	font-size: 10;
+}

@@ -17,6 +17,6 @@ else
 }
 ?>
 <br />
-Forest <?php echo $display_version ?>
+<span class="footer-version">Forest <?php echo $display_version ?></span>
 </body>
 </html>
