@@ -1,20 +1,9 @@
-<html>
-<head>
-<title>Summary - Forest</title>
-<link rel="stylesheet" type="text/css" href="forest.css" />
-</head>
-<body>
 <?php
 
-$updates_table = "updates";
+$page_title = "Summary";
+include "header.php";
 
-$db_server = "localhost";
-$db_user = "forest_user";
-$db_password = "forest_pass";
-$db_name = "forest";
-
-mysql_connect($db_server, $db_user, $db_password);
-mysql_select_db($db_name);
+include "db.php";
 
 /*$awol_result = mysql_query("select * from systems where last_checkin < DATE_SUB(NOW(), INTERVAL 36 HOUR)");
 if(mysql_num_rows($awol_result) > 0)
@@ -148,5 +137,6 @@ while($systems_row)
 }
 ?>
 </table>
-</body>
-</html>
+<?php
+include "footer.php";
+?>
