@@ -22,8 +22,8 @@ get_available_updates ()
 		updates=`apt-get dist-upgrade -Vs |grep ^Inst | cut -d " " -f 2`
 		echo $updates
 	elif [ "x$distro" = xcentos ] ; then
-		#for centos - NOT TESTED!!!
-		updates=`yum check-update | grep -v "Loaded plugins:\|Loading mirror speeds\| \* \|^$" | cut -d " " -f 1`
+		#for centos
+		updates=`yum check-update -q | grep -v " \* \|^$" | cut -d " " -f 1 | cut -d "." -f 1 | uniq`
 		echo $updates
 	fi
 }
@@ -44,6 +44,16 @@ is_reboot_needed()
 		else
 			echo "false"
 		fi
+	elif [ "x$distro" = "xcentos" ]; then
+		# I assume that a kernel is the only thing that would require a
+		# reboot. There could be other things that need it as well.
+		running_kernel=`uname -a |cut -d " " -f 3`
+		newest_kernel=`yum -q list kernel | grep "installed" | awk -F" " '{ print $2 }' | sort -n -s | sed '$!d'`
+		if [ "x$running_kernel" != "x$newest_kernel"  ]; then
+			echo "true"
+		else
+			echo "false"
+		fi
 	else
 		echo "unknown"
 	fi
@@ -60,7 +70,10 @@ do_updates()
 			echo $results
 		fi
 	elif [ "x$distro" = "xcentos" ]; then
-		results=`yum update $1`
+		results=`yum -y update $1`
+		if [ $? -ne 0 ]; then
+			echo $results
+		fi
 	fi
 }
 
@@ -94,7 +107,7 @@ fi
 
 formatted_reboot="reboot_required=`is_reboot_needed`"
 
-curldata=`curl --silent --show-error --data-urlencode "$postdata1" --data-urlencode "$postdata2" --data-urlencode "$formatted_reboot" $post_url`
+curldata=`curl --silent --show-error --data "$postdata1" --data "$postdata2" --data "$formatted_reboot" $post_url`
 
 # filter out success messege and return value of grep to avoid cron warning messages
 if [ "x$1" = "x--cron" ]; then
