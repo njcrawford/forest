@@ -3,7 +3,7 @@ $forest_version = '$URL$';
 $forest_version = explode("/", $forest_version);
 $forest_version = $forest_version[count($forest_version)-4];
 
-$forest_rev = '$Revision$';
+/*$forest_rev = '$Revision$';
 $forest_rev = explode(" ", $forest_rev);
 $forest_rev = $forest_rev[1];
 
@@ -14,9 +14,9 @@ if($forest_version == "trunk")
 else
 {
 	$display_version = "v" . $forest_version;
-}
+}*/
 ?>
 <br />
-<div class="footer-version">Forest <?php echo $display_version ?></div>
+<div class="footer-version">Forest <?php echo $forest_version ?></div>
 </body>
 </html>
