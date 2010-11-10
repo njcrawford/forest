@@ -1,9 +1,9 @@
 <?php
 
 $page_title = "Summary";
-include "header.php";
+require "header.php";
 
-include "db.php";
+require "db.php";
 
 /*$awol_result = mysql_query("select * from systems where last_checkin < DATE_SUB(NOW(), INTERVAL 36 HOUR)");
 if(mysql_num_rows($awol_result) > 0)
@@ -138,5 +138,5 @@ while($systems_row)
 ?>
 </table>
 <?php
-include "footer.php";
+require "footer.php";
 ?>

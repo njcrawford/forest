@@ -1,9 +1,9 @@
 <?php
 
 $page_title = "Updates by system";
-include "header.php";
+require "header.php";
 
-include "db.php";
+require "db.php";
 
 if(isset($_GET['name']))
 {
@@ -66,4 +66,4 @@ else
 	echo "No system specified";
 }
 
-include "footer.php";
+require "footer.php";
