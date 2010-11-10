@@ -65,7 +65,7 @@ do_updates()
 {
 	distro=`detect_distribution`
 	if [ "x$distro" = "xubuntu" ]; then
-		results=`apt-get -q -y install $1`
+		results=`apt-get -q -y -o DPkg::Options::\=--force-confold install $1`
 		if [ $? -ne 0 ]; then
 			echo $results
 		fi
