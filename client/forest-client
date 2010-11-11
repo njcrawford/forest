@@ -67,11 +67,13 @@ do_updates()
 	if [ "x$distro" = "xubuntu" ]; then
 		results=`apt-get -q -y -o DPkg::Options::\=--force-confold install $1`
 		if [ $? -ne 0 ]; then
+			echo "apt-get install did not execute successfully"
 			echo $results
 		fi
 	elif [ "x$distro" = "xcentos" ]; then
 		results=`yum -y update $1`
 		if [ $? -ne 0 ]; then
+			echo "yum update did not execute successfully"
 			echo $results
 		fi
 	fi
