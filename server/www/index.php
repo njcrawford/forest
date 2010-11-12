@@ -5,21 +5,6 @@ require "header.php";
 
 require "db.php";
 
-/*$awol_result = mysql_query("select * from systems where last_checkin < DATE_SUB(NOW(), INTERVAL 36 HOUR)");
-if(mysql_num_rows($awol_result) > 0)
-{
-	echo "<br /><h3>Systems that have not checked in for more than 36 hours</h3><br />";
-	echo "<table>";
-	echo "<tr><th>System name</th><th>Last checkin</th></tr>";
-	$awol_row = mysql_fetch_assoc($awol_result);
-	while($awol_row)
-	{
-		echo "<tr><td>" . $awol_row['name'] . "</td><td>" . $awol_row['last_checkin'] . "</td></tr>";
-		$awol_row = mysql_fetch_assoc($awol_result);
-	}
-	echo "</table>";
-}*/
-
 $systems_final = array();
 
 $systems_result = mysql_query("select * from (select systems.id, name, count(package_name) as packages, sum(if(accepted is null, 0, accepted)) as accepted_count, reboot_required, last_checkin from systems left join (updates) on (updates.system_id = systems.id) group by systems.id) b order by packages desc");
