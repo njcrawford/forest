@@ -1,7 +1,5 @@
 <?php
 
-$updates_table = "updates";
-
 $db_server = "localhost";
 $db_user = "forest_user";
 $db_password = "forest_pass";
@@ -19,6 +17,6 @@ if($built_for_db_version > $version_row['value'])
 }
 else if($built_for_db_version < $version_row['value'])
 {
-	die("Database schema is newer than application");
+	die("Database schema version too new! Expected: " . $built_for_db_version . ", Actual: " . $version_row['value']);
 }
 ?>
