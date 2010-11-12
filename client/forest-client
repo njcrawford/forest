@@ -98,6 +98,17 @@ accepted_updates=`curl --silent --show-error $accepted_url`
 if [ $? -ne 0 ]; then
 	exit 0
 fi
+
+error_check=`echo $accepted_updates | cut -d ":" -f 1`
+# quit here if there was an error getting accepted updates
+if [ "x$error_check" != "xdata_ok" ]; then
+	echo "error getting accepted packages: $accepted_updates"
+	exit 1
+fi
+
+# filter out error status
+accepted_updates=`echo "$accepted_updates" | cut -d " " -f 2-`
+
 # only try to apply updates if the list isn't empty
 if [ "x$accepted_updates" != "x" ]; then
 	do_updates "$accepted_updates"
@@ -119,7 +130,7 @@ curldata=`curl --silent --show-error --data "$postdata1" --data "$postdata2" --d
 
 # filter out success messege and return value of grep to avoid cron warning messages
 if [ "x$1" = "x--cron" ]; then
-	curldata=`echo "$curldata" | grep -v "data ok"`
+	curldata=`echo "$curldata" | grep -v "data_ok"`
 fi
 
 # output anything from curl that hasn't been filtered
