@@ -1,21 +1,6 @@
 <?php
 
-$updates_table = "updates";
-$post_data_name = "available_updates";
-
-$db_server = "localhost";
-$db_user = "forest_user";
-$db_password = "forest_pass";
-$db_name = "forest";
-
-if(!mysql_connect($db_server, $db_user, $db_password))
-{
-	die("Could not connect to db");
-}
-if(!mysql_select_db($db_name))
-{
-	die("Could not select db");
-}
+require "db.php";
 
 if(!empty($_POST['system_name']))
 {
@@ -53,12 +38,12 @@ if(!empty($_POST['system_name']))
 		$data_ok = true;
 		// Forget about old updates before adding new ones
 		mysql_query("update systems set last_checkin = NOW() where id = '" . $system_id . "'");
-		mysql_query("delete from " . $updates_table . " where system_id = '" . $system_id . "'");
+		mysql_query("delete from updates where system_id = '" . $system_id . "'");
 		$packages = explode(",", $_POST[$post_data_name]);
 		// build an SQL query to save info for all packages that need updated
 		foreach($packages as $this_package)
 		{
-			$result = mysql_query("insert into " . $updates_table . " (system_id, package_name) values
+			$result = mysql_query("insert into updates (system_id, package_name) values
 				(
 					'" . $system_id . "',
 					'" . $this_package . "'
@@ -85,7 +70,7 @@ if(!empty($_POST['system_name']))
 	{
 		// Forget about old updates and save checkin time
 		mysql_query("update systems set last_checkin = NOW() where id = '" . $system_id . "'");
-		mysql_query("delete from " . $updates_table . " where system_id = '" . $system_id . "'");
+		mysql_query("delete from updates where system_id = '" . $system_id . "'");
 		echo "data ok";
 	}
 	else
