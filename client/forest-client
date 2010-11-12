@@ -1,5 +1,11 @@
 #!/bin/sh
 
+# set environemt stuff
+# PATH should contain at least /usr/local/sbin, /usr/sbin and /sbin
+PATH=$PATH:/usr/local/sbin:/usr/sbin:/sbin
+# some parts of apt-get seem to need term set to something
+TERM=dumb
+
 # This function returns the lowercase name of the linux distribution we're 
 # running on. Currently I only care about Ubuntu and CentOS, so that's all 
 # it detects.
