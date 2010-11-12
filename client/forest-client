@@ -25,7 +25,7 @@ get_available_updates ()
 	distro=`detect_distribution`
 	if [ "x$distro" = xubuntu ] ; then
 		#for ubuntu
-		updates=`apt-get dist-upgrade -Vs |grep ^Inst | cut -d " " -f 2`
+		updates=`apt-get dist-upgrade -Vs 2>&1|grep ^Inst | cut -d " " -f 2`
 		echo $updates
 	elif [ "x$distro" = xcentos ] ; then
 		#for centos
