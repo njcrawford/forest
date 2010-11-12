@@ -1,6 +1,7 @@
 <?php
 
 require "db.php";
+require "rpc-common.php";
 
 if(!empty($_POST['system_name']))
 {
@@ -29,7 +30,7 @@ if(!empty($_POST['system_name']))
 		}
 		else
 		{
-			die("Mysql error: " . mysql_error());
+			die($RPC_ERROR_TAG . "Mysql error: " . mysql_error());
 		}
 	}
 
@@ -58,12 +59,12 @@ if(!empty($_POST['system_name']))
 		//send back a message indicating data received (or not)
 		if($data_ok)
 		{
-			echo "data ok";
+			echo $RPC_SUCCESS_TAG;
 			$update_data_ok = true;
 		}
 		else
 		{
-			echo "data error";
+			echo $RPC_ERROR_TAG . "data error";
 		}
 	}
 	elseif(!empty($_POST['no_updates_available']))
@@ -71,11 +72,11 @@ if(!empty($_POST['system_name']))
 		// Forget about old updates and save checkin time
 		mysql_query("update systems set last_checkin = NOW() where id = '" . $system_id . "'");
 		mysql_query("delete from updates where system_id = '" . $system_id . "'");
-		echo "data ok";
+		echo $RPC_SUCCESS_TAG;
 	}
 	else
 	{
-		echo "data error";
+		echo $RPC_ERROR_TAG . "data error";
 	}
 
 	// the reboot_required section is optional for now
@@ -97,6 +98,6 @@ if(!empty($_POST['system_name']))
 }
 else
 {
-	echo "no data";
+	echo $RPC_ERROR_TAG . "no data";
 }
 ?>
