@@ -79,7 +79,7 @@ elseif(!empty($_POST['no_updates_available']))
 }
 else
 {
-	echo $RPC_ERROR_TAG . "missing both available_updates and no_updates_available";
+	die($RPC_ERROR_TAG . "missing both available_updates and no_updates_available");
 }
 
 // the reboot_required section is optional for rpc v1

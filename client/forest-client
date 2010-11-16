@@ -7,7 +7,7 @@ PATH=$PATH:/usr/local/sbin:/usr/sbin:/sbin
 TERM=dumb
 
 # global variables
-rpc_version=1
+rpc_version="1"
 
 # This function returns the lowercase name of the linux distribution we're 
 # running on. Currently I only care about Ubuntu and CentOS, so that's all 
