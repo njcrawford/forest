@@ -55,7 +55,7 @@ if(mysql_num_rows($systems_result) > 0)
 		<td<?php echo $nice_checkin_class ?>><?php echo $this_system['last_checkin'] ?></td>
 		<td>
 <?php
-		if($this_system['packages'] > 0 && $this_system['packages'] != $this_system['accepted_count'])
+		if($this_system['packages'] > 0 && ($this_system['packages'] != $this_system['accepted_count']))
 		{
 ?>
 			<form method="post" action="mark-accepted.php">
