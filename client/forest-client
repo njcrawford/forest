@@ -8,29 +8,23 @@ TERM=dumb
 
 # global variables
 rpc_version="1"
-
-# This function returns the lowercase name of the linux distribution we're 
-# running on. Currently I only care about Ubuntu and CentOS, so that's all 
-# it detects.
-detect_distribution ()
-{
-	if [ -f /etc/lsb-release ] ; then
-		echo "ubuntu"
-	elif [ -f /etc/redhat-release ] ; then
-		echo "centos"
-	fi
-}
+current_distro=""
+# detect which distro we're on so we know what commands to run
+if [ -f /etc/lsb-release ] ; then
+	current_distro="ubuntu"
+elif [ -f /etc/redhat-release ] ; then
+	current_distro="centos"
+fi
 
 # This function does not output anything if there are no packages to update or
 # if the distribution cannot be detected.
 get_available_updates ()
 {
-	distro=`detect_distribution`
-	if [ "x$distro" = xubuntu ] ; then
+	if [ "x$current_distro" = xubuntu ] ; then
 		#for ubuntu
 		updates=`apt-get dist-upgrade -Vs 2>&1|grep ^Inst | cut -d " " -f 2`
 		echo $updates
-	elif [ "x$distro" = xcentos ] ; then
+	elif [ "x$current_distro" = xcentos ] ; then
 		#for centos
 		updates=`yum check-update -q | grep -v " \* \|^$" | cut -d " " -f 1 | cut -d "." -f 1 | uniq`
 		echo $updates
@@ -46,14 +40,13 @@ spaces_to_commas ()
 # Returns true if a reboot is needed, false otherwise
 is_reboot_needed()
 {
-	distro=`detect_distribution`
-	if [ "x$distro" = "xubuntu" ]; then
+	if [ "x$current_distro" = "xubuntu" ]; then
 		if [ -f /var/run/reboot-required ]; then
 			echo "true"
 		else
 			echo "false"
 		fi
-	elif [ "x$distro" = "xcentos" ]; then
+	elif [ "x$current_distro" = "xcentos" ]; then
 		# I assume that a kernel is the only thing that would require a
 		# reboot. There could be other things that need it as well.
 		running_kernel=`uname -a |cut -d " " -f 3`
@@ -72,15 +65,14 @@ is_reboot_needed()
 # Takes a space separated list of packages.
 do_updates()
 {
-	distro=`detect_distribution`
-	if [ "x$distro" = "xubuntu" ]; then
+	if [ "x$current_distro" = "xubuntu" ]; then
 		results=`apt-get -q -y -o DPkg::Options::\=--force-confold install $1 2>&1`
 		if [ $? -ne 0 ]; then
 			echo "apt-get install did not execute successfully"
 			echo $results
 		fi
-	elif [ "x$distro" = "xcentos" ]; then
-		results=`yum -y update $1`
+	elif [ "x$current_distro" = "xcentos" ]; then
+		results=`yum -y update $1 2>&1`
 		if [ $? -ne 0 ]; then
 			echo "yum update did not execute successfully"
 			echo $results
@@ -88,6 +80,8 @@ do_updates()
 	fi
 }
 
+# default server url in case config file is missing
+server_url="http://forest/forest"
 # include config file
 . /etc/forest-client.conf
 
