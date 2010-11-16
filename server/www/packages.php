@@ -1,9 +1,9 @@
 <?php
 
 $page_title = "Updates by package name";
-require "header.php";
+require "inc/header.php";
 
-require "db.php";
+require "inc/db.php";
 
 ?>
 <a href="./">Back to summary page</a><br />

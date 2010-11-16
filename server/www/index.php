@@ -1,9 +1,9 @@
 <?php
 
 $page_title = "Summary";
-require "header.php";
+require "inc/header.php";
 
-require "db.php";
+require "inc/db.php";
 
 $systems_final = array();
 

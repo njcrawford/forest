@@ -1,7 +1,7 @@
 <?php
 
-require "db.php";
-require "rpc-common.php";
+require "inc/db.php";
+require "inc/rpc-common.php";
 
 if(empty($_POST['system_name']))
 {
