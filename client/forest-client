@@ -6,6 +6,9 @@ PATH=$PATH:/usr/local/sbin:/usr/sbin:/sbin
 # some parts of apt-get seem to need term set to something
 TERM=dumb
 
+# global variables
+rpc_version=1
+
 # This function returns the lowercase name of the linux distribution we're 
 # running on. Currently I only care about Ubuntu and CentOS, so that's all 
 # it detects.
@@ -90,7 +93,7 @@ do_updates()
 
 # build urls to use for posting and getting data
 post_url="$server_url/collect.php"
-accepted_url="$server_url/getaccepted.php?system=`hostname`"
+accepted_url="$server_url/getaccepted.php?rpc_version=$rpc_version&system=`hostname`"
 
 # check for accepted updates and apply them
 accepted_updates=`curl --silent --show-error $accepted_url`
