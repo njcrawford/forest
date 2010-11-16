@@ -37,7 +37,7 @@ if(!$system_id_ok)
 	}
 }
 
-if(!empty($_POST['updates_available']))
+if(!empty($_POST['available_updates']))
 {
 	$data_ok = true;
 	// Forget about old updates before adding new ones
