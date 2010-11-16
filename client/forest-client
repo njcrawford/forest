@@ -22,11 +22,11 @@ get_available_updates ()
 {
 	if [ "x$current_distro" = xubuntu ] ; then
 		#for ubuntu
-		updates=`apt-get dist-upgrade -Vs 2>&1|grep ^Inst | cut -d " " -f 2`
+		updates=`apt-get dist-upgrade -Vs 2>/dev/null |grep ^Inst | cut -d " " -f 2`
 		echo $updates
 	elif [ "x$current_distro" = xcentos ] ; then
 		#for centos
-		updates=`yum check-update -q | grep -v " \* \|^$" | cut -d " " -f 1 | cut -d "." -f 1 | uniq`
+		updates=`yum check-update -q 2>/dev/null | grep -v " \* \|^$" | cut -d " " -f 1 | cut -d "." -f 1 | uniq`
 		echo $updates
 	fi
 }
