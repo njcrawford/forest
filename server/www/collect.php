@@ -5,7 +5,7 @@ require "rpc-common.php";
 
 if(empty($_POST['system_name']))
 {
-	echo $RPC_ERROR_TAG . "no system specified";
+	echo $RPC_ERROR_TAG . "No system specified";
 }
 
 $system_id_ok = false;

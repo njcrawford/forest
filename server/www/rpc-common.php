@@ -17,6 +17,6 @@ else
 }
 if($client_rpc_version != $rpc_version)
 {
-	die($RPC_ERROR_TAG ."rpc version mismatch, server: " . $rpc_version . ", client: " . $_GET['rpc_version']);
+	die($RPC_ERROR_TAG . "rpc version mismatch, server: " . $rpc_version . ", client: " . $_GET['rpc_version']);
 }
 ?>
