@@ -43,7 +43,7 @@ if(!empty($_POST['available_updates']))
 	// Forget about old updates before adding new ones
 	mysql_query("update systems set last_checkin = NOW() where id = '" . $system_id . "'");
 	mysql_query("delete from updates where system_id = '" . $system_id . "'");
-	$packages = explode(",", $_POST['updates_available']);
+	$packages = explode(",", $_POST['available_updates']);
 	// build an SQL query to save info for all packages that need updated
 	foreach($packages as $this_package)
 	{
