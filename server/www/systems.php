@@ -16,7 +16,7 @@ if(isset($_GET['name']))
 			systems.name, 
 			systems.reboot_required, 
 			systems.last_checkin, 
-			count(update.package_name) as packages, 
+			count(updates.package_name) as packages, 
 			sum(if(accepted is null, 0, accepted)) as accepted_count 
 		from systems left join (updates) on (updates.system_id = systems.id)
 		where name = '" . $_GET['name'] . "' group by systems.id"
@@ -37,7 +37,7 @@ if(isset($_GET['name']))
 	}
 ?>
 	Name: <?php echo $systems_row['name'] ?><br />
-	Updates: <?php echo mysql_num_rows($updates_result) ?><br />
+	Updates: <?php echo $systems_row['packages'] ?><br />
 	Reboot Needed: <?php echo $nice_reboot ?><br />
 	Last Check-in: <?php echo $systems_row['last_checkin'] ?><br />
 <?php
