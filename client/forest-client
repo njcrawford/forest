@@ -118,20 +118,20 @@ if [ "x$accepted_updates" != "x" ]; then
 fi
 
 # collect packages available for update and report them
-postdata1="system_name=`hostname`"
-formatted_updates=`get_available_updates`
-if [ "x$formatted_updates" != "x" ]; then
-	formatted_updates=`spaces_to_commas "$formatted_updates"`
-	postdata2="available_updates=$formatted_updates"
+formatted_system_name="system_name=`hostname`"
+updates=`get_available_updates`
+if [ "x$updates" != "x" ]; then
+	updates=`spaces_to_commas "$updates"`
+	formatted_updates="available_updates=$updates"
 else
-	postdata2="no_updates_available=true"
+	formatted_updates="no_updates_available=true"
 fi
 
 formatted_reboot="reboot_required=`is_reboot_needed`"
 
 formatted_rpc_version="rpc_version=$rpc_version"
 
-curldata=`curl --silent --show-error --data "$formatted_rpc_version" --data "$postdata1" --data "$postdata2" --data "$formatted_reboot" $post_url`
+curldata=`curl --silent --show-error --data "$formatted_rpc_version" --data "$formatted_system_name" --data "$formatted_updates" --data "$formatted_reboot" $post_url`
 
 # filter out success messege and return value of grep to avoid cron warning messages
 if [ "x$1" = "x--cron" ]; then
