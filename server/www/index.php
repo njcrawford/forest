@@ -7,7 +7,7 @@ require "inc/db.php";
 
 $systems_final = array();
 
-$systems_result = mysql_query("select * from (select systems.id, name, count(package_name) as packages, sum(if(accepted is null, 0, accepted)) as accepted_count, reboot_required, last_checkin from systems left join (updates) on (updates.system_id = systems.id) group by systems.id) b order by packages desc");
+$systems_result = mysql_query("select * from (select systems.id, name, count(package_name) as packages, sum(if(accepted is null, 0, accepted)) as accepted_count, reboot_required, last_checkin from systems left join (updates) on (updates.system_id = systems.id) group by systems.id) b order by packages desc, reboot_required desc, last_checkin");
 if(mysql_num_rows($systems_result) > 0)
 {
 	# Get systems that have updates, sorted by number of updates
@@ -47,7 +47,7 @@ if(mysql_num_rows($systems_result) > 0)
 ?>
 	<tr>
 		<td class="name">
-			<a href="systems.php?name=<? echo $this_system['name'] ?>"><? echo $this_system['name'] ?></a>
+			<a href="systems.php?name=<?php echo $this_system['name'] ?>"><?php echo $this_system['name'] ?></a>
 		</td>
 		<td><?php echo $this_system['packages'] ?></td>
 		<td><?php echo $this_system['accepted_count'] ?></td>
@@ -93,10 +93,10 @@ while($systems_row)
 ?>
         <tr>
 		<td class="name">
-			<a href="packages.php?name=<? echo $systems_row['package_name'] ?>"><? echo $systems_row['package_name'] ?></a>
+			<a href="packages.php?name=<?php echo $systems_row['package_name'] ?>"><?php echo $systems_row['package_name'] ?></a>
 		</td>
-		<td><? echo $systems_row['systems'] ?></td>
-		<td><? echo $systems_row['accepted_count'] ?></td>
+		<td><?php echo $systems_row['systems'] ?></td>
+		<td><?php echo $systems_row['accepted_count'] ?></td>
 		<td>
 <?php
 	if($systems_row['systems'] != $systems_row['accepted_count'])
@@ -104,7 +104,7 @@ while($systems_row)
 ?>
 			<form method="post" action="mark-accepted.php">
 				<input type="hidden" name="accepted" value="true">
-				<input type="hidden" name="package" value="<? echo $systems_row['package_name'] ?>">
+				<input type="hidden" name="package" value="<?php echo $systems_row['package_name'] ?>">
 				<input type="submit" value="Accept all">
 			</form>
 <?php
