@@ -123,5 +123,5 @@ while($systems_row)
 ?>
 </table>
 <?php
-require "footer.php";
+require "inc/footer.php";
 ?>

@@ -1,7 +1,7 @@
 <?php
 $forest_version = '$URL$';
 $forest_version = explode("/", $forest_version);
-$forest_version = $forest_version[count($forest_version)-4];
+$forest_version = $forest_version[count($forest_version)-5];
 
 /*$forest_rev = '$Revision$';
 $forest_rev = explode(" ", $forest_rev);
