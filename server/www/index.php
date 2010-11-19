@@ -33,7 +33,7 @@ while($systems_row)
 
 	# add awol value
 	$systems[$systems_row['id']]['awol'] = 0;
-	if( strtotime($this_system['last_checkin']) < (time() - (36 * 3600) )
+	if( strtotime($this_system['last_checkin']) < (time() - (36 * 3600)) )
 	{
 		$systems[$systems_row['id']]['awol'] = 1;
 	}
