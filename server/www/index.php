@@ -5,8 +5,10 @@ require "inc/header.php";
 
 require "inc/db.php";
 
-$systems_final = array();
+//init systems to avoid errors later
+$systems = array();
 
+// Get data from mysql
 $systems_result = mysql_query(
 "select * from (
     select 
@@ -29,6 +31,7 @@ order by
 $systems_row = mysql_fetch_assoc($systems_result);
 while($systems_row)
 {
+	// Copy this row into systems array, and translate variables as needed
 	$systems[$systems_row['id']] = $systems_row;
 
 	# add awol value
