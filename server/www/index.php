@@ -55,7 +55,7 @@ while($systems_row)
 	$systems_row = mysql_fetch_assoc($systems_result);
 }
 
-foreach($systems as $this_system)
+if(count($systems) > 0)
 {
 ?>
 <br />
