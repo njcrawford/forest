@@ -7,31 +7,56 @@ require "inc/db.php";
 
 $systems_final = array();
 
-$systems_result = mysql_query("select * from (select systems.id, name, count(package_name) as packages, sum(if(accepted is null, 0, accepted)) as accepted_count, reboot_required, last_checkin from systems left join (updates) on (updates.system_id = systems.id) group by systems.id) b order by packages desc, reboot_required desc, last_checkin");
-if(mysql_num_rows($systems_result) > 0)
+$systems_result = mysql_query(
+"select * from (
+    select 
+        systems.id, 
+        name,
+        count(package_name) as packages, 
+        sum(if(accepted is null, 0, accepted)) as accepted_count,
+        reboot_required, 
+        last_checkin,
+        if(last_checkin < DATE_SUB(NOW(), INTERVAL 36 HOUR), 1, 0) as is_awol
+    from systems 
+        left join (updates) on (updates.system_id = systems.id) 
+    group by systems.id
+) b 
+order by 
+    packages desc, 
+    reboot_required desc, 
+    last_checkin"
+);
+$systems_row = mysql_fetch_assoc($systems_result);
+while($systems_row)
 {
-	# Get systems that have updates, sorted by number of updates
-	$systems_row = mysql_fetch_assoc($systems_result);
-	while($systems_row)
+	$systems[$systems_row['id']] = $systems_row;
+
+	# add awol value
+	$systems[$systems_row['id']]['awol'] = 0;
+	if( strtotime($this_system['last_checkin']) < (time() - (36 * 3600) )
 	{
-		$systems_final[$systems_row['id']] = $systems_row;
-
-		# Translate all the reboot_required values
-		if($systems_row['reboot_required'] == null)
-		{
-			$systems_final[$systems_row['id']]['reboot_required'] = "Unknown";
-		}
-		elseif($systems_row['reboot_required'] == 1)
-		{
-			$systems_final[$systems_row['id']]['reboot_required'] = "Yes";
-		}
-		else
-		{
-			$systems_final[$systems_row['id']]['reboot_required'] = "No";
-		}
-
-		$systems_row = mysql_fetch_assoc($systems_result);
+		$systems[$systems_row['id']]['awol'] = 1;
 	}
+
+	# Translate reboot_required values
+	if($systems[$systems_row['id']]['reboot_required'] == null)
+	{
+		$systems[$systems_row['id']]['reboot_required_text'] = "Unknown";
+	}
+	elseif($systems[$systems_row['id']]['reboot_required'] == 1)
+	{
+		$systems[$systems_row['id']]['reboot_required_text'] = "Yes";
+	}
+	else
+	{
+		$systems[$systems_row['id']]['reboot_required_text'] = "No";
+	}
+
+	$systems_row = mysql_fetch_assoc($systems_result);
+}
+
+foreach($systems as $this_system)
+{
 ?>
 <br />
 <h3>Updates available by system</h3>
@@ -40,10 +65,14 @@ if(mysql_num_rows($systems_result) > 0)
 <tr><th rowspan="2">System Name</th><th colspan="2">Updates       </th><th rowspan="2">Reboot<br />Required</th><th rowspan="2">Last Checkin</th><th rowspan="2" style="width:4em">&nbsp;</th></tr>
 <tr>                                <th>Available</th><th>Accepted</th></tr>
 <?php
-	foreach($systems_final as $this_system)
+	foreach($systems as $this_system)
 	{
-		$nice_checkin_class = (strtotime($this_system['last_checkin']) < (time() - (36 * 60 * 60))) ? " class=\"awol\"" : "";
-		$nice_reboot_class = ($this_system['reboot_required'] == "Yes") ? " class=\"reboot\"" : "";
+		$nice_checkin_class = "";
+		if( ($this_system['awol'] == 1) && ($this_system['ignore_awol'] == 0) )
+		{
+			$nice_checkin_class = " class=\"awol\"";
+		}
+		$nice_reboot_class = ($this_system['reboot_required'] == 1) ? " class=\"reboot\"" : "";
 ?>
 	<tr>
 		<td class="name">
@@ -51,7 +80,7 @@ if(mysql_num_rows($systems_result) > 0)
 		</td>
 		<td><?php echo $this_system['packages'] ?></td>
 		<td><?php echo $this_system['accepted_count'] ?></td>
-		<td<?php echo $nice_reboot_class ?>><?php echo $this_system['reboot_required'] ?></td>
+		<td<?php echo $nice_reboot_class ?>><?php echo $this_system['reboot_required_text'] ?></td>
 		<td<?php echo $nice_checkin_class ?>><?php echo $this_system['last_checkin'] ?></td>
 		<td>
 <?php
