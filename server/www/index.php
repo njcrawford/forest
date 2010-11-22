@@ -18,13 +18,14 @@ $systems_result = mysql_query(
         sum(if(accepted is null, 0, accepted)) as accepted_count,
         reboot_required, 
         last_checkin,
-        if(last_checkin < DATE_SUB(NOW(), INTERVAL 36 HOUR), 1, 0) as is_awol,
+        if(last_checkin < DATE_SUB(NOW(), INTERVAL 36 HOUR), 1, 0) as awol,
         ignore_awol
     from systems 
         left join (updates) on (updates.system_id = systems.id) 
     group by systems.id
 ) b 
-order by 
+order by
+    awol, 
     packages desc, 
     reboot_required desc, 
     last_checkin"
@@ -34,13 +35,6 @@ while($systems_row)
 {
 	// Copy this row into systems array, and translate variables as needed
 	$systems[$systems_row['id']] = $systems_row;
-
-	# add awol value
-	$systems[$systems_row['id']]['awol'] = 0;
-	if( strtotime($systems_row['last_checkin']) < (time() - (36 * 3600)) )
-	{
-		$systems[$systems_row['id']]['awol'] = 1;
-	}
 
 	# Translate reboot_required values
 	if($systems[$systems_row['id']]['reboot_required'] == null)
