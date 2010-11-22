@@ -95,3 +95,4 @@ else
 }
 
 require "footer.php";
+?>
