@@ -17,6 +17,7 @@ elseif(!isset($_POST['ignore_awol']))
 }
 
 $query = "update systems set ignore_awol = '" . $_POST['ignore_awol'] . "' where name = '" . $_POST['name'] . "'";
+echo $query;
 
 
 require "inc/db.php";
@@ -24,10 +25,10 @@ require "inc/db.php";
 $result = mysql_query($query);
 if($result)
 {
-	redirect_back();
+	//redirect_back();
 }
 else
 {
-	echo "Error: " . mysql_error();
+	//echo "Error: " . mysql_error();
 }
 ?>
