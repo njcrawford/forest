@@ -18,7 +18,8 @@ $systems_result = mysql_query(
         sum(if(accepted is null, 0, accepted)) as accepted_count,
         reboot_required, 
         last_checkin,
-        if(last_checkin < DATE_SUB(NOW(), INTERVAL 36 HOUR), 1, 0) as is_awol
+        if(last_checkin < DATE_SUB(NOW(), INTERVAL 36 HOUR), 1, 0) as is_awol,
+        ignore_awol
     from systems 
         left join (updates) on (updates.system_id = systems.id) 
     group by systems.id
