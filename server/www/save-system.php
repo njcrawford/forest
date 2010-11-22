@@ -16,7 +16,8 @@ elseif(!isset($_POST['ignore_awol']))
 	die("No ignore_awol value");
 }
 
-$query = "update systems set ignore_awol = '" . $_POST['ignore_awol'] . "' where name = '" . $_POST['name'] . "'";
+$nice_ignore_awol = ($_POST['ignore_awol'] == "on") ? "1" : "0";
+$query = "update systems set ignore_awol = '" . $nice_ignore_awol . "' where name = '" . $_POST['name'] . "'";
 echo $query;
 
 
