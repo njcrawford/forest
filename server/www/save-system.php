@@ -14,18 +14,16 @@ if(!isset($_POST['name']))
 
 $nice_ignore_awol = ($_POST['ignore_awol'] == "on") ? "1" : "0";
 $query = "update systems set ignore_awol = '" . $nice_ignore_awol . "' where name = '" . $_POST['name'] . "'";
-echo $query;
-
 
 require "inc/db.php";
 
 $result = mysql_query($query);
 if($result)
 {
-	//redirect_back();
+	redirect_back();
 }
 else
 {
-	//echo "Error: " . mysql_error();
+	echo "Error: " . mysql_error();
 }
 ?>
