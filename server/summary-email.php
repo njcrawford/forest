@@ -13,15 +13,20 @@ $output_message .= $server_link . "\n\n";
 
 // get systems with updates
 // print name and number of updates
-$update_query = "select 
-			systems.name as system_name, 
-			count(updates.package_name) as update_count 
-		from 
-			systems left join (updates)
-			on (systems.id = updates.system_id)
-                where last_checkin >= DATE_SUB(NOW(), INTERVAL 36 HOUR)
-		group by system_name 
-		order by update_count desc";
+$update_query = "select * from (
+        select 
+            systems.name as system_name, 
+            count(updates.package_name) as update_count, 
+            last_checkin 
+        from systems 
+            left join (updates) 
+            on (systems.id = updates.system_id) 
+        group by system_name 
+        order by update_count desc
+    ) b 
+    where 
+        last_checkin >= DATE_SUB(NOW(), INTERVAL 36 HOUR) and 
+        update_count > 0";
 $update_result = mysql_query($update_query);
 if (mysql_num_rows($update_result) > 0)
 {
