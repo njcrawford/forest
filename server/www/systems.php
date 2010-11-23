@@ -7,11 +7,12 @@ require "inc/db.php";
 
 ?>
 <a href="./">Back to summary page</a><br />
-<a href="edit-system.php?name=<?php echo $this_system['name'] ?>"><?php echo $this_system['name'] ?></a><br />
 <?php
-
 if(isset($_GET['name']))
 {
+?>
+<a href="edit-system.php?name=<?php echo $_GET['name'] ?>">Edit system</a><br />
+<?php
 	$systems_result = mysql_query("select 
 			systems.id, 
 			systems.name, 
