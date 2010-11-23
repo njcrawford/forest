@@ -1,5 +1,6 @@
 #!/usr/bin/php
 <?php
+require "www/inc/db.php";
 
 $output_message = "";
 
@@ -10,9 +11,6 @@ include '/etc/forest-server.conf';
 
 $output_message .= $server_link . "\n\n";
 
-mysql_connect("localhost", "forest_user", "forest_pass");
-mysql_select_db("forest");
-
 // get systems with updates
 // print name and number of updates
 $update_query = "select 
@@ -21,8 +19,9 @@ $update_query = "select
 		from 
 			systems left join (updates)
 			on (systems.id = updates.system_id)
+                where last_checkin >= DATE_SUB(NOW(), INTERVAL 36 HOUR)
 		group by system_name 
-		order by system_name";
+		order by update_count desc";
 $update_result = mysql_query($update_query);
 if (mysql_num_rows($update_result) > 0)
 {
@@ -43,7 +42,7 @@ $output_message .= "\n";
 
 // get systems that need a reboot
 // just print name
-$reboot_query = "select name from systems where reboot_required = 1";
+$reboot_query = "select name from systems where reboot_required = '1' and last_checkin >= DATE_SUB(NOW(), INTERVAL 36 HOUR)";
 $reboot_result = mysql_query($reboot_query);
 if (mysql_num_rows($reboot_result) > 0)
 {
