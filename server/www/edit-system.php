@@ -18,6 +18,7 @@ $nice_checked = ($row['ignore_awol'] == 1) ? "checked=checked " : "";
 ?>
 <a href="./">Back to summary page</a><br />
 <a href="systems.php?name=<?php echo $_GET['name'] ?>">Back to updates for <?php echo $_GET['name'] ?></a><br />
+<br />
 <form action="save-system.php" method="post">
 <input type="hidden" name="name" value="<?php echo $_GET['name'] ?>">
 Name: <?php echo $row['name'] ?><br />
