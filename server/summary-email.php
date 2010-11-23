@@ -19,9 +19,8 @@ $update_query = "select
 			systems.name as system_name, 
 			count(updates.package_name) as update_count 
 		from 
-			systems, updates 
-		where 
-			systems.id = updates.system_id 
+			systems left join (updates)
+			on (systems.id = updates.system_id)
 		group by system_name 
 		order by system_name";
 $update_result = mysql_query($update_query);
@@ -60,7 +59,7 @@ if (mysql_num_rows($reboot_result) > 0)
 
 // get systems that haven't checked in for a while
 // print name and last check in time
-$awal_query = "select name, last_checkin from systems where last_checkin < DATE_SUB(NOW(), INTERVAL 36 HOUR)";
+$awal_query = "select name, last_checkin from systems where last_checkin < DATE_SUB(NOW(), INTERVAL 36 HOUR) and ignore_awol = '0'";
 $awal_result = mysql_query($awal_query);
 if (mysql_num_rows($awal_result) > 0)
 {
