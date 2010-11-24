@@ -20,7 +20,7 @@ if($_POST['username'] == $_POST['password'])
 {
 	$login_success = true;
 	// this needs to be changed to a session id or something like that
-	setcookie('login_name', $_POST['username'], 0);
+	setcookie('login_name', $_POST['username'], 0, '/forest/');
 }
 
 if($login_success)
