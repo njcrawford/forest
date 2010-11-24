@@ -1,5 +1,7 @@
 <?php
 
+require "inc/check-login.php";
+
 $page_title = "Updates by system";
 require "inc/header.php";
 

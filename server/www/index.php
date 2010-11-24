@@ -1,5 +1,7 @@
 <?php
 
+require "inc/check-login.php";
+
 $page_title = "Summary";
 require "inc/header.php";
 
