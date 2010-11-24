@@ -9,7 +9,10 @@ $email_to = "root";
 $server_link = "http://forest/forest/";
 include '/etc/forest-server.conf';
 
-$output_message .= $server_link . "\n\n";
+$output_message .= $server_link . "\n";
+
+require "www/inc/version.php";
+$output_message .= "Forest version " . $forest_version . "\n\n";
 
 // get systems with updates
 // print name and number of updates
