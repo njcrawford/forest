@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# set environemt stuff
+# set environment stuff
 # PATH should contain at least /usr/local/sbin, /usr/sbin and /sbin
 PATH=$PATH:/usr/local/sbin:/usr/sbin:/sbin
 # some parts of apt-get seem to need term set to something
@@ -103,8 +103,8 @@ if [ "x$error_check" != "xdata_ok" ]; then
 	exit 1
 fi
 
-# filter out error status
-accepted_updates=`echo "$accepted_updates" | cut -d " " -f 2-`
+# filter out error status and trim spaces from remainder
+accepted_updates=`echo "$accepted_updates" | cut -d " " -f 2- | sed 's/^ *\(.*\) *$/\1/'`
 
 # only try to apply updates if the list isn't empty
 if [ "x$accepted_updates" != "x" ]; then
