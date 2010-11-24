@@ -6,10 +6,10 @@ $output_message = "";
 
 // default settings and read config file
 $email_to = "root";
-$server_link = "http://forest/forest/";
+$server_url = "http://forest/forest/";
 include '/etc/forest-server.conf';
 
-$output_message .= $server_link . "\n";
+$output_message .= $server_url . "\n";
 
 require "www/inc/version.php";
 $output_message .= "Forest version " . $forest_version . "\n\n";
