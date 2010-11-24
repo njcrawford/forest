@@ -23,7 +23,7 @@ get_available_updates ()
 	if [ "x$current_distro" = "xubuntu" ] ; then
 		#for ubuntu
 		updates=`apt-get dist-upgrade -Vs 2>&1`
-		if [ $? = 0 ]; then
+		if [ $? -eq 0 ]; then
 			updates=`echo $updates | grep ^Inst | cut -d " " -f 2`
 		else
 			updates=error: $updates
@@ -32,7 +32,7 @@ get_available_updates ()
 	elif [ "x$current_distro" = "xcentos" ] ; then
 		#for centos
 		updates=`yum check-update -q 2>&1`
-		if [ $? = 0 ]; then
+		if [ $? -eq 0 ]; then
 			updates=`echo $updates | grep -v " \* \|^$" | cut -d " " -f 1 | cut -d "." -f 1 | uniq`
 		else
 			updates=error: $updates
