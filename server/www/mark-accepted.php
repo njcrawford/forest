@@ -1,10 +1,6 @@
 <?php
 
-function redirect_back()
-{
-	// send the user back to the page they just came from
-	header("Location: " . $_SERVER['HTTP_REFERER'], 307);
-}
+require_once "inc/redirect.php";
 
 // make sure the basic required POST stuff is here
 if(!isset($_POST['system_id']) && !isset($_POST['package']))
