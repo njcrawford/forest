@@ -20,13 +20,23 @@ fi
 # if the distribution cannot be detected.
 get_available_updates ()
 {
-	if [ "x$current_distro" = xubuntu ] ; then
+	if [ "x$current_distro" = "xubuntu" ] ; then
 		#for ubuntu
-		updates=`apt-get dist-upgrade -Vs 2>/dev/null |grep ^Inst | cut -d " " -f 2`
+		updates=`apt-get dist-upgrade -Vs 2>&1`
+		if [ $? = 0 ]; then
+			updates=`echo $updates | grep ^Inst | cut -d " " -f 2`
+		else
+			updates=error: $updates
+		fi
 		echo $updates
-	elif [ "x$current_distro" = xcentos ] ; then
+	elif [ "x$current_distro" = "xcentos" ] ; then
 		#for centos
-		updates=`yum check-update -q 2>/dev/null | grep -v " \* \|^$" | cut -d " " -f 1 | cut -d "." -f 1 | uniq`
+		updates=`yum check-update -q 2>&1`
+		if [ $? = 0 ]; then
+			updates=`echo $updates | grep -v " \* \|^$" | cut -d " " -f 1 | cut -d "." -f 1 | uniq`
+		else
+			updates=error: $updates
+		fi
 		echo $updates
 	fi
 }
@@ -66,7 +76,7 @@ is_reboot_needed()
 do_updates()
 {
 	if [ "x$current_distro" = "xubuntu" ]; then
-		results=`apt-get -q -y -o DPkg::Options::\=--force-confold install $1 2>&1`
+		results=`apt-get -y -o DPkg::Options::\=--force-confold install $1 2>&1`
 		if [ $? -ne 0 ]; then
 			echo "apt-get install did not execute successfully"
 			echo $results
@@ -115,6 +125,14 @@ fi
 formatted_system_name="system_name=`hostname`"
 updates=`get_available_updates`
 if [ "x$updates" != "x" ]; then
+	error_check=`echo $updates | cut -d ":" -f 1`
+	if [ "x$error_check" = "xerror" ]; then
+		echo "Error getting available updates"
+		echo $updates
+		exit 1
+	else
+		
+	fi
 	updates=`spaces_to_commas "$updates"`
 	formatted_updates="available_updates=$updates"
 else
