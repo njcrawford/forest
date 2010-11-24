@@ -1,6 +1,7 @@
 <?php
 
 require_once "inc/redirect.php";
+require "/etc/forest-server.conf";
 
 // check inputs
 if(!isset($_POST['username']))
