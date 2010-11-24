@@ -131,10 +131,9 @@ if [ "x$updates" != "x" ]; then
 		echo $updates
 		exit 1
 	else
-		
+		updates=`spaces_to_commas "$updates"`
+		formatted_updates="available_updates=$updates"
 	fi
-	updates=`spaces_to_commas "$updates"`
-	formatted_updates="available_updates=$updates"
 else
 	formatted_updates="no_updates_available=true"
 fi
