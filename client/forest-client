@@ -26,7 +26,7 @@ get_available_updates ()
 		if [ $? -eq 0 ]; then
 			updates=`echo $updates | grep ^Inst | cut -d " " -f 2`
 		else
-			updates=error: $updates
+			updates='error: '$updates
 		fi
 		echo $updates
 	elif [ "x$current_distro" = "xcentos" ] ; then
@@ -35,7 +35,7 @@ get_available_updates ()
 		if [ $? -eq 0 ]; then
 			updates=`echo $updates | grep -v " \* \|^$" | cut -d " " -f 1 | cut -d "." -f 1 | uniq`
 		else
-			updates=error: $updates
+			updates='error: '$updates
 		fi
 		echo $updates
 	fi
@@ -80,12 +80,14 @@ do_updates()
 		if [ $? -ne 0 ]; then
 			echo "apt-get install did not execute successfully"
 			echo $results
+			exit 1
 		fi
 	elif [ "x$current_distro" = "xcentos" ]; then
 		results=`yum -y update $1 2>&1`
 		if [ $? -ne 0 ]; then
 			echo "yum update did not execute successfully"
 			echo $results
+			exit 1
 		fi
 	fi
 }
