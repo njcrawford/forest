@@ -56,4 +56,5 @@ else
 	echo "No system specified";
 }
 
-require "footer.php";
+require "inc/footer.php";
+?>

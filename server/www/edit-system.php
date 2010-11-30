@@ -27,5 +27,5 @@ Ignore AWOL: <input name="ignore_awol" type=checkbox <?php echo $nice_checked ?>
 <input type=submit value=Save>
 </form>
 <?php
-require "footer.php";
+require "inc/footer.php";
 ?>
