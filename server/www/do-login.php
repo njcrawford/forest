@@ -15,12 +15,15 @@ if(!isset($_POST['password']))
 
 $login_success = false;
 // do the actual login
-// this login mechanism is only for testing, it needs to be changed to something real asap
-if($_POST['username'] == $_POST['password'])
+foreach($allowed_users as $this_user)
 {
-	$login_success = true;
-	// this needs to be changed to a session id or something like that
-	setcookie('login_name', $_POST['username'], 0, '/forest/');
+	if($_POST['username'] == $this_user['username'] && $_POST['password'] == $this_user['password'])
+	{
+		$login_success = true;
+		// this needs to be changed to a session id or something like that
+		setcookie('login_name', $_POST['username'], 0, '/forest/');
+		break;
+	}
 }
 
 if($login_success)
@@ -31,7 +34,8 @@ if($login_success)
 else
 {
 	// go back to the login page
-	redirect_back(); 
+	//redirect_back(); 
+	die("Invalid login information");
 }
 
 ?>
