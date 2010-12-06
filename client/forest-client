@@ -32,9 +32,9 @@ get_available_updates ()
 	elif [ "x$current_distro" = "xcentos" ] ; then
 		#for centos
 		updates=`yum check-update -q 2>&1`
-		if [ $? -eq 0 ]; then
+		if [ "$?" -eq "0" ]; then
 			updates=''
-		elif [ $? -eq 100 ]; then
+		elif [ "$?" -eq "100" ]; then
 			updates=`echo $updates | grep -v " \* \|^$" | cut -d " " -f 1 | cut -d "." -f 1 | uniq`
 		else
 			updates="error: $updates"
