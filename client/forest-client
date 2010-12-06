@@ -25,7 +25,7 @@ get_available_updates ()
 		updates=`apt-get dist-upgrade -Vs 2>&1`
 		updates_return=$?
 		if [ "$updates_return" -eq "0" ] ; then
-			updates=`echo $updates | grep ^Inst | cut -d " " -f 2`
+			updates=`echo "$updates" | grep ^Inst | cut -d " " -f 2`
 		else
 			updates="error: $updates"
 		fi
@@ -37,7 +37,7 @@ get_available_updates ()
 		if [ "$updates_return" -eq "0" ] ; then
 			updates=""
 		elif [ "$updates_return" -eq "100" ] ; then
-			updates=`echo $updates | grep -v " \* \|^$" | cut -d " " -f 1 | cut -d "." -f 1 | uniq`
+			updates=`echo "$updates" | grep -v " \* \|^$" | cut -d " " -f 1 | cut -d "." -f 1 | uniq`
 		else
 			updates="error: $updates"
 		fi
@@ -83,14 +83,14 @@ do_updates()
 		results=`apt-get -y -o DPkg::Options::\=--force-confold install $1 2>&1`
 		if [ $? -ne 0 ]; then
 			echo "apt-get install did not execute successfully"
-			echo $results
+			echo "$results"
 			exit 1
 		fi
 	elif [ "x$current_distro" = "xcentos" ]; then
 		results=`yum -y update $1 2>&1`
 		if [ $? -ne 0 ]; then
 			echo "yum update did not execute successfully"
-			echo $results
+			echo "$results"
 			exit 1
 		fi
 	fi
@@ -134,7 +134,7 @@ if [ "x$updates" != "x" ]; then
 	error_check=`echo $updates | cut -d ":" -f 1`
 	if [ "x$error_check" = "xerror" ]; then
 		echo "Error getting available updates"
-		echo $updates
+		echo "$updates"
 		exit 1
 	else
 		updates=`spaces_to_commas "$updates"`
@@ -157,5 +157,5 @@ fi
 
 # output anything from curl that hasn't been filtered
 if [ "x" != "x$curldata" ]; then
-	echo $curldata
+	echo "$curldata"
 fi
