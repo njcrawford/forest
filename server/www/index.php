@@ -21,12 +21,14 @@ $systems_result = mysql_query(
         reboot_required, 
         last_checkin,
         if(last_checkin < DATE_SUB(NOW(), INTERVAL 36 HOUR), 1, 0) as awol,
+        if((last_checkin < DATE_SUB(NOW(), INTERVAL 36 HOUR)) and ignore_awol = 0, 1, 0) as important_awol,
         ignore_awol
     from systems 
         left join (updates) on (updates.system_id = systems.id) 
     group by systems.id
 ) b 
 order by
+    important_awol desc,
     awol, 
     packages desc, 
     reboot_required desc, 
