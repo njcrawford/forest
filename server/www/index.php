@@ -74,7 +74,7 @@ if(count($systems) > 0)
 		{
 			$nice_checkin_class = " class=\"awol\"";
 		}
-		$nice_reboot_class = ($this_system['reboot_required'] == 1) ? " class=\"reboot\"" : "";
+		$nice_reboot_class = (($this_system['reboot_required'] == 1) && ($this_system['awol'] == 0)) ? " class=\"reboot\"" : "";
 ?>
 	<tr>
 		<td class="name">
