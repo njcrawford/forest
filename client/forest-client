@@ -1,10 +1,10 @@
-#!/bin/sh
+#!/bin/bash
 
 # set environment stuff
 # PATH should contain at least /usr/local/sbin, /usr/sbin and /sbin
 PATH=$PATH:/usr/local/sbin:/usr/sbin:/sbin
 # some parts of apt-get seem to need term set to something
-TERM=dumb
+#TERM=dumb
 
 # global variables
 rpc_version="1"
@@ -23,7 +23,8 @@ get_available_updates ()
 	if [ "x$current_distro" = "xubuntu" ] ; then
 		#for ubuntu
 		updates=`apt-get dist-upgrade -Vs 2>&1`
-		if [ $? -eq 0 ]; then
+		updates_return=$?
+		if [ "$updates_return" -eq "0" ] ; then
 			updates=`echo $updates | grep ^Inst | cut -d " " -f 2`
 		else
 			updates="error: $updates"
@@ -32,9 +33,10 @@ get_available_updates ()
 	elif [ "x$current_distro" = "xcentos" ] ; then
 		#for centos
 		updates=`yum check-update -q 2>&1`
-		if [ "$?" -eq "0" ]; then
-			updates=''
-		elif [ "$?" -eq "100" ]; then
+		updates_return=$?
+		if [ "$updates_return" -eq "0" ] ; then
+			updates=""
+		elif [ "$updates_return" -eq "100" ] ; then
 			updates=`echo $updates | grep -v " \* \|^$" | cut -d " " -f 1 | cut -d "." -f 1 | uniq`
 		else
 			updates="error: $updates"
