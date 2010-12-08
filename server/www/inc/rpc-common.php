@@ -15,7 +15,7 @@ else
 {
 	die(RPC_ERROR_TAG . "No rpc version specified");
 }
-if($client_rpc_version != $forest_versions['rpc'])
+if($client_rpc_version != RPC_VERSION)
 {
 	die(RPC_ERROR_TAG . "rpc version mismatch, server: " . RPC_VERSION . ", client: " . $_GET['rpc_version']);
 }
