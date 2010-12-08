@@ -15,7 +15,7 @@ if(!isset($_POST['password']))
 
 $login_success = false;
 // do the actual login
-foreach($allowed_users as $this_user)
+foreach($forest_config['allowed_users'] as $this_user)
 {
 	if($_POST['username'] == $this_user['username'] && $_POST['password'] == $this_user['password'])
 	{
