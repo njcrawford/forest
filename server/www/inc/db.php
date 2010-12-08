@@ -1,22 +1,22 @@
 <?php
 
-$db_server = "localhost";
-$db_user = "forest_user";
-$db_password = "forest_pass";
-$db_name = "forest";
-$built_for_db_version = '1';
+$forest_config['db_server'] = "localhost";
+$forest_config['db_user'] = "forest_user";
+$forest_config['db_password'] = "forest_pass";
+$forest_config['db_name'] = "forest";
+define("DB_VERSION", 1);
 
-mysql_connect($db_server, $db_user, $db_password) or die("Could not connect to DB");
-mysql_select_db($db_name) or die("Could not select DB");
+mysql_connect($forest_config['db_server'], $forest_config['db_user'], $forest_config['db_password']) or die("Could not connect to DB");
+mysql_select_db($forest_config['db_name']) or die("Could not select DB");
 
 $version_result = mysql_query("select value from settings where name = 'db_version'");
 $version_row = mysql_fetch_assoc($version_result);
-if($built_for_db_version > $version_row['value'])
+if(DB_VERSION > $version_row['value'])
 {
 	die("Database schema needs updated");
 }
-else if($built_for_db_version < $version_row['value'])
+else if(DB_VERSION < $version_row['value'])
 {
-	die("Database schema version too new! Expected: " . $built_for_db_version . ", Actual: " . $version_row['value']);
+	die("Database schema version too new! Expected: " . DB_VERSION . ", Found: " . $version_row['value']);
 }
 ?>

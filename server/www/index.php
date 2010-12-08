@@ -7,7 +7,7 @@ require "inc/header.php";
 
 require "inc/db.php";
 
-//init systems to avoid errors later
+//init systems array to avoid errors later
 $systems = array();
 
 // Get data from mysql
