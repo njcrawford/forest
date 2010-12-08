@@ -29,7 +29,7 @@ foreach($forest_config['allowed_users'] as $this_user)
 if($login_success)
 {
 	// redirect to summary page
-	redirect($server_url);
+	redirect($forest_config['server_url']);
 }
 else
 {
