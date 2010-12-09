@@ -4,7 +4,7 @@ $forest_config['db_server'] = "localhost";
 $forest_config['db_user'] = "forest_user";
 $forest_config['db_password'] = "forest_pass";
 $forest_config['db_name'] = "forest";
-define("DB_VERSION", 1);
+define("DB_VERSION", 2);
 
 mysql_connect($forest_config['db_server'], $forest_config['db_user'], $forest_config['db_password']) or die("Could not connect to DB");
 mysql_select_db($forest_config['db_name']) or die("Could not select DB");

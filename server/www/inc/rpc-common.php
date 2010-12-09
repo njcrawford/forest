@@ -1,5 +1,5 @@
 <?php
-define("RPC_VERSION", 1);
+define("RPC_VERSION", 2);
 define("RPC_ERROR_TAG", "error: ");
 define("RPC_SUCCESS_TAG", "data_ok: ");
 

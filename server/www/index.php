@@ -22,7 +22,8 @@ $systems_result = mysql_query(
         last_checkin,
         if(last_checkin < DATE_SUB(NOW(), INTERVAL 36 HOUR), 1, 0) as awol,
         if((last_checkin < DATE_SUB(NOW(), INTERVAL 36 HOUR)) and ignore_awol = 0, 1, 0) as important_awol,
-        ignore_awol
+        ignore_awol,
+        reboot_accepted
     from systems 
         left join (updates) on (updates.system_id = systems.id) 
     group by systems.id
@@ -64,7 +65,7 @@ if(count($systems) > 0)
 <h3>Updates available by system</h3>
 <br />
 <table>
-<tr><th rowspan="2">System Name</th><th colspan="2">Updates       </th><th rowspan="2">Reboot<br />Required</th><th rowspan="2">Last Checkin</th><th rowspan="2" style="width:4em">&nbsp;</th></tr>
+<tr><th rowspan="2">System Name</th><th colspan="2">Updates       </th><th rowspan="2">Reboot<br />Required</th><th rowspan="2">Last Checkin</th><th rowspan="2" style="width:4em">&nbsp;</th><th rowspan="2" style="width:4em">&nbsp;</th></tr>
 <tr>                                <th>Available</th><th>Accepted</th></tr>
 <?php
 	foreach($systems as $this_system)
@@ -89,12 +90,43 @@ if(count($systems) > 0)
 		if($this_system['packages'] > 0 && ($this_system['packages'] != $this_system['accepted_count']))
 		{
 ?>
-			<form method="post" action="mark-accepted.php">
+			<form method="post" action="mark-accepted-updates.php">
 				<input type="hidden" name="accepted" value="true">
 				<input type="hidden" name="system_id" value="<?php echo $this_system['id'] ?>">
 				<input type="submit" value="Accept all">
 			</form>
 <?php
+		}
+		else
+		{
+			echo "&nbsp;";
+		}
+?>
+		</td>
+		<td>
+<?php
+		if($this_system['reboot_required'] == 1 && $this_system['allow_reboot'] == 1)
+		{
+			if($this_system['reboot_accepted'] != 1)
+			{
+?>
+			<form method="post" action="mark-accepted-reboot.php">
+				<input type="hidden" name="accepted" value="true">
+				<input type="hidden" name="system_id" value="<?php echo $this_system['id'] ?>">
+				<input type="submit" value="Accept reboot">
+			</form>
+<?php
+			}
+			else
+			{
+?>
+			<form method="post" action="mark-accepted-reboot.php">
+				<input type="hidden" name="accepted" value="false">
+				<input type="hidden" name="system_id" value="<?php echo $this_system['id'] ?>">
+				<input type="submit" value="Reject reboot">
+			</form>
+<?php
+			}
 		}
 		else
 		{
