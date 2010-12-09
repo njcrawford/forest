@@ -15,15 +15,22 @@ if(!isset($_POST['password']))
 
 $login_success = false;
 // do the actual login
-foreach($forest_config['allowed_users'] as $this_user)
+if($forest_config['login_source'] == "config_file")
 {
-	if($_POST['username'] == $this_user['username'] && $_POST['password'] == $this_user['password'])
+	foreach($forest_config['allowed_users'] as $this_user)
 	{
-		$login_success = true;
-		// this needs to be changed to a session id or something like that
-		setcookie('login_name', $_POST['username'], 0, '/forest/');
-		break;
+		if($_POST['username'] == $this_user['username'] && $_POST['password'] == $this_user['password'])
+		{
+			$login_success = true;
+			// this needs to be changed to a session id or something like that
+			setcookie('login_name', $_POST['username'], 0, '/forest/');
+			break;
+		}
 	}
+}
+else
+{
+	die("Invalid login_source in config file");
 }
 
 if($login_success)
