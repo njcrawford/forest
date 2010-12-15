@@ -28,9 +28,9 @@ require "inc/check-login.php";
 require_once "inc/redirect.php";
 
 // make sure the basic required POST stuff is here
-if(!isset($_POST['system_id']) && !isset($_POST['package']))
+if(!isset($_POST['system_id']))
 {
-	die("No package or system specified");
+	die("No system specified");
 }
 if(!isset($_POST['accepted']))
 {
@@ -41,22 +41,7 @@ elseif($_POST['accepted'] != "true" && $_POST['accepted'] != "false")
 	die("Invalid accepted value");
 }
 $nice_accepted = ($_POST['accepted'] == "true") ? 1 : 0;
-$query = "update updates set accepted = '" . $nice_accepted . "' where ";
-if(isset($_POST['system_id']) && isset($_POST['package']))
-{
-	// specific system/package combo
-	$query .= "system_id = '" . $_POST['system_id'] . "' and package_name = '" . $_POST['package']. "'";
-}
-elseif(isset($_POST['system_id']))
-{
-	// all updates for a system
-	$query .= "system_id = '" . $_POST['system_id'] . "'";
-}
-elseif(isset($_POST['package']))
-{
-	// all systems for a specific package
-	$query .= "package_name = '" . $_POST['package'] . "'";
-}
+$query = "update systems set reboot_accepted = '" . $nice_accepted . "' where id = '" . $_POST['system_id'] . "'";
 
 require "inc/db.php";
 
