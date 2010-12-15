@@ -112,9 +112,8 @@ if(count($systems) > 0)
 		<td class="name">
 			<a href="systems.php?name=<?php echo $this_system['name'] ?>"><?php echo $this_system['name'] ?></a>
 		</td>
-		<td><?php echo $this_system['packages'] ?></td>
 		<td>
-			<?php echo $this_system['accepted_count'] ?>
+			<?php echo $this_system['packages'] ?>
 <?php
 		if($this_system['packages'] > 0 && ($this_system['packages'] != $this_system['accepted_count']))
 		{
@@ -128,6 +127,7 @@ if(count($systems) > 0)
 		}
 ?>
 		</td>
+		<td><?php echo $this_system['accepted_count'] ?></td>
 		<td<?php echo $nice_reboot_class ?>>
 			<?php echo $this_system['reboot_required_text'] ?>
 <?php
