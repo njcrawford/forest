@@ -31,7 +31,7 @@ PATH=$PATH:/usr/local/sbin:/usr/sbin:/sbin
 #TERM=dumb
 
 # global variables
-rpc_version="1"
+rpc_version="2"
 current_distro=""
 # detect which distro we're on so we know what commands to run
 if [ -f /etc/lsb-release ] ; then
