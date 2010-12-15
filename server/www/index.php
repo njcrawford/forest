@@ -96,7 +96,7 @@ if(count($systems) > 0)
 <h3>Updates available by system</h3>
 <br />
 <table>
-<tr><th rowspan="2">System Name</th><th colspan="2">Updates       </th><th rowspan="2">Reboot<br />Required</th><th rowspan="2">Last Checkin</th><th rowspan="2" style="width:4em">&nbsp;</th></tr>
+<tr><th rowspan="2">System Name</th><th colspan="2">Updates       </th><th rowspan="2">Reboot<br />Required</th><th rowspan="2">Last Checkin</th></tr>
 <tr>                                <th>Available</th><th>Accepted</th></tr>
 <?php
 	foreach($systems as $this_system)
@@ -113,7 +113,21 @@ if(count($systems) > 0)
 			<a href="systems.php?name=<?php echo $this_system['name'] ?>"><?php echo $this_system['name'] ?></a>
 		</td>
 		<td><?php echo $this_system['packages'] ?></td>
-		<td><?php echo $this_system['accepted_count'] ?></td>
+		<td>
+			<?php echo $this_system['accepted_count'] ?>
+<?php
+		if($this_system['packages'] > 0 && ($this_system['packages'] != $this_system['accepted_count']))
+		{
+?>
+			<form method="post" action="mark-accepted-updates.php">
+				<input type="hidden" name="accepted" value="true">
+				<input type="hidden" name="system_id" value="<?php echo $this_system['id'] ?>">
+				<input type="submit" value="Accept all">
+			</form>
+<?php
+		}
+?>
+		</td>
 		<td<?php echo $nice_reboot_class ?>>
 			<?php echo $this_system['reboot_required_text'] ?>
 <?php
@@ -143,24 +157,6 @@ if(count($systems) > 0)
 ?>
 		</td>
 		<td<?php echo $nice_checkin_class ?>><?php echo $this_system['last_checkin'] ?></td>
-		<td>
-<?php
-		if($this_system['packages'] > 0 && ($this_system['packages'] != $this_system['accepted_count']))
-		{
-?>
-			<form method="post" action="mark-accepted-updates.php">
-				<input type="hidden" name="accepted" value="true">
-				<input type="hidden" name="system_id" value="<?php echo $this_system['id'] ?>">
-				<input type="submit" value="Accept all">
-			</form>
-<?php
-		}
-		else
-		{
-			echo "&nbsp;";
-		}
-?>
-		</td>
 	</tr>
 <?php
 	}
