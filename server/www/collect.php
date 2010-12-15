@@ -28,7 +28,7 @@ require "inc/rpc-common.php";
 
 if(empty($_POST['system_name']))
 {
-	echo $RPC_ERROR_TAG . "No system specified";
+	echo RPC_ERROR_TAG . "No system specified";
 }
 
 $system_id_ok = false;
@@ -56,7 +56,7 @@ if(!$system_id_ok)
 	}
 	else
 	{
-		die($RPC_ERROR_TAG . "Mysql error: " . mysql_error());
+		die(RPC_ERROR_TAG . "Mysql error: " . mysql_error());
 	}
 }
 
@@ -85,12 +85,12 @@ if(!empty($_POST['available_updates']))
 	//send back a message indicating data received (or not)
 	if($data_ok)
 	{
-		echo $RPC_SUCCESS_TAG;
+		echo RPC_SUCCESS_TAG;
 		$update_data_ok = true;
 	}
 	else
 	{
-		echo $RPC_ERROR_TAG . "data error";
+		echo RPC_ERROR_TAG . "data error";
 	}
 }
 elseif(!empty($_POST['no_updates_available']))
@@ -98,11 +98,11 @@ elseif(!empty($_POST['no_updates_available']))
 	// Forget about old updates and save checkin time
 	mysql_query("update systems set last_checkin = NOW() where id = '" . $system_id . "'");
 	mysql_query("delete from updates where system_id = '" . $system_id . "'");
-	echo $RPC_SUCCESS_TAG;
+	echo RPC_SUCCESS_TAG;
 }
 else
 {
-	die($RPC_ERROR_TAG . "missing both available_updates and no_updates_available");
+	die(RPC_ERROR_TAG . "missing both available_updates and no_updates_available");
 }
 
 // the reboot_required section is optional for rpc v1
