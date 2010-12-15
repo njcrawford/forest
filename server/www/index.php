@@ -106,7 +106,7 @@ if(count($systems) > 0)
 		{
 			$nice_checkin_class = " class=\"awol\"";
 		}
-		$nice_reboot_class = (($this_system['reboot_required'] == 1) && ($this_system['awol'] == 0)) ? " class=\"reboot\"" : "";
+		$nice_reboot_class = (($this_system['reboot_required_text'] == "Yes") && ($this_system['awol'] == 0)) ? " class=\"reboot\"" : "";
 ?>
 	<tr>
 		<td class="name">
@@ -125,7 +125,7 @@ if(count($systems) > 0)
 			<form method="post" action="mark-accepted-reboot.php">
 				<input type="hidden" name="accepted" value="true">
 				<input type="hidden" name="system_id" value="<?php echo $this_system['id'] ?>">
-				<input type="submit" value="Accept reboot">
+				<input type="submit" value="Accept">
 			</form>
 <?php
 			}
@@ -135,7 +135,7 @@ if(count($systems) > 0)
 			<form method="post" action="mark-accepted-reboot.php">
 				<input type="hidden" name="accepted" value="false">
 				<input type="hidden" name="system_id" value="<?php echo $this_system['id'] ?>">
-				<input type="submit" value="Reject reboot">
+				<input type="submit" value="Reject">
 			</form>
 <?php
 			}
