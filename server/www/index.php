@@ -46,7 +46,8 @@ $systems_result = mysql_query(
         if(last_checkin < DATE_SUB(NOW(), INTERVAL 36 HOUR), 1, 0) as awol,
         if((last_checkin < DATE_SUB(NOW(), INTERVAL 36 HOUR)) and ignore_awol = 0, 1, 0) as important_awol,
         ignore_awol,
-        reboot_accepted
+        reboot_accepted,
+        allow_reboot
     from systems 
         left join (updates) on (updates.system_id = systems.id) 
     group by systems.id
