@@ -53,8 +53,9 @@ $systems_result = mysql_query(
         left join (updates, update_locks) on (
             updates.system_id = systems.id and 
             updates.package_name = update_locks.package_name and 
-            systems.name = update_locks.system_name
+            systems.id = update_locks.system_id
         ) 
+    where update_locks.package_name is null
     group by systems.id
 ) b 
 order by
@@ -178,7 +179,7 @@ if(count($systems) > 0)
 <tr><th rowspan="2">Name</th><th colspan="3">Systems       </th><th rowspan="2" style="width:4em">&nbsp;</th></tr>
 <tr>                         <th>Available</th><th>Accepted</th><th>Locked</th></tr>
 <?php
-$systems_result = mysql_query("select updates.package_name, count(system_id) as systems, sum(accepted) as accepted_count, count(locked_updates.package_name) as locked_count from updates left join (locked_updates) on (updates.package_name = locked_updates.package_name) group by updates.package_name");
+$systems_result = mysql_query("select updates.package_name, count(updates.system_id) as systems, sum(accepted) as accepted_count, count(locked_updates.package_name) as locked_count from updates left join (locked_updates) on (updates.package_name = locked_updates.package_name) where update_locks.package_name is null group by updates.package_name");
 $systems_row = mysql_fetch_assoc($systems_result);
 while($systems_row)
 {
