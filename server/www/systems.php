@@ -103,7 +103,7 @@ if(isset($_GET['name']))
 			<a href="packages.php?name=<? echo $updates_row['package_name'] ?>"><? echo $updates_row['package_name'] ?></a>
 			<? echo $updates_row['version'] ?>
 <?php
-		if($updates_row['locked'] == 1)
+		if($updates_row['locked'] == 0)
 		{
 ?>
 	                <form method="post" action="mark-accepted.php">
