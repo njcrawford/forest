@@ -55,7 +55,6 @@ $systems_result = mysql_query(
             updates.package_name = update_locks.package_name and 
             systems.id = update_locks.system_id
         ) 
-    where update_locks.package_name is null
     group by systems.id
 ) b 
 order by
