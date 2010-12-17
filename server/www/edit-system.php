@@ -51,6 +51,11 @@ Last Check-in: <?php echo $row['last_checkin'] ?><br />
 Ignore AWOL: <input name="ignore_awol" type=checkbox <?php echo $nice_checked ?>></input><br />
 <input type=submit value=Save>
 </form>
+<form action="add-update-lock.php" method="post">
+<input type="hidden" name="system_name" value="<?php echo $_GET['name'] ?>">
+New update lock<input name="package_name"></input>
+<input type=submit value="Add lock">
+</form>
 <?php
 require "inc/footer.php";
 ?>
