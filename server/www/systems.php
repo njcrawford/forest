@@ -81,7 +81,7 @@ if(isset($_GET['name']))
 ?>
 	<ul>
 <?php
-	$updates_result = mysql_query("select * from updates where system_id = '" . $systems_row['id'] . "'");
+	$updates_result = mysql_query("select updates.package_name, updates.version, if(update_locks.package_name is null, 0, 1) as locked from updates left outer join (update_locks) on (updates.system_id = update_locks.system_id and updates.package_name = update_locks.package_name) where system_id = '" . $systems_row['id'] . "'");
         $updates_row = mysql_fetch_assoc($updates_result);
 	while($updates_row)
 	{
@@ -102,12 +102,19 @@ if(isset($_GET['name']))
 			<input type="checkbox" <? echo $nice_checked ?>>
 			<a href="packages.php?name=<? echo $updates_row['package_name'] ?>"><? echo $updates_row['package_name'] ?></a>
 			<? echo $updates_row['version'] ?>
+<?php
+		if($updates_row['locked'] == 1)
+		{
+?>
 	                <form method="post" action="mark-accepted.php">
 				<input type="hidden" name="accepted" value="<? echo $nice_accepted_value ?>">
 				<input type="hidden" name="system_id" value="<? echo $systems_row['id'] ?>">
 				<input type="hidden" name="package" value="<? echo $updates_row['package_name'] ?>">
 				<input type="submit" value="<? echo $nice_button_name ?>">
 			</form>
+<?php
+		}
+?>
 		</li>
 <?php
 		$updates_row = mysql_fetch_assoc($updates_result);
