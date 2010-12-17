@@ -23,10 +23,13 @@ A copy of the full GPL 2 license can be found in the docs directory.
 You can contact me at http://www.njcrawford.com/contact
 */
 
+// These should be stored in /etc/forest-server.conf
 $forest_config['db_server'] = "localhost";
 $forest_config['db_user'] = "forest_user";
 $forest_config['db_password'] = "forest_pass";
 $forest_config['db_name'] = "forest";
+
+// Defines
 define("DB_VERSION", 2);
 
 mysql_connect($forest_config['db_server'], $forest_config['db_user'], $forest_config['db_password']) or die("Could not connect to DB");
