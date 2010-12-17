@@ -51,11 +51,25 @@ Last Check-in: <?php echo $row['last_checkin'] ?><br />
 Ignore AWOL: <input name="ignore_awol" type=checkbox <?php echo $nice_checked ?>></input><br />
 <input type=submit value=Save>
 </form>
+<br />
 <form action="add-update-lock.php" method="post">
 <input type="hidden" name="system_name" value="<?php echo $_GET['name'] ?>">
 New update lock<input name="package_name"></input>
 <input type=submit value="Add lock">
 </form>
+<ul>
+<?php
+$result2 = mysql_query("select * from update_locks where system_id = '" . $row['id'] . "'");
+$row2 = mysql_fetch_assoc($result2);
+while($row != null)
+{
+?>
+<li><?php echo $row2['package_name'] ?></li>
+<?php
+$row2 = mysql_fetch_assoc($result2);
+}
+?>
+</ul>
 <?php
 require "inc/footer.php";
 ?>
