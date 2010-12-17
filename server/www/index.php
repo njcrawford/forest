@@ -39,7 +39,7 @@ $systems_result = mysql_query(
     select 
         systems.id, 
         name,
-        count(package_name) as packages, 
+        count(updates.package_name) as packages, 
         sum(if(accepted is null, 0, accepted)) as accepted_count,
         reboot_required, 
         last_checkin,
@@ -47,9 +47,14 @@ $systems_result = mysql_query(
         if((last_checkin < DATE_SUB(NOW(), INTERVAL 36 HOUR)) and ignore_awol = 0, 1, 0) as important_awol,
         ignore_awol,
         reboot_accepted,
-        allow_reboot
+        allow_reboot,
+        count(update_locks.package_name) as locked_count
     from systems 
-        left join (updates) on (updates.system_id = systems.id) 
+        left join (updates, update_locks) on (
+            updates.system_id = systems.id and 
+            updates.package_name = update_locks.package_name and 
+            systems.name = update_locks.system_name
+        ) 
     group by systems.id
 ) b 
 order by
@@ -65,7 +70,7 @@ while($systems_row)
 	// Copy this row into systems array, and translate variables as needed
 	$systems[$systems_row['id']] = $systems_row;
 
-	# Translate reboot_required values
+	// Translate reboot_required values
 	if($systems[$systems_row['id']]['reboot_required'] == null)
 	{
 		$systems[$systems_row['id']]['reboot_required_text'] = "Unknown";
@@ -96,8 +101,8 @@ if(count($systems) > 0)
 <h3>Updates available by system</h3>
 <br />
 <table>
-<tr><th rowspan="2">System Name</th><th colspan="2">Updates       </th><th rowspan="2">Reboot<br />Required</th><th rowspan="2">Last Checkin</th></tr>
-<tr>                                <th>Available</th><th>Accepted</th></tr>
+<tr><th rowspan="2">System Name</th><th colspan="3">Updates       </th><th rowspan="2">Reboot<br />Required</th><th rowspan="2">Last Checkin</th></tr>
+<tr>                                <th>Available</th><th>Accepted</th><th>Locked</th></tr>
 <?php
 	foreach($systems as $this_system)
 	{
@@ -128,6 +133,7 @@ if(count($systems) > 0)
 ?>
 		</td>
 		<td><?php echo $this_system['accepted_count'] ?></td>
+		<td><?php echo $this_system['locked_count'] ?></td>
 		<td<?php echo $nice_reboot_class ?>>
 			<?php echo $this_system['reboot_required_text'] ?>
 <?php
@@ -169,10 +175,10 @@ if(count($systems) > 0)
 <h3>Updates available by package name</h3>
 <br />
 <table>
-<tr><th rowspan="2">Name</th><th colspan="2">Systems       </th><th rowspan="2" style="width:4em">&nbsp;</th></tr>
-<tr>                         <th>Available</th><th>Accepted</th></tr>
+<tr><th rowspan="2">Name</th><th colspan="3">Systems       </th><th rowspan="2" style="width:4em">&nbsp;</th></tr>
+<tr>                         <th>Available</th><th>Accepted</th><th>Locked</th></tr>
 <?php
-$systems_result = mysql_query("select package_name, count(system_id) as systems, sum(accepted) as accepted_count from updates group by package_name");
+$systems_result = mysql_query("select updates.package_name, count(system_id) as systems, sum(accepted) as accepted_count, count(locked_updates.package_name) as locked_count from updates left join (locked_updates) on (updates.package_name = locked_updates.package_name) group by updates.package_name");
 $systems_row = mysql_fetch_assoc($systems_result);
 while($systems_row)
 {
@@ -183,6 +189,7 @@ while($systems_row)
 		</td>
 		<td><?php echo $systems_row['systems'] ?></td>
 		<td><?php echo $systems_row['accepted_count'] ?></td>
+		<td><?php echo $systems_row['locked_count'] ?></td>
 		<td>
 <?php
 	if($systems_row['systems'] != $systems_row['accepted_count'])
