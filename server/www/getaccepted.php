@@ -28,14 +28,15 @@ require "inc/rpc-common.php";
 
 if(empty($_GET['system']))
 {
-	die(RPC_ERROR_TAG ."No system specified");
+	die(RPC_ERROR_TAG . "No system specified");
 }
 
 
 $system_result = mysql_query("select * from systems where name = '" . $_GET['system'] . "'");
 $system_row = mysql_fetch_assoc($system_result);
 
-$updates_result = mysql_query("select * from updates where system_id = '" . $system_row['id'] . "' and accepted = '1'");
+$updates_result = mysql_query("select * from updates left outer join (update_locks) on (updates.system_id = update_locks.system_id and updates.package_name = update_locks.package_name) where updates.system_id = '" . $system_row['id'] . "' and update_locks.package_name is null");
+
 $updates_row = mysql_fetch_assoc($updates_result);
 
 echo RPC_SUCCESS_TAG;
