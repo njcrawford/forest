@@ -61,7 +61,7 @@ New update lock<input name="package_name"></input>
 <?php
 $result2 = mysql_query("select * from update_locks where system_id = '" . $row['id'] . "'");
 $row2 = mysql_fetch_assoc($result2);
-while($row != null)
+while($row2 != null)
 {
 ?>
 <li><?php echo $row2['package_name'] ?></li>
