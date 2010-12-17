@@ -36,10 +36,10 @@ $systems = array();
 // Get data from mysql
 $systems_result = mysql_query(
 "select * from (
-    select 
+        select 
         systems.id, 
         name,
-        count(updates.package_name) as packages, 
+        count(c.package_name) as packages, 
         sum(if(accepted is null, 0, accepted)) as accepted_count,
         reboot_required, 
         last_checkin,
@@ -48,14 +48,26 @@ $systems_result = mysql_query(
         ignore_awol,
         reboot_accepted,
         allow_reboot,
-        sum(if(update_locks.package_name is null, 0, 1)) as locked_count
+        sum(locked) as locked_count
     from systems 
-        left join (updates, update_locks) on (
-            updates.system_id = systems.id and 
-            updates.package_name = update_locks.package_name and 
-            update_locks.system_id = systems.id
+        left join (
+            (
+                select 
+                    updates.system_id, 
+                    updates.package_name, 
+                    updates.accepted, 
+                    if(update_locks.package_name is null, 0, 1) as locked 
+                from updates 
+                left outer join (update_locks) on 
+                (
+                    updates.package_name = update_locks.package_name and 
+                    updates.system_id = update_locks.system_id
+                )
+            ) as c) on (
+            c.system_id = systems.id
         ) 
     group by systems.id
+
 ) b 
 order by
     important_awol desc,
