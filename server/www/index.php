@@ -50,7 +50,8 @@ $systems_result = mysql_query(
         allow_reboot,
         sum(locked) as locked_count
     from systems 
-        left join (
+        left join 
+        (
             (
                 select 
                     updates.system_id, 
@@ -63,11 +64,14 @@ $systems_result = mysql_query(
                     updates.package_name = update_locks.package_name and 
                     updates.system_id = update_locks.system_id
                 )
-            ) as c) on (
+            ) 
+            as c
+        ) 
+        on 
+        (
             c.system_id = systems.id
         ) 
     group by systems.id
-
 ) b 
 order by
     important_awol desc,
