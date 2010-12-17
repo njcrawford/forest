@@ -49,8 +49,8 @@ $systems_result = mysql_query(
         reboot_accepted,
         allow_reboot,
         count(update_locks.package_name) as locked_count
-    from systems 
-        left join (updates, update_locks) on (
+    from updates 
+        left join (systems, update_locks) on (
             updates.system_id = systems.id and 
             updates.package_name = update_locks.package_name and 
             systems.id = update_locks.system_id
