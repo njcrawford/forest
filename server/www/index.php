@@ -48,12 +48,12 @@ $systems_result = mysql_query(
         ignore_awol,
         reboot_accepted,
         allow_reboot,
-        count(update_locks.package_name) as locked_count
-    from updates 
-        left join (systems, update_locks) on (
+        sum(if(update_locks.package_name is null, 0, 1)) as locked_count
+    from systems 
+        left join (updates, update_locks) on (
             updates.system_id = systems.id and 
             updates.package_name = update_locks.package_name and 
-            systems.id = update_locks.system_id
+            update_locks.system_id = systems.id
         ) 
     group by systems.id
 ) b 
