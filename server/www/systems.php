@@ -81,7 +81,7 @@ if(isset($_GET['name']))
 ?>
 	<ul>
 <?php
-	$updates_result = mysql_query("select updates.package_name, updates.version, if(update_locks.package_name is null, 0, 1) as locked from updates left outer join (update_locks) on (updates.system_id = update_locks.system_id and updates.package_name = update_locks.package_name) where system_id = '" . $systems_row['id'] . "'");
+	$updates_result = mysql_query("select updates.package_name, updates.version, if(update_locks.package_name is null, 0, 1) as locked from updates left outer join (update_locks) on (updates.system_id = update_locks.system_id and updates.package_name = update_locks.package_name) where updates.system_id = '" . $systems_row['id'] . "'");
         $updates_row = mysql_fetch_assoc($updates_result);
 	while($updates_row)
 	{
