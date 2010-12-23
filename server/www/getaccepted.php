@@ -41,6 +41,15 @@ $updates_row = mysql_fetch_assoc($updates_result);
 
 echo RPC_SUCCESS_TAG;
 
+if($system_row['reboot_accepted'] == 1)
+{
+	echo "reboot-true: ";
+}
+else
+{
+	echo "reboot-false: ";
+}
+
 while($updates_row)
 {
 	echo $updates_row['package_name'] . " ";
