@@ -52,6 +52,7 @@ Ignore AWOL: <input name="ignore_awol" type=checkbox <?php echo $nice_checked ?>
 <input type=submit value=Save>
 </form>
 <br />
+Update Locks<br />
 <form action="add-update-lock.php" method="post">
 <input type="hidden" name="system_name" value="<?php echo $_GET['name'] ?>">
 New update lock<input name="package_name"></input>
@@ -64,7 +65,13 @@ $row2 = mysql_fetch_assoc($result2);
 while($row2 != null)
 {
 ?>
-<li><?php echo $row2['package_name'] ?></li>
+	<li><?php echo $row2['package_name'] ?>
+		<form action="remove-update-lock.php" method="post">
+		<input type="hidden" name="system_name" value="<?php echo $_GET['name'] ?>">
+		New update lock<input name="package_name"></input>
+		<input type=submit value="Remove">
+		</form>
+	</li>
 <?php
 $row2 = mysql_fetch_assoc($result2);
 }

@@ -35,7 +35,7 @@ if(!isset($_POST['system_name']) && !isset($_POST['package_name']))
 $query = "select id from systems where name = '" . $_POST['system_name'] . "'";
 $result = mysql_query($query);
 $row = mysql_fetch_assoc($result);
-$query = "insert into update_locks values ('" . $row['id'] . "', '" . $_POST['package_name'] . "')";
+$query = "delete from update_locks where system_id = '" . $row['id'] . "' and package_name = '" . $_POST['package_name'] . "'";
 
 $result = mysql_query($query);
 if($result)
