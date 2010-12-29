@@ -71,7 +71,7 @@ if(isset($_GET['name']))
 	if($systems_row['packages'] > 0 && ($systems_row['packages'] != $systems_row['accepted_count']))
 	{
 ?>
-		<form method="post" action="mark-accepted.php">
+		<form method="post" action="mark-accepted-updates.php">
 			<input type="hidden" name="accepted" value="true">
 			<input type="hidden" name="system_id" value="<?php echo $systems_row['id'] ?>">
 			<input type="submit" value="Accept all">
@@ -106,7 +106,7 @@ if(isset($_GET['name']))
 		if($updates_row['locked'] == 0)
 		{
 ?>
-	                <form method="post" action="mark-accepted.php">
+	                <form method="post" action="mark-accepted-updates.php">
 				<input type="hidden" name="accepted" value="<? echo $nice_accepted_value ?>">
 				<input type="hidden" name="system_id" value="<? echo $systems_row['id'] ?>">
 				<input type="hidden" name="package" value="<? echo $updates_row['package_name'] ?>">
