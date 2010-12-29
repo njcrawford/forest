@@ -97,7 +97,7 @@ while($systems_row)
 		{
 			$systems[$systems_row['id']]['reboot_required_text'] = "Accepted";
 		}
-		elseif($systems[$systems_row['id']]['allow_reboot'] == 1)
+		else
 		{
 			$systems[$systems_row['id']]['reboot_required_text'] = "Yes";
 		}
