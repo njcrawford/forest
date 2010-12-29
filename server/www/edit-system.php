@@ -68,7 +68,7 @@ while($row2 != null)
 	<li><?php echo $row2['package_name'] ?>
 		<form action="remove-update-lock.php" method="post">
 		<input type="hidden" name="system_name" value="<?php echo $_GET['name'] ?>">
-		New update lock<input name="package_name"></input>
+		<input type="hidden" name="package_name" value="<?php echo $row2['package_name'] ?>">
 		<input type=submit value="Remove">
 		</form>
 	</li>
