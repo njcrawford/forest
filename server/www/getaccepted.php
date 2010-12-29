@@ -45,7 +45,7 @@ if(mysql_num_rows($system_result) != 1)
 }
 $system_row = mysql_fetch_assoc($system_result);
 
-$updates_result = mysql_query("select * from updates 
+$updates_result = mysql_query("select updates.package_name from updates 
     left outer join (update_locks) 
     on 
     (
