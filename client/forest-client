@@ -152,7 +152,7 @@ fi
 reboot_check=`echo $accepted_updates | cut -d ":" -f 2`
 reboot_check=`trim_spaces $reboot_check`
 do_reboot=false
-# quit here if there was an error getting accepted updates
+# quit here if there was an error getting accepted reboot
 if [ "x$reboot_check" = "xreboot-true" ]; then
 	do_reboot=true
 	echo "Client requested reboot!"
@@ -160,6 +160,7 @@ elif [ "x$reboot_check" = "xreboot-false" ]; then
 	echo "Client did not request reboot!"
 else
 	echo "invalid reboot request value: $reboot_check"
+	exit 1
 fi
 
 # filter out error status and trim spaces from remainder

@@ -33,11 +33,17 @@ if(empty($_GET['system']))
 
 
 $system_result = mysql_query("select * from systems where name = '" . $_GET['system'] . "'");
+if(!$system_result)
+{
+	die(RPC_ERROR_TAG . "Mysql error: " . mysql_error());
+}
 $system_row = mysql_fetch_assoc($system_result);
 
-$updates_result = mysql_query("select * from updates left outer join (update_locks) on (updates.system_id = update_locks.system_id and updates.package_name = update_locks.package_name) where updates.system_id = '" . $system_row['id'] . "' and update_locks.package_name is null");
-
-$updates_row = mysql_fetch_assoc($updates_result);
+$updates_result = mysql_query("select * from updates left outer join (update_locks) on (updates.system_id = update_locks.system_id and updates.package_name = update_locks.package_name) where updates.system_id = '" . $system_row['id'] . "' and update_locks.package_name is null and updates.accepted = '1'");
+if(!$updates_result)
+{
+	die(RPC_ERROR_TAG . "Mysql error: " . mysql_error());
+}
 
 echo RPC_SUCCESS_TAG;
 
@@ -49,7 +55,7 @@ else
 {
 	echo "reboot-false: ";
 }
-
+$updates_row = mysql_fetch_assoc($updates_result);
 while($updates_row)
 {
 	echo $updates_row['package_name'] . " ";
