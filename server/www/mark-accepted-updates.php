@@ -24,7 +24,7 @@ You can contact me at http://www.njcrawford.com/contact
 */
 
 require "inc/check-login.php";
-
+require "inc/db.php";
 require_once "inc/redirect.php";
 
 // make sure the basic required POST stuff is here
@@ -57,8 +57,6 @@ elseif(isset($_POST['package']))
 	// all systems for a specific package
 	$query .= "package_name = '" . $_POST['package'] . "'";
 }
-
-require "inc/db.php";
 
 $result = mysql_query($query);
 if($result)
