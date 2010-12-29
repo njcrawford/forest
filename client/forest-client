@@ -150,6 +150,7 @@ if [ "x$error_check" != "xdata_ok" ]; then
 fi
 
 reboot_check=`echo $accepted_updates | cut -d ":" -f 2`
+reboot_check=`trim_spaces $reboot_check`
 do_reboot=false
 # quit here if there was an error getting accepted updates
 if [ "x$reboot_check" = "xreboot-true" ]; then
