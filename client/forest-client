@@ -120,6 +120,12 @@ do_updates()
 	fi
 }
 
+# Trims spaces from beginning and end
+trim_spaces()
+{
+	echo $1 | sed 's/^ *\(.*\) *$/\1/'
+}
+
 # default server url in case config file is missing
 server_url="http://forest/forest"
 # include config file
@@ -156,7 +162,8 @@ else
 fi
 
 # filter out error status and trim spaces from remainder
-accepted_updates=`echo "$accepted_updates" | cut -d " " -f 3- | sed 's/^ *\(.*\) *$/\1/'`
+accepted_updates=`echo "$accepted_updates" | cut -d " " -f 3-`
+accepted_updates=`trim_spaces "$accepted_updates"`
 
 # only try to apply updates if the list isn't empty
 if [ "x$accepted_updates" != "x" ]; then
