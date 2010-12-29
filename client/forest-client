@@ -151,10 +151,10 @@ fi
 
 reboot_check=`echo $accepted_updates | cut -d ":" -f 2`
 reboot_check=`trim_spaces $reboot_check`
-do_reboot=false
+do_reboot="true"
 # quit here if there was an error getting accepted reboot
 if [ "x$reboot_check" = "xreboot-true" ]; then
-	do_reboot=true
+	do_reboot="false"
 	echo "Client requested reboot!"
 elif [ "x$reboot_check" != "xreboot-false" ]; then
 	echo "invalid reboot request value: $reboot_check"
@@ -188,10 +188,10 @@ else
 fi
 
 formatted_reboot="reboot_required=`is_reboot_needed`"
-
+formatted_reboot_attempted="reboot_attempted=$do_reboot"
 formatted_rpc_version="rpc_version=$rpc_version"
 
-curldata=`curl --silent --show-error --data "$formatted_rpc_version" --data "$formatted_system_name" --data "$formatted_updates" --data "$formatted_reboot" $post_url`
+curldata=`curl --silent --show-error --data "$formatted_rpc_version" --data "$formatted_system_name" --data "$formatted_updates" --data "$formatted_reboot" --data "$formatted_reboot_attempted" $post_url`
 
 # filter out success messege and return value of grep to avoid cron warning messages
 if [ "x$1" = "x--cron" ]; then

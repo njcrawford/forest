@@ -121,9 +121,9 @@ if(!empty($_POST['reboot_required']))
 }
 // we want to update the reboot_required flag, even if it is null
 $query = "update systems set reboot_required = " . $reboot_required;
-if($reboot_required != "'1'")
+// reset the accepted flag if the system no longer needs a reboot, or a reboot was attempted
+if($reboot_required != "'1'" || (!empty($_POST['reboot_attempted']) && $_POST['reboot_attempted'] == "true"))
 {
-	// reset the accepted flag if the syetem no longer needs a reboot
 	$query .= ", reboot_accepted = '0'";
 }
 $query .= " where id = '" . $system_id . "'";
