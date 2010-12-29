@@ -37,9 +37,26 @@ if(!$system_result)
 {
 	die(RPC_ERROR_TAG . "Mysql error: " . mysql_error());
 }
+if(mysql_num_rows($system_result) != 1)
+{
+	// This error will also be thrown if more than one system in the 
+	// database has the same name.
+	die(RPC_ERROR_TAG . "System not found in database");
+}
 $system_row = mysql_fetch_assoc($system_result);
 
-$updates_result = mysql_query("select * from updates left outer join (update_locks) on (updates.system_id = update_locks.system_id and updates.package_name = update_locks.package_name) where updates.system_id = '" . $system_row['id'] . "' and update_locks.package_name is null and updates.accepted = '1'");
+$updates_result = mysql_query("select * from updates 
+    left outer join (update_locks) 
+    on 
+    (
+        updates.system_id = update_locks.system_id and 
+        updates.package_name = update_locks.package_name
+    ) 
+    where 
+        updates.system_id = '" . $system_row['id'] . "' and 
+        update_locks.package_name is null and 
+        updates.accepted = '1'"
+);
 if(!$updates_result)
 {
 	die(RPC_ERROR_TAG . "Mysql error: " . mysql_error());
