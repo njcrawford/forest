@@ -26,6 +26,12 @@ You can contact me at http://www.njcrawford.com/contact
 require_once "inc/redirect.php";
 require "/etc/forest-server.conf";
 
+function set_logged_in_token()
+{
+	// this needs to be changed to a session id or something like that
+	setcookie('login_name', $_POST['username'], 0, '/forest/');
+}
+
 // check inputs
 if(!isset($_POST['username']))
 {
@@ -45,10 +51,47 @@ if($forest_config['login_source'] == "config_file")
 		if($_POST['username'] == $this_user['username'] && $_POST['password'] == $this_user['password'])
 		{
 			$login_success = true;
-			// this needs to be changed to a session id or something like that
-			setcookie('login_name', $_POST['username'], 0, '/forest/');
+			set_logged_in_token();
 			break;
 		}
+	}
+}
+elseif($forest_config['login_source'] == "ldap")
+{
+	$ds=ldap_connect($forest_config['ldap_server']);
+	if (!$ds)
+	{
+		die('Cannot connect to LDAP server.');
+	}
+	$dn = $forest_config['ldap_auth_var'] . "=" . $_POST['username'] . ", " . $forest_config['ldap_base'];
+
+	$result=@ldap_bind($ds,$dn,$_POST['password']);
+	if (!$result)
+	{
+		// Couldn't bind to LDAP server, see 
+		$lderr = ldap_error($ds);
+		if($lderr != "Invalid credentials")
+		{
+			echo "Error: " . ldap_error($ds) . "<br /><br />";
+			die('Check your user name and password and try again.');
+		}
+	}
+	elseif(!empty($forest_config['ldap_allowed_users']))
+	{
+		foreach($forest_config['ldap_allowed_users'] as $this_user)
+		{
+			if($_POST['username'] == $this_user)
+			{
+				$login_success = true;
+				set_logged_in_token();
+				break;
+			}
+		}
+	}
+	else
+	{
+		$login_success = true;
+		set_logged_in_token();
 	}
 }
 else
