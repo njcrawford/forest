@@ -29,7 +29,7 @@ require_once "/etc/forest-server.conf";
 if($forest_config['login_required'] != false)
 {
 	// check for login cookie
-	if(!isset($_COOKIE['login_name']))
+	if(!isset($_SESSION['login_name']))
 	{
 		require_once "/etc/forest-server.conf";
 		require_once "inc/redirect.php";

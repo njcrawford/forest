@@ -29,7 +29,9 @@ require "/etc/forest-server.conf";
 function set_logged_in_token()
 {
 	// this needs to be changed to a session id or something like that
-	setcookie('login_name', $_POST['username'], 0, '/forest/');
+	//setcookie('login_name', $_POST['username'], 0, '/forest/');
+	session_start();
+	$_SESSION['login_name'] = $_POST['username'];
 }
 
 // check inputs
