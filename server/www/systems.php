@@ -114,6 +114,12 @@ if(isset($_GET['name']))
 			</form>
 <?php
 		}
+		else
+		{
+?>
+			(locked)
+<?php
+		}
 ?>
 		</li>
 <?php
