@@ -35,7 +35,7 @@ CREATE TABLE `settings` (
 
 LOCK TABLES `settings` WRITE;
 /*!40000 ALTER TABLE `settings` DISABLE KEYS */;
-INSERT INTO `settings` VALUES ('db_version','1'),('awol_hours','36');
+INSERT INTO `settings` VALUES ('db_version','2'),('awol_hours','36');
 /*!40000 ALTER TABLE `settings` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -52,7 +52,22 @@ CREATE TABLE `systems` (
   `last_checkin` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `reboot_required` tinyint(1) DEFAULT NULL,
   `ignore_awol` tinyint(1) NOT NULL DEFAULT '0',
+  `reboot_accepted` tinyint(1) NOT NULL DEFAULT '0',
+  `allow_reboot` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `update_locks`
+--
+
+DROP TABLE IF EXISTS `update_locks`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `update_locks` (
+  `system_id` int(11) DEFAULT NULL,
+  `package_name` text
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -72,6 +87,7 @@ CREATE TABLE `updates` (
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -82,4 +98,4 @@ CREATE TABLE `updates` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2010-11-22 11:17:13
+-- Dump completed on 2010-12-30 15:09:00
