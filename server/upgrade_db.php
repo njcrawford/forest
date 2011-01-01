@@ -62,6 +62,7 @@ if(DB_VERSION == 2)
 	if($current_db_version == '1')
 	{
 		upgrade_1_to_2();
+		echo "DB schema updated";
 	}
 	else
 	{
