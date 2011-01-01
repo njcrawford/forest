@@ -35,7 +35,12 @@ function upgrade_1_to_2()
 		die("Failed setting new db schema version");
 	}
 
-	$result = mysql_query("alter table systems add reboot_accepted tinyint(1) NOT NULL DEFAULT '0', allow_reboot tinyint(1) NOT NULL DEFAULT '0'");
+	$result = mysql_query("alter table systems add reboot_accepted tinyint(1) NOT NULL DEFAULT '0'");
+	if(!$result)
+	{
+		die("Failed to alter systems table");
+	}
+	$result = mysql_query("alter table systems add allow_reboot tinyint(1) NOT NULL DEFAULT '0'");
 	if(!$result)
 	{
 		die("Failed to alter systems table");
