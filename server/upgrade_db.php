@@ -24,6 +24,7 @@ A copy of the full GPL 2 license can be found in the docs directory.
 You can contact me at http://www.njcrawford.com/contact
 */
 
+$db_upgrade_mode = true;
 require "www/inc/db.php";
 
 function upgrade_1_to_2()
