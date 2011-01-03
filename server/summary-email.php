@@ -36,7 +36,7 @@ include '/etc/forest-server.conf';
 $output_message .= $server_url . "\n";
 
 require "www/inc/version.php";
-$output_message .= "Forest version " . $forest_version . "\n\n";
+$output_message .= "Forest version " . FOREST_VERSION . "\n\n";
 
 // get systems with updates
 // print name and number of updates
