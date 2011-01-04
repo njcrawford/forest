@@ -75,6 +75,12 @@ spaces_to_commas ()
 	echo $1 | sed 's/ \+/,/g'
 }
 
+# Encodes special HTML characters
+encode_for_html ()
+{
+	echo $1 | sed 's/+/%2b/g'
+}
+
 # Returns true if a reboot is needed, false otherwise
 is_reboot_needed()
 {
@@ -181,6 +187,7 @@ if [ "x$updates" != "x" ]; then
 		exit 1
 	else
 		updates=`spaces_to_commas "$updates"`
+		updates=`encode_for_html "$updates"`
 		formatted_updates="available_updates=$updates"
 	fi
 else
