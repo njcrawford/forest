@@ -38,7 +38,8 @@ require "inc/db.php";
 $result = mysql_query("select * from systems where name = '" . $_GET['name'] . "'");
 $row = mysql_fetch_assoc($result);
 
-$nice_checked = ($row['ignore_awol'] == 1) ? "checked=checked " : "";
+$nice_awol_checked = ($row['ignore_awol'] == 1) ? "checked=checked " : "";
+$nice_reboot_checked = ($row['allow_reboot'] == 1) ? "checked=checked " : "";
 
 ?>
 <a href="./">Back to summary page</a><br />
@@ -48,7 +49,8 @@ $nice_checked = ($row['ignore_awol'] == 1) ? "checked=checked " : "";
 <input type="hidden" name="name" value="<?php echo $_GET['name'] ?>">
 Name: <?php echo $row['name'] ?><br />
 Last Check-in: <?php echo $row['last_checkin'] ?><br />
-Ignore AWOL: <input name="ignore_awol" type=checkbox <?php echo $nice_checked ?>></input><br />
+Ignore AWOL: <input name="ignore_awol" type=checkbox <?php echo $nice_awol_checked ?>></input><br />
+Allow Reboot: <input name="allow_reboot" type=checkbox <?php echo $nice_reboot_checked ?>></input><br />
 <input type=submit value=Save>
 </form>
 <br />
