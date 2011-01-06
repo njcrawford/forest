@@ -28,10 +28,11 @@ require "www/inc/db.php";
 
 $output_message = "";
 
-// default settings and read config file
-$email_to = "root";
-$server_url = "http://forest/forest/";
+// Read config file
 include '/etc/forest-server.conf';
+// Use default settings if the config file didn't have anything set
+$email_to = empty($forest_config['email_to']) ? "root" : empty($forest_config['email_to']);
+$server_url = empty($forest_config['server_url']) ? "http://forest/forest/" : $forest_config['server_url'];
 
 $output_message .= $server_url . "\n";
 
