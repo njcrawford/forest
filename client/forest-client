@@ -161,7 +161,7 @@ do_reboot="false"
 # quit here if there was an error getting accepted reboot
 if [ "x$reboot_check" = "xreboot-true" ]; then
 	do_reboot="true"
-	echo "Client requested reboot!"
+	echo "shutdown -r now" | at now + 10 minutes
 elif [ "x$reboot_check" != "xreboot-false" ]; then
 	echo "invalid reboot request value: $reboot_check"
 	exit 1
