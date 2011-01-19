@@ -32,15 +32,15 @@ if(empty($_GET['system']))
 }
 
 
-$system_result = mysql_query("select * from systems where name = '" . $_GET['system'] . "'");
+$system_result = mysql_query("select * from systems where name = '" . mysql_real_escape_string($_GET['system']) . "'");
 if(!$system_result)
 {
 	die(RPC_ERROR_TAG . "Mysql error: " . mysql_error());
 }
 if(mysql_num_rows($system_result) != 1)
 {
-	// This error will also be thrown if more than one system in the 
-	// database has the same name.
+	// This error will be thrown if the system is not found, or if more than
+	// one system in the database has the same name.
 	die(RPC_ERROR_TAG . "System not found in database");
 }
 $system_row = mysql_fetch_assoc($system_result);
@@ -53,7 +53,7 @@ $updates_result = mysql_query("select updates.package_name from updates
         updates.package_name = update_locks.package_name
     ) 
     where 
-        updates.system_id = '" . $system_row['id'] . "' and 
+        updates.system_id = '" . mysql_real_escape_string($system_row['id']) . "' and 
         update_locks.package_name is null and 
         updates.accepted = '1'"
 );

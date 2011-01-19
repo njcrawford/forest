@@ -46,7 +46,7 @@ if(isset($_GET['name']))
 			count(updates.package_name) as packages, 
 			sum(if(accepted is null, 0, accepted)) as accepted_count 
 		from systems left join (updates) on (updates.system_id = systems.id)
-		where name = '" . $_GET['name'] . "' group by systems.id"
+		where name = '" . mysql_real_escape_string($_GET['name']) . "' group by systems.id"
 	);
 	$systems_row = mysql_fetch_assoc($systems_result);
 

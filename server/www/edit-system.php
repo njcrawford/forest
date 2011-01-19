@@ -35,7 +35,7 @@ if(!isset($_GET['name']))
 
 require "inc/db.php";
 
-$result = mysql_query("select * from systems where name = '" . $_GET['name'] . "'");
+$result = mysql_query("select * from systems where name = '" . mysql_real_escape_string($_GET['name']) . "'");
 $row = mysql_fetch_assoc($result);
 
 $nice_awol_checked = ($row['ignore_awol'] == 1) ? "checked=checked " : "";

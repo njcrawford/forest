@@ -41,7 +41,7 @@ elseif($_POST['accepted'] != "true" && $_POST['accepted'] != "false")
 	die("Invalid accepted value");
 }
 $nice_accepted = ($_POST['accepted'] == "true") ? 1 : 0;
-$query = "update systems set reboot_accepted = '" . $nice_accepted . "' where id = '" . $_POST['system_id'] . "'";
+$query = "update systems set reboot_accepted = '" . $nice_accepted . "' where id = '" . mysql_real_escape_string($_POST['system_id']) . "'";
 
 require "inc/db.php";
 

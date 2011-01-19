@@ -36,7 +36,7 @@ require "inc/db.php";
 
 if(isset($_GET['name']))
 {
-	$updates_result = mysql_query("select * from updates where package_name = '" . $_GET['name'] . "'");
+	$updates_result = mysql_query("select * from updates where package_name = '" . mysql_real_escape_string($_GET['name']) . "'");
 	$updates_row = mysql_fetch_assoc($updates_result);
 
 //	$systems_result = mysql_query("select name from systems where id = '" . $row['system_id'] . "'");
@@ -46,7 +46,7 @@ if(isset($_GET['name']))
 	echo "<ul>";
 	while($updates_row)
 	{
-		$systems_result = mysql_query("select name from systems where id = '" . $updates_row['system_id'] . "'");
+		$systems_result = mysql_query("select name from systems where id = '" . mysql_real_escape_string($updates_row['system_id']) . "'");
 	        $systems_row = mysql_fetch_assoc($systems_result);
 		if($updates_row['accepted'] == 1)
 		{

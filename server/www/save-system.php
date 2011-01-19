@@ -35,7 +35,7 @@ if(!isset($_POST['name']))
 
 $nice_ignore_awol = ($_POST['ignore_awol'] == "on") ? "1" : "0";
 $nice_allow_reboot = ($_POST['allow_reboot'] == "on") ? "1" : "0";
-$query = "update systems set ignore_awol = '" . $nice_ignore_awol . "', allow_reboot = '" . $nice_allow_reboot . "' where name = '" . $_POST['name'] . "'";
+$query = "update systems set ignore_awol = '" . $nice_ignore_awol . "', allow_reboot = '" . $nice_allow_reboot . "' where name = '" . mysql_real_escape_string($_POST['name']) . "'";
 
 require "inc/db.php";
 
