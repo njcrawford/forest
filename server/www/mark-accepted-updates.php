@@ -45,17 +45,17 @@ $query = "update updates set accepted = '" . $nice_accepted . "' where ";
 if(isset($_POST['system_id']) && isset($_POST['package']))
 {
 	// specific system/package combo
-	$query .= "system_id = '" . $_POST['system_id'] . "' and package_name = '" . $_POST['package']. "'";
+	$query .= "system_id = '" . mysql_real_escape_string($_POST['system_id']) . "' and package_name = '" . mysql_real_escape_string($_POST['package']) . "'";
 }
 elseif(isset($_POST['system_id']))
 {
 	// all updates for a system
-	$query .= "system_id = '" . $_POST['system_id'] . "'";
+	$query .= "system_id = '" . mysql_real_escape_string($_POST['system_id']) . "'";
 }
 elseif(isset($_POST['package']))
 {
 	// all systems for a specific package
-	$query .= "package_name = '" . $_POST['package'] . "'";
+	$query .= "package_name = '" . mysql_real_escape_string($_POST['package']) . "'";
 }
 
 $result = mysql_query($query);
