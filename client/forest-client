@@ -93,7 +93,7 @@ is_reboot_needed()
 	elif [ "x$current_distro" = "xcentos" ]; then
 		# I assume that a kernel is the only thing that would require a
 		# reboot. There could be other things that need it as well.
-		running_kernel=`uname -a |cut -d " " -f 3`
+		running_kernel=`uname -a | cut -d " " -f 3`
 		newest_kernel=`yum -q list kernel | grep "installed" | awk -F" " '{ print $2 }' | sort -n -s | sed '$!d'`
 		if [ "x$running_kernel" != "x$newest_kernel"  ]; then
 			echo "true"
@@ -161,7 +161,7 @@ do_reboot="false"
 # quit here if there was an error getting accepted reboot
 if [ "x$reboot_check" = "xreboot-true" ]; then
 	do_reboot="true"
-	echo "shutdown -r now" | at now + 10 minutes
+	echo "shutdown -r now" | at now + 10 minutes 2>&1 | grep -v "warning: commands will be executed using\|job [0-9]* at"
 elif [ "x$reboot_check" != "xreboot-false" ]; then
 	echo "invalid reboot request value: $reboot_check"
 	exit 1
