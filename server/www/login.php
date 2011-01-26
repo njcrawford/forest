@@ -23,6 +23,7 @@ A copy of the full GPL 2 license can be found in the docs directory.
 You can contact me at http://www.njcrawford.com/contact
 */
 
+$page_title = "Login";
 require "inc/header.php";
 ?>
 <form method="post" action="do-login.php">
