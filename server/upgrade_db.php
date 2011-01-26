@@ -32,24 +32,24 @@ function upgrade_1_to_2()
 	$result = mysql_query("update settings set value = '2' where name = 'db_version'");
 	if(!$result)
 	{
-		die("Failed setting new db schema version");
+		die("Failed setting new db schema version\n");
 	}
 
 	$result = mysql_query("alter table systems add reboot_accepted tinyint(1) NOT NULL DEFAULT '0'");
 	if(!$result)
 	{
-		die("Failed to alter systems table");
+		die("Failed to alter systems table\n");
 	}
 	$result = mysql_query("alter table systems add allow_reboot tinyint(1) NOT NULL DEFAULT '0'");
 	if(!$result)
 	{
-		die("Failed to alter systems table");
+		die("Failed to alter systems table\n");
 	}
 
 	$result = mysql_query("CREATE TABLE `update_locks` (`system_id` int(11) DEFAULT NULL, `package_name` text) ENGINE=MyISAM DEFAULT CHARSET=latin1");
 	if(!$result)
 	{
-		die("Failed to add update_locks table");
+		die("Failed to add update_locks table\n");
 	}
 }
 
@@ -62,15 +62,15 @@ if(DB_VERSION == 2)
 	if($current_db_version == '1')
 	{
 		upgrade_1_to_2();
-		echo "DB schema updated";
+		echo "DB schema updated\n";
 	}
 	else
 	{
-		echo "This script does not know how to update DB schema version '" . $current_db_version . "' to version '" . DB_VERSION . "'";
+		echo "This script does not know how to update DB schema version '" . $current_db_version . "' to version '" . DB_VERSION . "'\n";
 	}
 }
 else
 {
-	echo "This script has not been updated for DB schema version '" . DB_VERSION . "'";
+	echo "This script has not been updated for DB schema version '" . DB_VERSION . "'\n";
 }
 ?>
