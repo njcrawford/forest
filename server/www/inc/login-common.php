@@ -25,6 +25,8 @@ You can contact me at http://www.njcrawford.com/contact
 
 require_once "config-file.php";
 
+session_start();
+
 function is_login_token_set()
 {
 	// this needs to be beefed up
@@ -37,7 +39,6 @@ function set_logged_in_token($token)
 	//setcookie('login_name', $_POST['username'], 0, '/forest/');
 	if(!is_login_token_set())
 	{
-		session_start();
 		$_SESSION['login_name'] = $token;
 	}
 }
