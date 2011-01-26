@@ -80,6 +80,7 @@ elseif($forest_config['login_source'] == "ldap")
 	}
 	elseif(!empty($forest_config['ldap_allowed_users']))
 	{
+		// make sure this user is allowed by config file
 		foreach($forest_config['ldap_allowed_users'] as $this_user)
 		{
 			if($_POST['username'] == $this_user)
