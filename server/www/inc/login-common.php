@@ -23,7 +23,7 @@ A copy of the full GPL 2 license can be found in the docs directory.
 You can contact me at http://www.njcrawford.com/contact
 */
 
-require_once "config_file.php";
+require_once "config-file.php";
 
 function set_logged_in_token($token)
 {
