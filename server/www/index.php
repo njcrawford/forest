@@ -107,6 +107,11 @@ while($systems_row)
 		$systems[$systems_row['id']]['reboot_required_text'] = "No";
 	}
 
+	if($systems[$systems_row['id']]['locked_count'] == null)
+	{
+		$systems[$systems_row['id']]['locked_count'] = 0;
+	}
+
 	$systems_row = mysql_fetch_assoc($systems_result);
 }
 
