@@ -24,7 +24,7 @@ You can contact me at http://www.njcrawford.com/contact
 */
 
 require_once "inc/redirect.php";
-require "/etc/forest-server.conf";
+require_once "inc/config_file.php";
 
 function set_logged_in_token()
 {

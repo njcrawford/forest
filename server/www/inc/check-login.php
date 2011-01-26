@@ -23,7 +23,7 @@ A copy of the full GPL 2 license can be found in the docs directory.
 You can contact me at http://www.njcrawford.com/contact
 */
 
-require_once "/etc/forest-server.conf";
+require_once "inc/config-file.php";
 
 // Only check for a valid login if required by config
 if($forest_config['login_required'] != false)
@@ -31,7 +31,6 @@ if($forest_config['login_required'] != false)
 	// check for login cookie
 	if(!isset($_SESSION['login_name']))
 	{
-		require_once "/etc/forest-server.conf";
 		require_once "inc/redirect.php";
 		// no cookie, so redirect to login.php
 		redirect($forest_config['server_url'] . "/login.php");

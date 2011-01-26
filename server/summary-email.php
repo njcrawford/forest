@@ -29,7 +29,7 @@ require "www/inc/db.php";
 $output_message = "";
 
 // Read config file
-include '/etc/forest-server.conf';
+require "www/inc/config-file.php";
 // Use default settings if the config file didn't have anything set
 $email_to = empty($forest_config['email_to']) ? "root" : $forest_config['email_to'];
 $server_url = empty($forest_config['server_url']) ? "http://forest/forest/" : $forest_config['server_url'];
