@@ -3,7 +3,7 @@
 /*
 Forest - a web-based multi-system update manager
 
-Copyright (C) 2010 Nathan Crawford
+Copyright (C) 2011 Nathan Crawford
  
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
