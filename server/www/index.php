@@ -28,7 +28,7 @@ require "inc/check-login.php";
 $page_title = "Summary";
 require "inc/header.php";
 
-require "inc/db.php";
+require_once "inc/db.php";
 
 //init systems array to avoid errors later
 $systems = array();

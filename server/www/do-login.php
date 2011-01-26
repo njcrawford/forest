@@ -25,14 +25,7 @@ You can contact me at http://www.njcrawford.com/contact
 
 require_once "inc/redirect.php";
 require_once "inc/config_file.php";
-
-function set_logged_in_token()
-{
-	// this needs to be changed to a session id or something like that
-	//setcookie('login_name', $_POST['username'], 0, '/forest/');
-	session_start();
-	$_SESSION['login_name'] = $_POST['username'];
-}
+require_once "inc/login-common.php";
 
 // check inputs
 if(!isset($_POST['username']))
@@ -86,7 +79,7 @@ elseif($forest_config['login_source'] == "ldap")
 			if($_POST['username'] == $this_user)
 			{
 				$login_success = true;
-				set_logged_in_token();
+				set_logged_in_token($_POST['username']);
 				break;
 			}
 		}
@@ -94,7 +87,7 @@ elseif($forest_config['login_source'] == "ldap")
 	else
 	{
 		$login_success = true;
-		set_logged_in_token();
+		set_logged_in_token($_POST['username']);
 	}
 }
 else

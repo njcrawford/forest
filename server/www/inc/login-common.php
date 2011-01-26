@@ -23,23 +23,20 @@ A copy of the full GPL 2 license can be found in the docs directory.
 You can contact me at http://www.njcrawford.com/contact
 */
 
-require_once "inc/login-common.php";
-if(is_login_token_set())
+require_once "config_file.php";
+
+function set_logged_in_token($token)
 {
-	require "inc/redirect.php";
-	redirect($forest_config['server_url']);
+	// this needs to be changed to a session id or something like that
+	//setcookie('login_name', $_POST['username'], 0, '/forest/');
+	session_start();
+	$_SESSION['login_name'] = $token;
 }
-else
+
+function is_login_token_set()
 {
-$page_title = "Login";
-require "inc/header.php";
-?>
-<form method="post" action="do-login.php">
-Username: <input name="username"></input><br />
-Password: <input type="password" name="password"></input><br />
-<input type="submit" value="Login">
-</form>
-<?php
-require "inc/footer.php";
+	// this needs to be beefed up
+	return isset($_SESSION['login_name']);
 }
+
 ?>

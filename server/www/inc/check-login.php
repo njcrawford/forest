@@ -24,16 +24,17 @@ You can contact me at http://www.njcrawford.com/contact
 */
 
 require_once "inc/config-file.php";
+require_once "inc/login-common.php";
 
 // Only check for a valid login if required by config
-if($forest_config['login_required'] != false)
+if($forest_config['login_required'] == true)
 {
 	// check for login cookie
-	if(!isset($_SESSION['login_name']))
+	if(!is_login_token_set())
 	{
 		require_once "inc/redirect.php";
 		// no cookie, so redirect to login.php
-		redirect($forest_config['server_url'] . "/login.php");
+		redirect($forest_config['server_url'] . "login.php");
 	}
 }
 ?>
