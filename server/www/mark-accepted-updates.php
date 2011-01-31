@@ -47,17 +47,17 @@ $query = "update updates left join (update_locks)
 if(isset($_POST['system_id']) && isset($_POST['package']))
 {
 	// specific system/package combo
-	$query .= "system_id = '" . mysql_real_escape_string($_POST['system_id']) . "' and package_name = '" . mysql_real_escape_string($_POST['package']) . "'";
+	$query .= "updates.system_id = '" . mysql_real_escape_string($_POST['system_id']) . "' and package_name = '" . mysql_real_escape_string($_POST['package']) . "'";
 }
 elseif(isset($_POST['system_id']))
 {
 	// all updates for a system
-	$query .= "system_id = '" . mysql_real_escape_string($_POST['system_id']) . "'";
+	$query .= "updates.system_id = '" . mysql_real_escape_string($_POST['system_id']) . "'";
 }
 elseif(isset($_POST['package']))
 {
 	// all systems for a specific package
-	$query .= "package_name = '" . mysql_real_escape_string($_POST['package']) . "'";
+	$query .= "updates.package_name = '" . mysql_real_escape_string($_POST['package']) . "'";
 }
 
 $result = mysql_query($query);
