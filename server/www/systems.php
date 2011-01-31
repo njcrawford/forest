@@ -44,8 +44,9 @@ if(isset($_GET['name']))
 			systems.reboot_required, 
 			systems.last_checkin, 
 			count(updates.package_name) as packages, 
-			sum(if(accepted is null, 0, accepted)) as accepted_count 
-		from systems left join (updates) on (updates.system_id = systems.id)
+			sum(if(accepted is null, 0, accepted)) as accepted_count,
+			sum(if(update_locks.package_name is null, 0, 1)) as locked_count 
+		from systems left join (updates, update_locks) on (updates.system_id = systems.id and update_locks.system_id = systems.id)
 		where name = '" . mysql_real_escape_string($_GET['name']) . "' group by systems.id"
 	);
 	$systems_row = mysql_fetch_assoc($systems_result);
@@ -68,7 +69,7 @@ if(isset($_GET['name']))
 	Reboot Needed: <?php echo $nice_reboot ?><br />
 	Last Check-in: <?php echo $systems_row['last_checkin'] ?><br />
 <?php
-	if($systems_row['packages'] > 0 && ($systems_row['packages'] != $systems_row['accepted_count']))
+	if(($systems_row['packages'] - $systems_row['accepted_count'] - $systems_row['locked_count']) > 0 && ($systems_row['packages'] != $systems_row['accepted_count']))
 	{
 ?>
 		<form method="post" action="mark-accepted-updates.php">
