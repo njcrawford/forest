@@ -46,7 +46,7 @@ if(isset($_GET['name']))
 			count(updates.package_name) as packages, 
 			sum(if(accepted is null, 0, accepted)) as accepted_count,
 			sum(if(update_locks.package_name is null, 0, 1)) as locked_count 
-		from systems left join (updates, update_locks) on (updates.system_id = systems.id and update_locks.system_id = systems.id)
+		from systems left join (updates, update_locks) on (updates.system_id = systems.id and update_locks.system_id = systems.id and updates.package_name = update_locks.package_name)
 		where name = '" . mysql_real_escape_string($_GET['name']) . "' group by systems.id"
 	);
 	$systems_row = mysql_fetch_assoc($systems_result);
