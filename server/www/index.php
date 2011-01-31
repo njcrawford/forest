@@ -112,6 +112,8 @@ while($systems_row)
 		$systems[$systems_row['id']]['locked_count'] = 0;
 	}
 
+	$systems[$systems_row['id']]['packages'] -= $systems[$systems_row['id']]['locked_count'] + $systems[$systems_row['id']]['accepted'];
+
 	$systems_row = mysql_fetch_assoc($systems_result);
 }
 
