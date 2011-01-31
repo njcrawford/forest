@@ -41,7 +41,9 @@ elseif($_POST['accepted'] != "true" && $_POST['accepted'] != "false")
 	die("Invalid accepted value");
 }
 $nice_accepted = ($_POST['accepted'] == "true") ? 1 : 0;
-$query = "update updates set accepted = '" . $nice_accepted . "' where ";
+$query = "update updates left join (update_locks) 
+	on (updates.package_name = update_locks.package_name) 
+	set updates.accepted = '" . $nice_accepted . "' where update_locks.package_name is null and ";
 if(isset($_POST['system_id']) && isset($_POST['package']))
 {
 	// specific system/package combo
