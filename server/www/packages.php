@@ -46,29 +46,40 @@ if(isset($_GET['name']))
 	{
 		$systems_result = mysql_query("select name from systems where id = '" . mysql_real_escape_string($updates_row['system_id']) . "'");
 	        $systems_row = mysql_fetch_assoc($systems_result);
-		if($updates_row['accepted'] == 1)
+?>
+			<li>
+				<input type="checkbox" <? echo $nice_checked ?>>
+				<a href="systems.php?name=<? echo $systems_row['name'] ?>"><? echo $systems_row['name'] ?></a>
+<?php
+		if($updates_row['locked'] == 1)
 		{
-			$nice_accepted_value = "false";
-			$nice_button_name = "Reject";
-			$nice_checked = "checked=\"checked\"";
+			echo " (locked)";
 		}
 		else
 		{
-			$nice_accepted_value = "true";
-			$nice_button_name = "Accept";
-			$nice_checked = "";
+			if($updates_row['accepted'] == 1)
+			{
+				$nice_accepted_value = "false";
+				$nice_button_name = "Reject";
+				$nice_checked = "checked=\"checked\"";
+			}
+			else
+			{
+				$nice_accepted_value = "true";
+				$nice_button_name = "Accept";
+				$nice_checked = "";
+			}
+?>
+				<form method="post" action="mark-accepted-updates.php">
+					<input type="hidden" name="accepted" value="<? echo $nice_accepted_value ?>">
+					<input type="hidden" name="system_id" value="<? echo $updates_row['system_id'] ?>">
+					<input type="hidden" name="package" value="<? echo $updates_row['package_name'] ?>">
+					<input type="submit" value="<? echo $nice_button_name ?>">
+				</form>
+<?php
 		}
 ?>
-		<li>
-			<input type="checkbox" <? echo $nice_checked ?>>
-			<a href="systems.php?name=<? echo $systems_row['name'] ?>"><? echo $systems_row['name'] ?></a>
-			<form method="post" action="mark-accepted-updates.php">
-				<input type="hidden" name="accepted" value="<? echo $nice_accepted_value ?>">
-				<input type="hidden" name="system_id" value="<? echo $updates_row['system_id'] ?>">
-				<input type="hidden" name="package" value="<? echo $updates_row['package_name'] ?>">
-				<input type="submit" value="<? echo $nice_button_name ?>">
-			</form>
-		</li>
+			</li>
 <?php
 		$updates_row = mysql_fetch_assoc($updates_result);
 	}
