@@ -53,7 +53,7 @@ where updates.package_name = '" . mysql_real_escape_string($_GET['name']) . "'")
 <?php
 		if($updates_row['locked'] == 1)
 		{
-			echo " (locked)";
+			echo $updates_row['package_name'] . " (locked)";
 		}
 		else
 		{
