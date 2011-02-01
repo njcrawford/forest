@@ -216,12 +216,12 @@ while($systems_row)
 		<td class="name">
 			<a href="packages.php?name=<?php echo $systems_row['package_name'] ?>"><?php echo $systems_row['package_name'] ?></a>
 		</td>
-		<td><?php echo $systems_row['systems'] ?></td>
+		<td><?php echo ($systems_row['systems'] - $systems_row['accepted_count'] - $systems_row['locked_count']) ?></td>
 		<td><?php echo $systems_row['accepted_count'] ?></td>
 		<td><?php echo $systems_row['locked_count'] ?></td>
 		<td>
 <?php
-	if($systems_row['systems'] != $systems_row['accepted_count'])
+	if(($systems_row['systems'] - $systems_row['accepted_count'] - $systems_row['locked_count']) > 0 && $systems_row['systems'] != $systems_row['accepted_count'])
 	{
 ?>
 			<form method="post" action="mark-accepted.php">
