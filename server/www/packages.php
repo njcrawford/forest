@@ -50,10 +50,11 @@ where updates.package_name = '" . mysql_real_escape_string($_GET['name']) . "'")
 ?>
 		<li>
 			<input type="checkbox" <? echo $nice_checked ?>>
+			<a href="systems.php?name=<? echo $updates_row['name'] ?>"><? echo $updates_row['name'] ?></a>
 <?php
 		if($updates_row['locked'] == 1)
 		{
-			echo $updates_row['package_name'] . " (locked)";
+			echo " (locked)";
 		}
 		else
 		{
@@ -70,7 +71,6 @@ where updates.package_name = '" . mysql_real_escape_string($_GET['name']) . "'")
 				$nice_checked = "";
 			}
 ?>
-			<a href="systems.php?name=<? echo $updates_row['name'] ?>"><? echo $updates_row['name'] ?></a>
 			<form method="post" action="mark-accepted-updates.php">
 				<input type="hidden" name="accepted" value="<? echo $nice_accepted_value ?>">
 				<input type="hidden" name="system_id" value="<? echo $updates_row['system_id'] ?>">
