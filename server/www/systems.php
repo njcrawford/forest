@@ -39,6 +39,18 @@ if(isset($_GET['name']))
 <a href="edit-system.php?name=<?php echo $_GET['name'] ?>">Edit system</a><br />
 <?php
 	$systems_result = mysql_query("select 
+		updates.system_id, 
+		count(updates.package_name)as packages, 
+		sum(updates.accepted) as accepted_count, 
+		sum(if(update_locks.package_name is null, 0, 1)) as locked_count
+		from updates 
+		left outer join (update_locks) on 
+		(
+			updates.package_name = update_locks.package_name and 
+			updates.system_id = update_locks.system_id
+		) where updates.system_id = (select id from systems where name = '" . mysql_real_escape_string($_GET['name']) . "')");
+
+	/*$systems_result = mysql_query("select 
 			systems.id, 
 			systems.name, 
 			systems.reboot_required, 
@@ -49,7 +61,7 @@ if(isset($_GET['name']))
 		from systems left join (updates, update_locks) on 
 			(updates.system_id = systems.id and update_locks.system_id = systems.id and updates.package_name = update_locks.package_name)
 		where name = '" . mysql_real_escape_string($_GET['name']) . "' group by systems.id"
-	);
+	);*/
 	$systems_row = mysql_fetch_assoc($systems_result);
 
 	if($systems_row['reboot_required'] == null)
