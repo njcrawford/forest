@@ -38,6 +38,9 @@ if(isset($_GET['name']))
 ?>
 <a href="edit-system.php?name=<?php echo $_GET['name'] ?>">Edit system</a><br />
 <?php
+	$systems_result = mysql_query("select * from systems where name = '" . mysql_real_escape_string($_GET['name']) . "'");
+	$systems_row = mysql_fetch_assoc($systems_result);
+	
 	$systems_result = mysql_query("select 
 		updates.system_id, 
 		count(updates.package_name)as packages, 
@@ -48,7 +51,11 @@ if(isset($_GET['name']))
 		(
 			updates.package_name = update_locks.package_name and 
 			updates.system_id = update_locks.system_id
-		) where updates.system_id = (select id from systems where name = '" . mysql_real_escape_string($_GET['name']) . "')");
+		) where updates.system_id = '" . $systems_row['id'] . "'");
+	$systems_row2 = mysql_fetch_assoc($result);
+	$systems_row['packages'] = $systems_row2['packages'];
+	$systems_row['accepted_count'] = $systems_row2['accepted_count'];
+	$systems_row['locked_count'] = $systems_row2['locked_count'];
 
 	/*$systems_result = mysql_query("select 
 			systems.id, 
@@ -62,7 +69,6 @@ if(isset($_GET['name']))
 			(updates.system_id = systems.id and update_locks.system_id = systems.id and updates.package_name = update_locks.package_name)
 		where name = '" . mysql_real_escape_string($_GET['name']) . "' group by systems.id"
 	);*/
-	$systems_row = mysql_fetch_assoc($systems_result);
 
 	if($systems_row['reboot_required'] == null)
 	{
@@ -78,7 +84,7 @@ if(isset($_GET['name']))
 	}
 ?>
 	Name: <?php echo $systems_row['name'] ?><br />
-	Updates: <?php echo $systems_row['packages'] + $systems_row['accepted_count'] + $systems_row['locked_count'] ?><br />
+	Updates: <?php echo $systems_row['packages'] ?><br />
 	Reboot Needed: <?php echo $nice_reboot ?><br />
 	Last Check-in: <?php echo $systems_row['last_checkin'] ?><br />
 <?php
