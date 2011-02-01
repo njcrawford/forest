@@ -43,7 +43,7 @@ if(isset($_GET['name']))
 	
 	$systems_result = mysql_query("select 
 		updates.system_id, 
-		count(updates.package_name)as packages, 
+		count(updates.package_name) as packages, 
 		sum(updates.accepted) as accepted_count, 
 		sum(if(update_locks.package_name is null, 0, 1)) as locked_count
 		from updates 
@@ -52,7 +52,7 @@ if(isset($_GET['name']))
 			updates.package_name = update_locks.package_name and 
 			updates.system_id = update_locks.system_id
 		) where updates.system_id = '" . $systems_row['id'] . "'");
-	$systems_row2 = mysql_fetch_assoc($result);
+	$systems_row2 = mysql_fetch_assoc($systems_result);
 	$systems_row['packages'] = $systems_row2['packages'];
 	$systems_row['accepted_count'] = $systems_row2['accepted_count'];
 	$systems_row['locked_count'] = $systems_row2['locked_count'];
