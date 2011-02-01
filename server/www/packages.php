@@ -36,7 +36,12 @@ require "inc/db.php";
 
 if(isset($_GET['name']))
 {
-	$updates_result = mysql_query("select *, if(update_locks.package_name is null, 0, 1) as locked 
+	$updates_result = mysql_query("select updates.package_name,
+if(update_locks.package_name is null, 0, 1) as locked,
+systems.name as system_name,
+updates.accepted,
+updates.system_id,
+updates.package_name
 from updates left join (update_locks, systems) 
 on (updates.package_name = update_locks.package_name and updates.system_id = update_locks.system_id and updates.system_id = systems.id) 
 where updates.package_name = '" . mysql_real_escape_string($_GET['name']) . "'");
@@ -50,7 +55,7 @@ where updates.package_name = '" . mysql_real_escape_string($_GET['name']) . "'")
 ?>
 		<li>
 			<input type="checkbox" <? echo $nice_checked ?>>
-			<a href="systems.php?name=<? echo $updates_row['name'] ?>"><? echo $updates_row['name'] ?></a>
+			<a href="systems.php?name=<? echo $updates_row['system_name'] ?>"><? echo $updates_row['system_name'] ?></a>
 <?php
 		if($updates_row['locked'] == 1)
 		{
