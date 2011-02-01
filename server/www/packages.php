@@ -40,8 +40,7 @@ if(isset($_GET['name']))
 if(update_locks.package_name is null, 0, 1) as locked,
 systems.name as system_name,
 updates.accepted,
-updates.system_id,
-updates.package_name
+updates.system_id
 from updates left join (update_locks, systems) 
 on (updates.package_name = update_locks.package_name and updates.system_id = update_locks.system_id and updates.system_id = systems.id) 
 where updates.package_name = '" . mysql_real_escape_string($_GET['name']) . "'");
