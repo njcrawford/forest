@@ -6,7 +6,7 @@ using System.Management;
 using System.Net;
 using System.IO;
 
-namespace windows_client
+namespace forest_client
 {
     class Program
     {

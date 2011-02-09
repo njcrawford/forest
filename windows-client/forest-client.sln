@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 9.00
 # Visual Studio 2005
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "windows-client", "windows-client.csproj", "{CCCAA498-0F56-4DB3-B8C9-9F24DBBDD607}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "forest-client", "forest-client.csproj", "{CCCAA498-0F56-4DB3-B8C9-9F24DBBDD607}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
