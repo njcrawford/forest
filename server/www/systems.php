@@ -140,12 +140,13 @@ if(isset($_GET['name']))
 <?php
 		}
 ?>
+			<?php echo $updates_row['version'] ?>
 		</li>
 <?php
 	}
 	echo "</ul>";
 
-	$systems_row = mysql_fetch_assoc($systems_result);
+	//$systems_row = mysql_fetch_assoc($systems_result);
 }
 else
 {
