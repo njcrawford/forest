@@ -24,7 +24,7 @@ namespace forest_client
             {
                 if (update.AutoSelectOnWebSites)
                 {
-                    updates.Add(update.Title);
+                    updates.Add("KB" + update.KBArticleIDs[0]);
                 }
             }
         }
@@ -52,7 +52,7 @@ namespace forest_client
                     {
                         postData += ",";
                     }
-                    postData += s.Replace(",", "");
+                    postData += s;
                 }
             }
             else
