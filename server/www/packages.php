@@ -38,7 +38,7 @@ if(isset($_GET['name']))
 {
 	$updates_result = mysql_query("select updates.system_id, updates.package_name, updates.accepted, if(update_locks.package_name is null, 0, 1) as locked from updates left outer join (update_locks) on (updates.package_name = update_locks.package_name and updates.system_id = update_locks.system_id) where updates.package_name = '" . mysql_real_escape_string($_GET['name']) . "'");
 
-	echo "Name: " . $updates_row['package_name'] . "<br />Systems: " . mysql_num_rows($updates_result) . "<br />";
+	echo "Name: " . $_GET['name'] . "<br />Systems: " . mysql_num_rows($updates_result) . "<br />";
 	echo "<ul>";
 	for($updates_row = mysql_fetch_assoc($updates_result); $updates_row; $updates_row = mysql_fetch_assoc($updates_result))
 	{
