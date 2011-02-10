@@ -25,6 +25,7 @@ namespace forest_client
                 if (update.AutoSelectOnWebSites)
                 {
                     updates.Add(update.Title);
+                    //update.Categories
                 }
             }
         }
@@ -37,7 +38,7 @@ namespace forest_client
             request.Method = "POST";
             // Create POST data and convert it to a byte array.
             string postData = "rpc_version=" + rpcVersion;
-            postData += "&system_name=" + System.Environment.MachineName;
+            postData += "&system_name=" + System.Environment.MachineName.ToLower();
             postData += "&available_updates=";
             bool isFirst = true;
             foreach (string s in updates)
@@ -50,7 +51,7 @@ namespace forest_client
                 {
                     postData += ",";
                 }
-                postData += s;
+                postData += s.Replace(",", "");
             }
             byte[] byteArray = Encoding.UTF8.GetBytes(postData);
             // Set the ContentType property of the WebRequest.
