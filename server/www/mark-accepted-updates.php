@@ -27,6 +27,23 @@ require "inc/check-login.php";
 require "inc/db.php";
 require_once "inc/redirect.php";
 
+function set_accepted($system_id, $package_name, $accepted, $die_if_locked)
+{
+	// make sure this package isn't locked before trying to update it
+	$lock_query = "select * from update_locks where system_id = '" . $system_id . "' and package_name = '" . $package_name . "'";
+	$lock_result = mysql_query($lock_query);
+	if($die_if_locked && mysql_num_rows($lock_result) == 1)
+	{
+		die("This package is locked");
+	}
+	$query = "update updates 
+		set updates.accepted = '" . $accepted . "' 
+		where 
+		updates.system_id = '" . $system_id . "' and 
+		updates.package_name = '" . $package_name . "'";
+	return mysql_query($query);
+}
+
 // make sure the basic required POST stuff is here
 if(!isset($_POST['system_id']) && !isset($_POST['package']))
 {
@@ -41,26 +58,42 @@ elseif($_POST['accepted'] != "true" && $_POST['accepted'] != "false")
 	die("Invalid accepted value");
 }
 $nice_accepted = ($_POST['accepted'] == "true") ? 1 : 0;
-$query = "update updates left join (update_locks) 
-	on (updates.package_name = update_locks.package_name) 
-	set updates.accepted = '" . $nice_accepted . "' where update_locks.package_name is null and ";
+
 if(isset($_POST['system_id']) && isset($_POST['package']))
 {
 	// specific system/package combo
-	$query .= "updates.system_id = '" . mysql_real_escape_string($_POST['system_id']) . "' and updates.package_name = '" . mysql_real_escape_string($_POST['package']) . "'";
+	$result = set_accepted(mysql_real_escape_string($_POST['system_id']), mysql_real_escape_string($_POST['package_name']), $nice_accepted, true);
+	
 }
 elseif(isset($_POST['system_id']))
 {
 	// all updates for a system
-	$query .= "updates.system_id = '" . mysql_real_escape_string($_POST['system_id']) . "'";
+	$updates_result = mysql_query("select * from updates where system_id = '" . mysql_real_escape_string($_POST['system_id']) . "'");
+	for($updates_row = mysql_fetch_assoc($updates_result); $updates_row; $updates_row = mysql_fetch_assoc($updates_result))
+	{
+		$result = set_accepted($updates_row['system_id'], $updates_row['package_name'], $nice_accepted, false);
+		if(!$result)
+		{
+			break;
+		}
+	}
 }
 elseif(isset($_POST['package']))
 {
 	// all systems for a specific package
-	$query .= "updates.package_name = '" . mysql_real_escape_string($_POST['package']) . "'";
+	//$query .= "updates.package_name = '" . mysql_real_escape_string($_POST['package']) . "'";
+	$updates_result = mysql_query("select * from updates where package_name = '" . mysql_real_escape_string($_POST['package_name']) . "'");
+	for($updates_row = mysql_fetch_assoc($updates_result); $updates_row; $updates_row = mysql_fetch_assoc($updates_result))
+	{
+		$result = set_accepted($updates_row['system_id'], $updates_row['package_name'], $nice_accepted, false);
+		if(!$result)
+		{
+			break;
+		}
+	}
 }
 
-$result = mysql_query($query);
+//$result = mysql_query($query);
 if($result)
 {
 	redirect_back();
