@@ -44,7 +44,8 @@ function set_accepted($system_id, $package_name, $accepted, $die_if_locked)
 		}
 		else
 		{
-			return "locked";
+			// this should be enough to fake a success
+			return true;
 		}
 	}
 	$query = "update updates 
@@ -92,10 +93,9 @@ else
 	$updates_result = mysql_query($query);
 	for($updates_row = mysql_fetch_assoc($updates_result); $updates_row; $updates_row = mysql_fetch_assoc($updates_result))
 	{
-		$test_result = set_accepted($updates_row['system_id'], $updates_row['package_name'], $nice_accepted, false);
-		if(!$test_result && $test_result != "locked")
+		$result = set_accepted($updates_row['system_id'], $updates_row['package_name'], $nice_accepted, false);
+		if(!$result)
 		{
-			$result = $test_result;
 			break;
 		}
 	}
