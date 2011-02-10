@@ -46,7 +46,7 @@ if(isset($_POST['confirmed']))
 		die("Error: " . mysql_error());
 	}
 
-	$result = mysql_query("delete from systems where system_id = '" . $_POST['system_id'] . "'");
+	$result = mysql_query("delete from systems where id = '" . $_POST['system_id'] . "'");
 	if(!$result)
 	{
 		die("Error: " . mysql_error());
