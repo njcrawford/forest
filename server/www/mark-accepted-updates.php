@@ -32,6 +32,10 @@ function set_accepted($system_id, $package_name, $accepted, $die_if_locked)
 	// make sure this package isn't locked before trying to update it
 	$lock_query = "select * from update_locks where system_id = '" . $system_id . "' and package_name = '" . $package_name . "'";
 	$lock_result = mysql_query($lock_query);
+	if(!$lock_result)
+	{
+		die("Mysql error: " . mysql_error());
+	}
 	if($die_if_locked && mysql_num_rows($lock_result) == 1)
 	{
 		die("This package is locked");
