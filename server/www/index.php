@@ -225,7 +225,7 @@ while($systems_row)
 	if(($systems_row['systems'] - $systems_row['accepted_count'] - $systems_row['locked_count']) > 0 && $systems_row['systems'] != $systems_row['accepted_count'])
 	{
 ?>
-			<form method="post" action="mark-accepted.php">
+			<form method="post" action="mark-accepted-updates.php">
 				<input type="hidden" name="accepted" value="true">
 				<input type="hidden" name="package_name" value="<?php echo $systems_row['package_name'] ?>">
 				<input type="submit" value="Accept all">
