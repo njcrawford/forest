@@ -139,7 +139,7 @@ if(count($systems) > 0)
 ?>
 	<tr>
 		<td class="name">
-			<a href="systems.php?name=<?php echo $this_system['name'] ?>"><?php echo $this_system['name'] ?></a>
+			<a href="systems.php?system_id=<?php echo $this_system['id'] ?>"><?php echo $this_system['name'] ?></a>
 		</td>
 		<td>
 			<?php echo $this_system['packages'] ?>

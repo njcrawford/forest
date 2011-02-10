@@ -33,12 +33,12 @@ require "inc/db.php";
 ?>
 <a href="./">Back to summary page</a><br />
 <?php
-if(isset($_GET['name']))
+if(isset($_GET['system_id']))
 {
 ?>
-<a href="edit-system.php?name=<?php echo $_GET['name'] ?>">Edit system</a><br />
+<a href="edit-system.php?name=<?php echo $_GET['system_id'] ?>">Edit system</a><br />
 <?php
-	$systems_result = mysql_query("select * from systems where name = '" . mysql_real_escape_string($_GET['name']) . "'");
+	$systems_result = mysql_query("select * from systems where id = '" . mysql_real_escape_string($_GET['system_id']) . "'");
 	$systems_row = mysql_fetch_assoc($systems_result);
 	
 	$systems_result = mysql_query("select 
@@ -57,19 +57,6 @@ if(isset($_GET['name']))
 	$systems_row['accepted_count'] = $systems_row2['accepted_count'];
 	$systems_row['locked_count'] = $systems_row2['locked_count'];
 
-	/*$systems_result = mysql_query("select 
-			systems.id, 
-			systems.name, 
-			systems.reboot_required, 
-			systems.last_checkin, 
-			count(updates.package_name) as packages, 
-			sum(if(accepted is null, 0, accepted)) as accepted_count,
-			sum(if(update_locks.package_name is null, 0, 1)) as locked_count 
-		from systems left join (updates, update_locks) on 
-			(updates.system_id = systems.id and update_locks.system_id = systems.id and updates.package_name = update_locks.package_name)
-		where name = '" . mysql_real_escape_string($_GET['name']) . "' group by systems.id"
-	);*/
-
 	if($systems_row['reboot_required'] == null)
 	{
 		$nice_reboot = "Unknown";
@@ -87,6 +74,8 @@ if(isset($_GET['name']))
 	Updates: <?php echo $systems_row['packages'] ?><br />
 	Reboot Needed: <?php echo $nice_reboot ?><br />
 	Last Check-in: <?php echo $systems_row['last_checkin'] ?><br />
+	<a href="clear_updates.php?system_id=<?php echo $systems_row['id'] ?>">Clear Updates</a><br />
+	<a href="delete_system.php?system_id=<?php echo $systems_row['id'] ?>">Delete system</a><br />
 <?php
 	if(($systems_row['packages'] - $systems_row['accepted_count'] - $systems_row['locked_count']) > 0 && (($systems_row['packages'] - $systems_row['locked_count']) != $systems_row['accepted_count']))
 	{
@@ -102,7 +91,7 @@ if(isset($_GET['name']))
 	<ul>
 <?php
 	$updates_result = mysql_query("select updates.package_name, updates.version, if(update_locks.package_name is null, 0, 1) as locked, updates.accepted from updates left outer join (update_locks) on (updates.system_id = update_locks.system_id and updates.package_name = update_locks.package_name) where updates.system_id = '" . $systems_row['id'] . "'");
-	for($updates_row = mysql_fetch_assoc($updates_result); $updates_row; $updates_row = mysql_fetch_assoc($updates_result);)
+	for($updates_row = mysql_fetch_assoc($updates_result); $updates_row; $updates_row = mysql_fetch_assoc($updates_result))
 	{
 		if($updates_row['accepted'] == 1)
 		{
