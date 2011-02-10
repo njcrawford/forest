@@ -36,9 +36,16 @@ function set_accepted($system_id, $package_name, $accepted, $die_if_locked)
 	{
 		die("Mysql error: " . mysql_error());
 	}
-	if($die_if_locked && mysql_num_rows($lock_result) == 1)
+	if(mysql_num_rows($lock_result) == 1)
 	{
-		die("This package is locked");
+		if($die_if_locked)
+		{
+			die("This package is locked");
+		}
+		else
+		{
+			return "locked";
+		}
 	}
 	$query = "update updates 
 		set accepted = '" . $accepted . "' 
@@ -69,28 +76,26 @@ if(!empty($_POST['system_id']) && !empty($_POST['package_name']))
 	$result = set_accepted(mysql_real_escape_string($_POST['system_id']), mysql_real_escape_string($_POST['package_name']), $nice_accepted, true);
 	
 }
-elseif(!empty($_POST['system_id']))
+else
 {
-	// all updates for a system
-	$updates_result = mysql_query("select * from updates where system_id = '" . mysql_real_escape_string($_POST['system_id']) . "'");
-	for($updates_row = mysql_fetch_assoc($updates_result); $updates_row; $updates_row = mysql_fetch_assoc($updates_result))
+	$query = "select * from updates where ";
+	if(!empty($_POST['system_id']))
 	{
-		$result = set_accepted($updates_row['system_id'], $updates_row['package_name'], $nice_accepted, false);
-		if(!$result)
-		{
-			break;
-		}
+		// all updates for a system
+		$query .= "system_id = '" . mysql_real_escape_string($_POST['system_id']) . "'";
 	}
-}
-elseif(!empty($_POST['package_name']))
-{
-	// all systems for a specific package
-	$updates_result = mysql_query("select * from updates where package_name = '" . mysql_real_escape_string($_POST['package_name']) . "'");
+	elseif(!empty($_POST['package_name']))
+	{
+		// all systems for a specific package
+		$query .= "package_name = '" . mysql_real_escape_string($_POST['package_name']) . "'";
+	}
+	$updates_result = mysql_query($query);
 	for($updates_row = mysql_fetch_assoc($updates_result); $updates_row; $updates_row = mysql_fetch_assoc($updates_result))
 	{
-		$result = set_accepted($updates_row['system_id'], $updates_row['package_name'], $nice_accepted, false);
-		if(!$result)
+		$test_result = set_accepted($updates_row['system_id'], $updates_row['package_name'], $nice_accepted, false);
+		if($test_result != "locked" && !$test_result)
 		{
+			$result = $test_result
 			break;
 		}
 	}
