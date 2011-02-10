@@ -25,6 +25,7 @@ You can contact me at http://www.njcrawford.com/contact
 
 require_once "inc/db.php";
 require_once "inc/config-file.php";
+require_once "inc/redirect.php";
 
 if(isset($_POST['confirmed']))
 {
