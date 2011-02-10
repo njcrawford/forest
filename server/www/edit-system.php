@@ -43,7 +43,7 @@ $nice_reboot_checked = ($row['allow_reboot'] == 1) ? "checked=checked " : "";
 
 ?>
 <a href="./">Back to summary page</a><br />
-<a href="systems.php?system_id=<?php echo $_GET['system_id'] ?>">Back to updates for <?php echo $_GET['system_id'] ?></a><br />
+<a href="systems.php?system_id=<?php echo $_GET['system_id'] ?>">Back to updates for <?php echo $row['name'] ?></a><br />
 <br />
 <form action="save-system.php" method="post">
 <input type="hidden" name="system_id" value="<?php echo $_GET['system_id'] ?>">
