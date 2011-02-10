@@ -23,7 +23,7 @@ A copy of the full GPL 2 license can be found in the docs directory.
 You can contact me at http://www.njcrawford.com/contact
 */
 
-require_once "db.php";
+require_once "inc/db.php";
 require_once "inc/config-file.php";
 
 if(isset($_POST['confirmed']))
