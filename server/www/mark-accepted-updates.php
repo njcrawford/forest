@@ -95,7 +95,7 @@ else
 		$test_result = set_accepted($updates_row['system_id'], $updates_row['package_name'], $nice_accepted, false);
 		if($test_result != "locked" && !$test_result)
 		{
-			$result = $test_result
+			$result = $test_result;
 			break;
 		}
 	}
