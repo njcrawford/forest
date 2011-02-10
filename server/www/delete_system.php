@@ -34,6 +34,7 @@ if(isset($_POST['confirmed']))
 		die("No system specified");
 	}
 
+	// these queries should really be part of a transaction
 	$result = mysql_query("delete from updates where system_id = '" . $_POST['system_id'] . "'");
 	if(!$result)
 	{

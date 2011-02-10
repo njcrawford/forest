@@ -28,14 +28,11 @@ require_once "inc/redirect.php";
 require "inc/db.php";
 
 // make sure the basic required POST stuff is here
-if(!isset($_POST['system_name']) && !isset($_POST['package_name']))
+if(!isset($_POST['system_id']) && !isset($_POST['package_name']))
 {
 	die("No package or system specified");
 }
-$query = "select id from systems where name = '" . mysql_real_escape_string($_POST['system_name']) . "'";
-$result = mysql_query($query);
-$row = mysql_fetch_assoc($result);
-$query = "delete from update_locks where system_id = '" . $row['id'] . "' and package_name = '" . mysql_real_escape_string($_POST['package_name']) . "'";
+$query = "delete from update_locks where system_id = '" . mysql_real_escape_string($_POST['system_id']) . "' and package_name = '" . mysql_real_escape_string($_POST['package_name']) . "'";
 
 $result = mysql_query($query);
 if($result)

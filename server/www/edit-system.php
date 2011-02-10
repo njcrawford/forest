@@ -46,7 +46,7 @@ $nice_reboot_checked = ($row['allow_reboot'] == 1) ? "checked=checked " : "";
 <a href="systems.php?system_id=<?php echo $_GET['system_id'] ?>">Back to updates for <?php echo $_GET['system_id'] ?></a><br />
 <br />
 <form action="save-system.php" method="post">
-<input type="hidden" name="name" value="<?php echo $_GET['name'] ?>">
+<input type="hidden" name="system_id" value="<?php echo $_GET['system_id'] ?>">
 Name: <?php echo $row['name'] ?><br />
 Last Check-in: <?php echo $row['last_checkin'] ?><br />
 Ignore AWOL: <input name="ignore_awol" type=checkbox <?php echo $nice_awol_checked ?>></input><br />
@@ -56,26 +56,24 @@ Allow Reboot: <input name="allow_reboot" type=checkbox <?php echo $nice_reboot_c
 <br />
 Update Locks<br />
 <form action="add-update-lock.php" method="post">
-<input type="hidden" name="system_name" value="<?php echo $_GET['name'] ?>">
+<input type="hidden" name="system_id" value="<?php echo $_GET['system_id'] ?>">
 New update lock<input name="package_name"></input>
 <input type=submit value="Add lock">
 </form>
 <ul>
 <?php
 $result2 = mysql_query("select * from update_locks where system_id = '" . $row['id'] . "'");
-$row2 = mysql_fetch_assoc($result2);
-while($row2 != null)
+for($row2 = mysql_fetch_assoc($result2); $row2; $row2 = mysql_fetch_assoc($result2))
 {
 ?>
 	<li><?php echo $row2['package_name'] ?>
 		<form action="remove-update-lock.php" method="post">
-		<input type="hidden" name="system_name" value="<?php echo $_GET['name'] ?>">
+		<input type="hidden" name="system_id" value="<?php echo $_GET['system_id'] ?>">
 		<input type="hidden" name="package_name" value="<?php echo $row2['package_name'] ?>">
 		<input type=submit value="Remove">
 		</form>
 	</li>
 <?php
-$row2 = mysql_fetch_assoc($result2);
 }
 ?>
 </ul>
