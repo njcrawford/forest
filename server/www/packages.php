@@ -73,7 +73,7 @@ if(isset($_GET['name']))
 				<form method="post" action="mark-accepted-updates.php">
 					<input type="hidden" name="accepted" value="<? echo $nice_accepted_value ?>">
 					<input type="hidden" name="system_id" value="<? echo $updates_row['system_id'] ?>">
-					<input type="hidden" name="package" value="<? echo $updates_row['package_name'] ?>">
+					<input type="hidden" name="package_name" value="<? echo $updates_row['package_name'] ?>">
 					<input type="submit" value="<? echo $nice_button_name ?>">
 				</form>
 <?php

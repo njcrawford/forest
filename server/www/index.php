@@ -227,7 +227,7 @@ while($systems_row)
 ?>
 			<form method="post" action="mark-accepted.php">
 				<input type="hidden" name="accepted" value="true">
-				<input type="hidden" name="package" value="<?php echo $systems_row['package_name'] ?>">
+				<input type="hidden" name="package_name" value="<?php echo $systems_row['package_name'] ?>">
 				<input type="submit" value="Accept all">
 			</form>
 <?php
