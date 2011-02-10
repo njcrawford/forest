@@ -29,7 +29,7 @@ namespace forest_client
             }
         }
 
-        static void contactServer()
+        static string contactServer()
         {
             // Create a request using a URL that can receive a post. 
             WebRequest request = WebRequest.Create(settings.getValue("server_url") + "collect.php");
@@ -80,12 +80,12 @@ namespace forest_client
             StreamReader reader = new StreamReader(dataStream);
             // Read the content.
             string responseFromServer = reader.ReadToEnd();
-            // Display the content.
-            Console.WriteLine(responseFromServer);
             // Clean up the streams.
             reader.Close();
             dataStream.Close();
             response.Close();
+
+            return responseFromServer;
         }
 
         static void Main(string[] args)
@@ -106,12 +106,22 @@ namespace forest_client
             Console.WriteLine("Contacting forest server...");
             try
             {
-                contactServer();
+                string serverResponse = contactServer();
+                if (serverResponse == "data_ok:")
+                {
+                    Console.WriteLine("Server contacted successfully");
+                }
+                else
+                {
+                    Console.WriteLine("Server sent back unexpected response:");
+                    Console.WriteLine(serverResponse);
+                    Environment.Exit(1);
+                }
             }
             catch (Exception ex)
             {
                 Console.WriteLine("Error: " + ex.Message);
-                Environment.Exit(1);
+                Environment.Exit(10);
             }
             //Console.WriteLine("Press enter to exit");
             //Console.In.ReadLine();
