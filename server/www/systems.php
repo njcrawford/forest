@@ -36,7 +36,7 @@ require "inc/db.php";
 if(isset($_GET['system_id']))
 {
 ?>
-<a href="edit-system.php?name=<?php echo $_GET['system_id'] ?>">Edit system</a><br />
+<a href="edit-system.php?system_id=<?php echo $_GET['system_id'] ?>">Edit system</a><br />
 <?php
 	$systems_result = mysql_query("select * from systems where id = '" . mysql_real_escape_string($_GET['system_id']) . "'");
 	$systems_row = mysql_fetch_assoc($systems_result);

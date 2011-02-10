@@ -28,14 +28,14 @@ require "inc/check-login.php";
 $page_title = "Edit system";
 require "inc/header.php";
 
-if(!isset($_GET['name']))
+if(!isset($_GET['system_id']))
 {
 	die("No system specified");
 }
 
 require "inc/db.php";
 
-$result = mysql_query("select * from systems where name = '" . mysql_real_escape_string($_GET['name']) . "'");
+$result = mysql_query("select * from systems where id = '" . mysql_real_escape_string($_GET['system_id']) . "'");
 $row = mysql_fetch_assoc($result);
 
 $nice_awol_checked = ($row['ignore_awol'] == 1) ? "checked=checked " : "";
@@ -43,7 +43,7 @@ $nice_reboot_checked = ($row['allow_reboot'] == 1) ? "checked=checked " : "";
 
 ?>
 <a href="./">Back to summary page</a><br />
-<a href="systems.php?name=<?php echo $_GET['name'] ?>">Back to updates for <?php echo $_GET['name'] ?></a><br />
+<a href="systems.php?system_id=<?php echo $_GET['system_id'] ?>">Back to updates for <?php echo $_GET['system_id'] ?></a><br />
 <br />
 <form action="save-system.php" method="post">
 <input type="hidden" name="name" value="<?php echo $_GET['name'] ?>">
