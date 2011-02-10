@@ -41,15 +41,15 @@ function set_accepted($system_id, $package_name, $accepted, $die_if_locked)
 		die("This package is locked");
 	}
 	$query = "update updates 
-		set updates.accepted = '" . $accepted . "' 
+		set accepted = '" . $accepted . "' 
 		where 
-		updates.system_id = '" . $system_id . "' and 
-		updates.package_name = '" . $package_name . "'";
+		system_id = '" . $system_id . "' and 
+		package_name = '" . $package_name . "'";
 	return mysql_query($query);
 }
 
 // make sure the basic required POST stuff is here
-if(!isset($_POST['system_id']) && !isset($_POST['package']))
+if(!isset($_POST['system_id']) && !isset($_POST['package_name']))
 {
 	die("No package or system specified");
 }
@@ -63,7 +63,7 @@ elseif($_POST['accepted'] != "true" && $_POST['accepted'] != "false")
 }
 $nice_accepted = ($_POST['accepted'] == "true") ? 1 : 0;
 
-if(isset($_POST['system_id']) && isset($_POST['package']))
+if(isset($_POST['system_id']) && isset($_POST['package_name']))
 {
 	// specific system/package combo
 	$result = set_accepted(mysql_real_escape_string($_POST['system_id']), mysql_real_escape_string($_POST['package_name']), $nice_accepted, true);
