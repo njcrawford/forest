@@ -93,7 +93,7 @@ else
 	for($updates_row = mysql_fetch_assoc($updates_result); $updates_row; $updates_row = mysql_fetch_assoc($updates_result))
 	{
 		$test_result = set_accepted($updates_row['system_id'], $updates_row['package_name'], $nice_accepted, false);
-		if($test_result != "locked" && !$test_result)
+		if(!$test_result && $test_result != "locked")
 		{
 			$result = $test_result;
 			break;
