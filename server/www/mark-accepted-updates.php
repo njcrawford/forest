@@ -54,7 +54,7 @@ elseif(!empty($_POST['system_id']))
 	// all updates for a system
 	$query .= "updates.system_id = '" . mysql_real_escape_string($_POST['system_id']) . "'";
 }
-elseif(!empty($_POST['package']))
+elseif(!empty($_POST['package_name']))
 {
 	// all systems for a specific package
 	$query .= "updates.package_name = '" . mysql_real_escape_string($_POST['package_name']) . "'";
