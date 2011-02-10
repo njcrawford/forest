@@ -25,7 +25,6 @@ namespace forest_client
                 if (update.AutoSelectOnWebSites)
                 {
                     updates.Add(update.Title);
-                    //update.Categories
                 }
             }
         }
@@ -39,19 +38,26 @@ namespace forest_client
             // Create POST data and convert it to a byte array.
             string postData = "rpc_version=" + rpcVersion;
             postData += "&system_name=" + System.Environment.MachineName.ToLower();
-            postData += "&available_updates=";
-            bool isFirst = true;
-            foreach (string s in updates)
+            if (updates.Count > 0)
             {
-                if (isFirst)
+                postData += "&available_updates=";
+                bool isFirst = true;
+                foreach (string s in updates)
                 {
-                    isFirst = false;
+                    if (isFirst)
+                    {
+                        isFirst = false;
+                    }
+                    else
+                    {
+                        postData += ",";
+                    }
+                    postData += s.Replace(",", "");
                 }
-                else
-                {
-                    postData += ",";
-                }
-                postData += s.Replace(",", "");
+            }
+            else
+            {
+                postData += "&no_updates_available=true";
             }
             byte[] byteArray = Encoding.UTF8.GetBytes(postData);
             // Set the ContentType property of the WebRequest.
@@ -98,7 +104,15 @@ namespace forest_client
                 Console.WriteLine(s);
             }*/
             Console.WriteLine("Contacting forest server...");
-            contactServer();
+            try
+            {
+                contactServer();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error: " + ex.Message);
+                Environment.Exit(1);
+            }
             //Console.WriteLine("Press enter to exit");
             //Console.In.ReadLine();
         }
