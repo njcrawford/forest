@@ -24,7 +24,14 @@ namespace forest_client
             {
                 if (update.AutoSelectOnWebSites)
                 {
-                    updates.Add("KB" + update.KBArticleIDs[0]);
+                    if(update.KBArticleIDs.Count > 0)
+		    {
+			updates.Add("KB" + update.KBArticleIDs[0]);
+		    }
+			else
+			{
+				updates.Add(update.Title);
+			}
                 }
             }
         }
