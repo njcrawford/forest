@@ -34,7 +34,7 @@ if(empty($_POST['system_name']))
 $system_id_ok = false;
 $update_data_ok = false;
 $system_name = mysql_real_escape_string($_POST['system_name']);
-$result = mysql_query("select * from systems where name = '" . $_POST['system_name'] . "'");
+$result = mysql_query("select * from systems where name = '" . $system_name . "'");
 if($result)
 {
 	$row = mysql_fetch_assoc($result);

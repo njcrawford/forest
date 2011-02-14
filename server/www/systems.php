@@ -134,8 +134,6 @@ if(isset($_GET['system_id']))
 <?php
 	}
 	echo "</ul>";
-
-	//$systems_row = mysql_fetch_assoc($systems_result);
 }
 else
 {
