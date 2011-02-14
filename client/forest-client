@@ -182,11 +182,11 @@ updates=`get_available_updates`
 if [ "x$updates" != "x" ]; then
 	error_check=`echo $updates | cut -d ":" -f 1`
 	if [ "x$error_check" = "xerror" ]; then
+		echo "Error getting available updates"
+		echo "$updates"
 		error_check=`echo $updates | cut -d ":" -f 3`
 		error_check=`trim_spaces $error_check`
 		if [ "x$error_check" != "xSystem not found in database" ]; then
-			echo "Error getting available updates"
-			echo "$updates"
 			exit 1
 		fi
 	else
