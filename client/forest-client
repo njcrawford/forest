@@ -152,7 +152,13 @@ error_check=`echo $accepted_updates | cut -d ":" -f 1`
 # quit here if there was an error getting accepted updates
 if [ "x$error_check" != "xdata_ok" ]; then
 	echo "error getting accepted packages: $accepted_updates"
-	exit 1
+	error_check=`echo $accepted_updates | cut -d ":" -f 2`
+	error_check=`trim_spaces "$error_check"`
+	if [ "x$error_check" = "xSystem not found in database" ]; then
+		accepted_updates="data_ok: reboot-false: "
+	else
+		exit 1
+	fi
 fi
 
 reboot_check=`echo $accepted_updates | cut -d ":" -f 2`
@@ -184,11 +190,7 @@ if [ "x$updates" != "x" ]; then
 	if [ "x$error_check" = "xerror" ]; then
 		echo "Error getting available updates"
 		echo "$updates"
-		error_check=`echo $updates | cut -d ":" -f 3`
-		error_check=`trim_spaces $error_check`
-		if [ "x$error_check" != "xSystem not found in database" ]; then
-			exit 1
-		fi
+		exit 1
 	else
 		updates=`spaces_to_commas "$updates"`
 		updates=`encode_for_html "$updates"`
