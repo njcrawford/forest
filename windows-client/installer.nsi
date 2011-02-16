@@ -44,6 +44,8 @@ Section "Forest Client for Windows (required)"
   
   ; Put file there
   File "forest-client.exe"
+  File "Interop.WUApiLib.dll"
+  File "IniFile.dll"
   
   ; Write the installation path into the registry
   WriteRegStr HKLM "SOFTWARE\Forest Client" "Install_Dir" "$INSTDIR"
@@ -78,6 +80,8 @@ Section "Uninstall"
 
   ; Remove files and uninstaller
   Delete "$INSTDIR\forest-client.exe"
+  Delete "$INSTDIR\Interop.WUApiLib.dll"
+  Delete "$INSTDIR\IniFile.dll"
   Delete "$INSTDIR\uninstall.exe"
 
   ; Remove shortcuts, if any
