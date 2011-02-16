@@ -46,6 +46,7 @@ Section "Forest Client for Windows (required)"
   File "forest-client.exe"
   File "Interop.WUApiLib.dll"
   File "IniFile.dll"
+  File "ConfigurationGUI.exe"
   
   ; Write the installation path into the registry
   WriteRegStr HKLM "SOFTWARE\Forest Client" "Install_Dir" "$INSTDIR"
@@ -64,7 +65,7 @@ Section "Start Menu Shortcuts"
 
   CreateDirectory "$SMPROGRAMS\Forest Client"
   CreateShortCut "$SMPROGRAMS\Forest Client\Uninstall.lnk" "$INSTDIR\uninstall.exe" "" "$INSTDIR\uninstall.exe" 0
-  CreateShortCut "$SMPROGRAMS\Forest Client\Configuration.lnk" "$INSTDIR\forest-client.exe" "" "$INSTDIR\forest-client.exe" 0
+  CreateShortCut "$SMPROGRAMS\Forest Client\Configuration.lnk" "$INSTDIR\ConfigurationGUI.exe" "" "$INSTDIR\ConfigurationGUI.exe" 0
   
 SectionEnd
 
@@ -82,6 +83,7 @@ Section "Uninstall"
   Delete "$INSTDIR\forest-client.exe"
   Delete "$INSTDIR\Interop.WUApiLib.dll"
   Delete "$INSTDIR\IniFile.dll"
+  Delete "$INSTDIR\ConfigurationGUI.exe"
   Delete "$INSTDIR\uninstall.exe"
 
   ; Remove shortcuts, if any
