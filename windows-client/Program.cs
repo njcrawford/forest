@@ -97,7 +97,7 @@ namespace forest_client
 
         static void Main(string[] args)
         {
-            // set a default for server url if there nothing set
+            // set a default for server url if there is nothing set
             if (settings.getValue("server_url") == null)
             {
                 settings.setValue("server_url", "http://url-not-set/forest/");
