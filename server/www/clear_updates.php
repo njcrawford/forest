@@ -39,7 +39,7 @@ if(isset($_POST['confirmed']))
 	$result = mysql_query("delete from updates where system_id = '" . $_POST['system_id'] . "'");
 	if($result)
 	{
-		redirect($forest_config['server_url'] . "systems.php?system_id=" . $_POST['system_id']);
+		redirect($forest_config['server_url'] . "/systems.php?system_id=" . $_POST['system_id']);
 	}
 	else
 	{
