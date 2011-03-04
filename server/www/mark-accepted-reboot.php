@@ -27,6 +27,8 @@ require "inc/check-login.php";
 
 require_once "inc/redirect.php";
 
+require "inc/db.php";
+
 // make sure the basic required POST stuff is here
 if(!isset($_POST['system_id']))
 {
@@ -42,8 +44,6 @@ elseif($_POST['accepted'] != "true" && $_POST['accepted'] != "false")
 }
 $nice_accepted = ($_POST['accepted'] == "true") ? 1 : 0;
 $query = "update systems set reboot_accepted = '" . $nice_accepted . "' where id = '" . mysql_real_escape_string($_POST['system_id']) . "'";
-
-require "inc/db.php";
 
 $result = mysql_query($query);
 if($result)
