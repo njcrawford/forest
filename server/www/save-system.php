@@ -27,6 +27,8 @@ require "inc/check-login.php";
 
 require_once "inc/redirect.php";
 
+require "inc/db.php";
+
 // make sure the basic required POST stuff is here
 if(!isset($_POST['system_id']))
 {
@@ -36,8 +38,6 @@ if(!isset($_POST['system_id']))
 $nice_ignore_awol = ($_POST['ignore_awol'] == "on") ? "1" : "0";
 $nice_allow_reboot = ($_POST['allow_reboot'] == "on") ? "1" : "0";
 $query = "update systems set ignore_awol = '" . $nice_ignore_awol . "', allow_reboot = '" . $nice_allow_reboot . "' where id = '" . mysql_real_escape_string($_POST['system_id']) . "'";
-
-require "inc/db.php";
 
 $result = mysql_query($query);
 if($result)

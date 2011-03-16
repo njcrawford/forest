@@ -24,6 +24,7 @@ You can contact me at http://www.njcrawford.com/contact
 */
 
 require "inc/check-login.php";
+require "inc/db.php";
 
 $page_title = "Edit system";
 require "inc/header.php";
@@ -32,8 +33,6 @@ if(!isset($_GET['system_id']))
 {
 	die("No system specified");
 }
-
-require "inc/db.php";
 
 $result = mysql_query("select * from systems where id = '" . mysql_real_escape_string($_GET['system_id']) . "'");
 $row = mysql_fetch_assoc($result);

@@ -25,7 +25,7 @@ You can contact me at http://www.njcrawford.com/contact
 
 require "inc/check-login.php";
 
-require_once "inc/db.php";
+require "inc/db.php";
 require_once "inc/config-file.php";
 require_once "inc/redirect.php";
 
