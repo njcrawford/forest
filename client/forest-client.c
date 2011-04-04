@@ -26,7 +26,11 @@
 #include <stdio.h>
 
 #define RPC_VERSION 2
+#define RPC_VERSION_STRING "2"
+
 #define MAX_INPUT_LINE_SIZE 200
+
+#define BUFFER_SIZE 1024;
 
 // for now, define what PM to use at compile time (from list above)
 // valid options are _APT, _RPM and _WINDOWS
@@ -42,6 +46,7 @@ int getAvailableUpdates(lineList* outList);
 int getAcceptedUpdates(lineList* outList);
 int applyUpdates(lineList* list);
 int reportAvailableUpdates(lineList* list);
+void readConfigFile();
 
 int main(char** args, int argc)
 {
@@ -57,18 +62,19 @@ int main(char** args, int argc)
 	char * serverUrl = "http://forest/forest";
 
 	// read config file
+	readConfigFile();
 
 	// determine what packages are available to update
 	getAvailableUpdates(&availableUpdates);
 
 	// get list of packages that have been accepted for update
-	getAcceptedUpdates(&acceptedUpdates);
+	getAcceptedUpdates(&acceptedUpdates, serverUrl);
 
 	// apply accepted updates (and only available updates)
 	applyUpdates(&acceptedUpdates);
 
 	// report packages that are available to update
-	reportAvailableUpdates(&availableUpdates);
+	reportAvailableUpdates(&availableUpdates, serverUrl);
 
 	return 0;
 }
@@ -85,7 +91,7 @@ int getAvailableUpdates(lineList* outList)
 	command = "yum check-update -q -C 2>&1";
 #else
 	//something to break compilation if no package manager is defined
-	()
+	);
 #endif
 
 	mySystem(command, outList, &commandRetval);
@@ -133,9 +139,36 @@ int getAvailableUpdates(lineList* outList)
 #endif
 }
 
-int getAcceptedUpdates(lineList* outList)
+// fills outList with names of accepted packages
+int getAcceptedUpdates(lineList* outList, const char * serverUrl)
 {
+	char hostname[HOST_NAME_MAX + 1];
+	char acceptedUrl[BUFFER_SIZE];
+	char command[BUFFER_SIZE];
+	int response = 0;
+	
+	hostname[HOST_NAME_MAX] = '\0';
+	// get the current host name
+	response = gethostname(hostname, HOST_NAME_MAX);
+	if(response == -1)
+	{
+		//fprintf(stderr, "Could not get hostname, exiting.");
+		perror("Error in getAcceptedUpdates(): ");
+		exit(1);
+	}
 
+	// build accepted URL
+	snprintf(acceptedUrl, BUFFER_SIZE, "%s/getaccepted.php?rpc_version=%d&system=%s", serverUrl, RPC_VERSION, hostname);
+
+	// build command to run
+	snprintf(command, BUFFER_SIZE, "curl --silent --show-error %s", acceptedUrl);
+	mySystem(command, outList, &commandRetval);
+	
+	// exit silently if curl fails
+	if(commandRetval != 0)
+	{
+		exit(0);
+	}
 }
 
 int applyUpdates(lineList* list)
@@ -148,6 +181,12 @@ int reportAvailableUpdates(lineList* list)
 
 }
 
+void readConfigFile()
+{
+	FILE * configFile;
+	configFile = fopen("/etc/forest-client.conf", "r");
+}
+
 // adds newItem to the end of list
 void pushToStringList(lineList* list, char * newItem)
 {
@@ -158,7 +197,7 @@ void pushToStringList(lineList* list, char * newItem)
 	tempList = malloc(sizeof(char*) * (listCount + 1));
 
 	// copy pointers from old list to new list
-	for(i = 0; i < list.lineCount; i++)
+	for(i = 0; i < list->lineCount; i++)
 	{
 		tempList[i] = list->lines[i];
 	}
@@ -174,6 +213,9 @@ void pushToStringList(lineList* list, char * newItem)
 
 	// assign the new list in the old one's place
 	list->lines = templist;
+
+	// increment the line count
+	list->lineCount++;
 }
 
 // Works like system(), but returns lines of stdout in outList and the command's
