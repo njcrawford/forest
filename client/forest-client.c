@@ -181,12 +181,13 @@ int getAcceptedUpdates(lineList* outList, const char * serverUrl, const char * m
 	char acceptedUrl[BUFFER_SIZE];
 	char command[BUFFER_SIZE];
 	int response = 0;
+	char wordBuffer[BUFFER_SIZE];
 
 	// build accepted URL
 	snprintf(acceptedUrl, BUFFER_SIZE, "%s/getaccepted.php?rpc_version=%d&system=%s", serverUrl, RPC_VERSION, myHostname);
 
 	// build command to run
-	snprintf(command, BUFFER_SIZE, "curl --silent --show-error %s", acceptedUrl);
+	snprintf(command, BUFFER_SIZE, "curl --silent --show-error \"%s\"", acceptedUrl);
 	mySystem(command, outList, &response);
 	
 	// exit silently if curl fails
@@ -194,11 +195,23 @@ int getAcceptedUpdates(lineList* outList, const char * serverUrl, const char * m
 	{
 		exit(0);
 	}
+
+	// make sure the response was something we expected
+	sscanf(outList->lines[0], "%s", wordBuffer);
+	if(strcmp(wordBuffer, "data_ok:") != 0)
+	{
+		fprintf(stderr, "Error getting accepted updates: %s\n", outList->lines[0]);
+		exit(1);
+	}
+	else
+	{
+		// remove data_ok and reboot lines
+	}
 }
 
 int applyUpdates(lineList* list)
 {
-	char * command;
+	char * command = NULL;
 	int i;
 	int remainingBuf;
 	int commandResponse;
@@ -222,8 +235,8 @@ int applyUpdates(lineList* list)
 #endif
 
 	flattenedOutput = flattenStringList(list, ' ');
-	temp = malloc(sizeof(char) * (strlen(command) + strlen(flattenedOutput)));
-	sprintf(temp, "%s%s", command, flattenedOutput);
+	temp = malloc(sizeof(char) * (strlen(command) + strlen(flattenedOutput) + 5));
+	sprintf(temp, "%s%s 2>&1", command, flattenedOutput);
 	command = temp;
 
 	free(flattenedOutput);
@@ -308,6 +321,7 @@ void readConfigFile(forestConfig * config)
 	char * splitPtr;
 	char confName[BUFFER_SIZE];
 	char confValue[BUFFER_SIZE];
+	char * cleanupPtr = NULL;
 
 	configFile = fopen("/etc/forest-client.conf", "r");
 	while(response)
@@ -322,7 +336,31 @@ void readConfigFile(forestConfig * config)
 			splitPtr = strchr(line, '=');
 			if(splitPtr != NULL)
 			{
+				// remove the equals sign
 				*splitPtr = '\0';
+
+				// remove a newline, if it exists
+				cleanupPtr = strchr(line, '\n');
+				if(cleanupPtr != NULL)
+				{
+					*cleanupPtr = '\0';
+				}
+
+				// remove two double quotes, if they exist
+				cleanupPtr = strchr(splitPtr + 1, '"');
+				if(cleanupPtr != NULL)
+				{
+					*cleanupPtr = '\0';
+					// advance the split pointer to where the first double quote was
+					splitPtr = cleanupPtr;
+				}
+				
+				cleanupPtr = strchr(splitPtr + 1, '"');
+				if(cleanupPtr != NULL)
+				{
+					*cleanupPtr = '\0';
+				}
+				
 				strncpy(confName, line, BUFFER_SIZE);
 				strncpy(confValue, splitPtr + 1, BUFFER_SIZE);
 				if(strcmp(confName, "server_url") == 0)
@@ -433,10 +471,13 @@ char * flattenStringList(lineList * list, char seperator)
 	}
 
 	retval = malloc(sizeof(char) * sizeCounter);
+	retval[0] = '\0';
 
 	for(i = 0; i < list->lineCount; i++)
 	{
 		strcat(retval, list->lines[i]);
 		strncat(retval, &seperator, 1);
 	}
+
+	return retval;
 }
