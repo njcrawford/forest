@@ -61,7 +61,7 @@ get_available_updates ()
 		if [ "$updates_return" -eq "0" ] ; then
 			updates=""
 		elif [ "$updates_return" -eq "100" ] ; then
-			updates=`echo "$updates" | grep -v " \* \|^$" | cut -d " " -f 1 | cut -d "." -f 1 | uniq`
+			updates=`echo "$updates" | grep -v " \* \|^$" | cut -d " " -f 1 | sed 's/\(.*\)\..*/\1/' | uniq`
 		else
 			updates="error: $updates"
 		fi
