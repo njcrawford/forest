@@ -61,7 +61,19 @@ get_available_updates ()
 		if [ "$updates_return" -eq "0" ] ; then
 			updates=""
 		elif [ "$updates_return" -eq "100" ] ; then
-			updates=`echo "$updates" | grep -v " \* \|^$\|^Another app\|Existing lock" | cut -d " " -f 1 | sed 's/\(.*\)\..*/\1/' | uniq`
+			#filter out empty lines
+			updates=`echo "$updates" | grep -v " \* \|^$"`
+			#filter out wait messages when other instances of yum are running
+			updates=`echo "$updates" | grep -v "^Another app\|^Existing lock"`
+			#filter out HTTP errors when a mirror is down
+			updates=`echo "$updates" | grep "HTTP Error\|^Trying other mirror.$"`
+			#keep everything up to the first space (package name and arch)
+			updates=`echo "$updates" | cut -d " " -f 1`
+			#remove the architecture (.i386, .x86_64, etc)
+			updates=`echo "$updates" | sed 's/\(.*\)\..*/\1/'`
+			#remove duplicates from the list (produced by removing architecture)
+			#the list may need to be sorted before running uniq
+			updates=`echo "$updates" | uniq`
 		else
 			updates="error: $updates"
 		fi
@@ -213,5 +225,6 @@ fi
 
 # output anything from curl that hasn't been filtered
 if [ "x" != "x$curldata" ]; then
+	echo "Returned from curl:"
 	echo "$curldata"
 fi
