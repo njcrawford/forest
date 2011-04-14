@@ -1,7 +1,7 @@
 //#############################################################################
 // Forest - a web-based multi-system update manager
 //
-// Copyright (C) 2010 Nathan Crawford
+// Copyright (C) 2011 Nathan Crawford
 // 
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -31,23 +31,23 @@
 // string functions
 #include <string.h>
 
-#define RPC_VERSION 2
+#include "apt-get.h"
+#include "yum.h"
+#include "wuaapi.h"
+#include "lineList.h"
 
-#define MAX_INPUT_LINE_SIZE 200
+#define RPC_VERSION 2
 
 #define BUFFER_SIZE 1024
 
-// for now, define what PM to use at compile time (from list above)
-// valid options are _APT, _YUM and _WINDOWS
-#define PACKAGE_MANAGER_APT
-//#define PACKAGE_MANAGER_YUM
-//#define PACKAGE_MANAGER_WINDOWS
+#define CONFIG_FILE_PATH "/etc/forest-client.conf"
 
-typedef struct lineListStruct
-{
-	char** lines;
-	int lineCount;
-} lineList;
+// for now, define what PM to use at compile time (from list above)
+// valid options are _APTGET (apt-get), _YUM (yum) and _WUAAPI (Windows 
+// update agent API)
+#define PACKAGE_MANAGER_APTGET
+//#define PACKAGE_MANAGER_YUM
+//#define PACKAGE_MANAGER_WUAAPI
 
 typedef struct forestConfigStruct
 {
@@ -60,9 +60,6 @@ int applyUpdates(lineList* list);
 int reportAvailableUpdates(lineList* list, const char * serverUrl, const char * myHostname);
 void readConfigFile(forestConfig * config);
 void mySystem(const char* command, lineList* outList, int * returnVal);
-void clearStringList(lineList* list);
-void pushToStringList(lineList* list, char * newItem);
-char * flattenStringList(lineList * list, char seperator);
 
 int main(char** args, int argc)
 {
@@ -112,66 +109,12 @@ int main(char** args, int argc)
 
 int getAvailableUpdates(lineList* outList)
 {
-	char * command;
-	int commandRetval = 0;
-
-#if defined PACKAGE_MANAGER_APT
-	command = "apt-get dist-upgrade -Vs 2>&1";
+#if defined PACKAGE_MANAGER_APTGET
+	return getAvailableUpdatesAptGet(outList);
 #elif defined PACKAGE_MANAGER_YUM
-	//TODO: yum output will need further cleanup
-	command = "yum check-update -q -C 2>&1";
-#elif defined PACKAGE_MANAGER_WINDOWS
-	// I don't think there is a command that will do this under windows.
-	// This will probably need to be broken out into a seperate function.
-#else
-	//something to break compilation if no package manager is defined
-	);
-#endif
-
-	mySystem(command, outList, &commandRetval);
-
-#ifdef PACKAGE_MANAGER_YUM
-	// yum check-update returns 0 if no updates are available or 100 if 
-	// there is at least one update available
-	if(commandRetval == 0)
-	{
-		clearList(outList);
-	}
-	else if(commandRetval == 100)
-	{
-		int lineNum;
-		int lineLen;
-		int letterNum;
-		char * tempLine;
-		for(lineNum = 0; lineNum < outList->lineCount; lineNum++)
-		{
-			lineLen = strlen(outList->lines[lineNum]);
-			// only keep everything up to the first '.'
-			for(letterNum = 0; letterNum < lineLen; letterNum++)
-			{
-				if(outList->lines[lineNum][letterNum] == '.')
-				{
-					// null terminate so we can use strcpy
-					outList->lines[lineNum][letterNum] = '\0';
-
-					// malloc space for shortened line
-					tempLine = malloc(sizeof(char) * letterNum);
-
-					// copy the shortened line into the new space
-					strcpy(tempLine, outList->lines[lineNum]);
-
-					// free the old line
-					free(outList->lines[lineNum]);
-
-					// put the shortened line into the list where the original was
-					outList->lines[lineNum] = tempLine;
-
-					// don't process this line any further
-					break;
-				}
-			}
-		}
-	}
+	return getAvailableUpdatesYum(outList);
+#elif defined PACKAGE_MANAGER_WUAAPI
+	return getAvailableUpdatesWuaApi(outList);
 #endif
 }
 
@@ -211,51 +154,13 @@ int getAcceptedUpdates(lineList* outList, const char * serverUrl, const char * m
 
 int applyUpdates(lineList* list)
 {
-	char * command = NULL;
-	int i;
-	int remainingBuf;
-	int commandResponse;
-	lineList commandOutput;	
-	char * flattenedOutput = NULL;
-	char * temp = NULL;
-
-	memset(&commandOutput, 0, sizeof(lineList));
-
-#if defined PACKAGE_MANAGER_APT
-	command = "apt-get -y -o DPkg::Options::\\=--force-confold install ";
+#if defined PACKAGE_MANAGER_APTGET
+	return applyUpdatesAptGet(list);
 #elif defined PACKAGE_MANAGER_YUM
-	//TODO: yum output will need further cleanup
-	command = "yum -y update ";
-#elif defined PACKAGE_MANAGER_WINDOWS
-	// I don't think there is a command that will do this under windows.
-	// This will probably need to be broken out into a seperate function.
-#else
-	//something to break compilation if no package manager is defined
-	);
+	return applyUpdatesYum(list);
+#elif defined PACKAGE_MANAGER_WUAAPI
+	return applyUpdatesWuaApi(list);
 #endif
-
-	flattenedOutput = flattenStringList(list, ' ');
-	temp = malloc(sizeof(char) * (strlen(command) + strlen(flattenedOutput) + 5));
-	sprintf(temp, "%s%s 2>&1", command, flattenedOutput);
-	command = temp;
-
-	free(flattenedOutput);
-	flattenedOutput = NULL;
-
-	mySystem(command, &commandOutput, &commandResponse);
-
-	free(command);
-	command = NULL;
-	
-	if(commandResponse != 0)
-	{
-		flattenedOutput = flattenStringList(&commandOutput, ' ');
-		fprintf(stderr, "Error in applyUpdates: Package manager failed to apply updates:\n%s", flattenedOutput);
-		free(flattenedOutput);
-		exit(1);
-	}
-
-	clearStringList(&commandOutput);
 }
 
 int reportAvailableUpdates(lineList* list, const char * serverUrl, const char * myHostname)
@@ -323,7 +228,7 @@ void readConfigFile(forestConfig * config)
 	char confValue[BUFFER_SIZE];
 	char * cleanupPtr = NULL;
 
-	configFile = fopen("/etc/forest-client.conf", "r");
+	configFile = fopen(CONFIG_FILE_PATH, "r");
 	while(response)
 	{
 		response = fgets(line, BUFFER_SIZE, configFile);
@@ -377,56 +282,14 @@ void readConfigFile(forestConfig * config)
 	}
 }
 
-// adds newItem to the end of list
-void pushToStringList(lineList* list, char * newItem)
-{
-	char** tempList = NULL;
-	int i;
 
-	// malloc new list with enough space for old list plus newItem
-	tempList = malloc(sizeof(char*) * (list->lineCount + 1));
-
-	// copy pointers from old list to new list
-	for(i = 0; i < list->lineCount; i++)
-	{
-		tempList[i] = list->lines[i];
-	}
-
-	// malloc new item
-	tempList[list->lineCount] = malloc(sizeof(char) * (strlen(newItem) + 1));
-
-	// copy new item into list
-	strcpy(tempList[list->lineCount], newItem);
-
-	// free the old list
-	free(list->lines);
-
-	// assign the new list in the old one's place
-	list->lines = tempList;
-
-	// increment the line count
-	list->lineCount++;
-}
-
-// empties list, freeing memory used by lines and reseting lineCount to 0
-void clearStringList(lineList * list)
-{
-	int i;
-
-	for(i = 0; i < list->lineCount; i++)
-	{
-		free(list->lines[i]);
-	}
-
-	list->lineCount = 0;
-}
 
 // Works like system(), but returns lines of stdout output in outList and the 
 // command's return value in returnVal.
 void mySystem(const char* command, lineList* outList, int * returnVal)
 {
 	FILE * pipe;
-	char line[MAX_INPUT_LINE_SIZE];
+	char line[BUFFER_SIZE];
 	char * response = NULL;
 	//int lineLen = 0;
 	char * newlinePtr = NULL;
@@ -438,7 +301,7 @@ void mySystem(const char* command, lineList* outList, int * returnVal)
 	do
 	{
 		// read a line
-		response = fgets(line, MAX_INPUT_LINE_SIZE, pipe);
+		response = fgets(line, BUFFER_SIZE, pipe);
 
 		// The last character that fgets reads may be a newline, but we
 		// don't want newlines in our list, so remove it.
@@ -456,28 +319,4 @@ void mySystem(const char* command, lineList* outList, int * returnVal)
 	*returnVal = pclose(pipe);
 }
 
-// Returns the strings in list as a single string seperated by seperator.
-// Every line in the list will be followed by a seperator, including the last line.
-// The list is malloc'd and so must be free'd when finished.
-char * flattenStringList(lineList * list, char seperator)
-{
-	char * retval = NULL;
-	int i;
-	int sizeCounter = 0;
 
-	for(i = 0; i < list->lineCount; i++)
-	{
-		sizeCounter += strlen(list->lines[i]) + 1;
-	}
-
-	retval = malloc(sizeof(char) * sizeCounter);
-	retval[0] = '\0';
-
-	for(i = 0; i < list->lineCount; i++)
-	{
-		strcat(retval, list->lines[i]);
-		strncat(retval, &seperator, 1);
-	}
-
-	return retval;
-}
