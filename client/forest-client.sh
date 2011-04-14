@@ -24,6 +24,10 @@
 # You can contact me at http://www.njcrawford.com/contact
 ###############################################################################
 
+# no undeclared variables!
+set -u
+
+
 # set environment stuff
 # PATH should contain at least /usr/local/sbin, /usr/sbin and /sbin
 PATH=$PATH:/usr/local/sbin:/usr/sbin:/sbin
@@ -106,7 +110,15 @@ is_reboot_needed()
 		# I assume that a kernel is the only thing that would require a
 		# reboot. There could be other things that need it as well.
 		running_kernel=`uname -a | cut -d " " -f 3`
-		newest_kernel=`yum -q list kernel | grep "installed" | awk -F" " '{ print $2 }' | sort -n -s | sed '$!d'`
+		newest_kernel=`yum -q list kernel 2>&1`
+		# filter out anything that's not installed
+		newest_kernel=`echo "$newest_kernel" | grep "installed"`
+		# cut out and keep version numbers
+		newest_kernel=`echo "$newest_kernel" | awk -F" " '{ print $2 }'`
+		# sort version numbers numerically
+		newest_kernel=`echo "$newest_kernel" | sort -n -s`
+		# don't remember what this does... maybe keep only the first line?
+		newest_kernel=`echo "$newest_kernel" | sed '$!d'`
 		if [ "x$running_kernel" != "x$newest_kernel"  ]; then
 			echo "true"
 		else
