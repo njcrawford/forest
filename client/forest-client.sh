@@ -158,15 +158,17 @@ trim_spaces()
 
 # default server url in case config file is missing
 server_url="http://forest/forest"
-# include config file
+# include config file if it exists
+if [ -f /etc/forest-client.conf ] ; then
 . /etc/forest-client.conf
+fi
 
 # build urls to use for posting and getting data
 post_url="$server_url/collect.php"
 accepted_url="$server_url/getaccepted.php?rpc_version=$rpc_version&system=`hostname`"
 
 # check for accepted updates and apply them
-accepted_updates=`curl --silent --show-error $accepted_url`
+accepted_updates=`curl --silent --show-error $accepted_url 2>&1`
 # quit here silently if curl can't connect
 if [ $? -ne 0 ]; then
 	exit 0
@@ -228,7 +230,7 @@ formatted_reboot="reboot_required=`is_reboot_needed`"
 formatted_reboot_attempted="reboot_attempted=$do_reboot"
 formatted_rpc_version="rpc_version=$rpc_version"
 
-curldata=`curl --silent --show-error --data "$formatted_rpc_version" --data "$formatted_system_name" --data "$formatted_updates" --data "$formatted_reboot" --data "$formatted_reboot_attempted" $post_url`
+curldata=`curl --silent --show-error --data "$formatted_rpc_version" --data "$formatted_system_name" --data "$formatted_updates" --data "$formatted_reboot" --data "$formatted_reboot_attempted" $post_url 2>&1`
 
 # filter out success messege and return value of grep to avoid cron warning messages
 if [ "x$1" = "x--cron" ]; then
