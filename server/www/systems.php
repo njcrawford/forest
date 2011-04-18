@@ -90,7 +90,7 @@ if(isset($_GET['system_id']))
 ?>
 	<ul>
 <?php
-	$updates_result = mysql_query("select updates.package_name, updates.version, if(update_locks.package_name is null, 0, 1) as locked, updates.accepted from updates left outer join (update_locks) on (updates.system_id = update_locks.system_id and updates.package_name = update_locks.package_name) where updates.system_id = '" . $systems_row['id'] . "'");
+	$updates_result = mysql_query("select updates.package_name, updates.version, if(update_locks.package_name is null, 0, 1) as locked, updates.accepted from updates left outer join (update_locks) on (updates.system_id = update_locks.system_id and updates.package_name = update_locks.package_name) where updates.system_id = '" . $systems_row['id'] . "' order by updates.package_name");
 	for($updates_row = mysql_fetch_assoc($updates_result); $updates_row; $updates_row = mysql_fetch_assoc($updates_result))
 	{
 		if($updates_row['accepted'] == 1)
