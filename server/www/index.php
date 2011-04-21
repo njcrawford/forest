@@ -122,7 +122,7 @@ if(count($systems) > 0)
 {
 ?>
 <br />
-<h3>Summary of available updates</h3>
+<h3>Updates available by system</h3>
 <br />
 <table>
 <tr><th rowspan="2">System Name</th><th colspan="3">Updates       </th><th rowspan="2">Reboot<br />Required</th><th rowspan="2">Last Checkin</th></tr>
