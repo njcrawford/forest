@@ -45,7 +45,7 @@ $systems_row['packages'] = $systems_row2['packages'];
 $systems_row['accepted_count'] = $systems_row2['accepted_count'];
 $systems_row['locked_count'] = $systems_row2['locked_count'];
 
-$page_title = "Updates for " . $systems_row['name'] ?>;
+$page_title = "Updates for " . $systems_row['name'];
 require "inc/header.php";
 
 ?>
