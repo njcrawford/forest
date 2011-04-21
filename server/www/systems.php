@@ -24,11 +24,29 @@ You can contact me at http://www.njcrawford.com/contact
 */
 
 require "inc/check-login.php";
-
-$page_title = "Updates by system";
-require "inc/header.php";
-
 require "inc/db.php";
+
+$systems_result = mysql_query("select * from systems where id = '" . mysql_real_escape_string($_GET['system_id']) . "'");
+$systems_row = mysql_fetch_assoc($systems_result);
+
+$systems_result = mysql_query("select 
+	updates.system_id, 
+	count(updates.package_name) as packages, 
+	sum(updates.accepted) as accepted_count, 
+	sum(if(update_locks.package_name is null, 0, 1)) as locked_count
+	from updates 
+	left outer join (update_locks) on 
+	(
+		updates.package_name = update_locks.package_name and 
+		updates.system_id = update_locks.system_id
+	) where updates.system_id = '" . $systems_row['id'] . "'");
+$systems_row2 = mysql_fetch_assoc($systems_result);
+$systems_row['packages'] = $systems_row2['packages'];
+$systems_row['accepted_count'] = $systems_row2['accepted_count'];
+$systems_row['locked_count'] = $systems_row2['locked_count'];
+
+$page_title = "Updates for " . $systems_row['name'] ?>;
+require "inc/header.php";
 
 ?>
 <a href="./">Back to summary page</a><br />
@@ -38,25 +56,6 @@ if(isset($_GET['system_id']))
 ?>
 <a href="edit-system.php?system_id=<?php echo $_GET['system_id'] ?>">Edit system</a><br />
 <?php
-	$systems_result = mysql_query("select * from systems where id = '" . mysql_real_escape_string($_GET['system_id']) . "'");
-	$systems_row = mysql_fetch_assoc($systems_result);
-	
-	$systems_result = mysql_query("select 
-		updates.system_id, 
-		count(updates.package_name) as packages, 
-		sum(updates.accepted) as accepted_count, 
-		sum(if(update_locks.package_name is null, 0, 1)) as locked_count
-		from updates 
-		left outer join (update_locks) on 
-		(
-			updates.package_name = update_locks.package_name and 
-			updates.system_id = update_locks.system_id
-		) where updates.system_id = '" . $systems_row['id'] . "'");
-	$systems_row2 = mysql_fetch_assoc($systems_result);
-	$systems_row['packages'] = $systems_row2['packages'];
-	$systems_row['accepted_count'] = $systems_row2['accepted_count'];
-	$systems_row['locked_count'] = $systems_row2['locked_count'];
-
 	if($systems_row['reboot_required'] == null)
 	{
 		$nice_reboot = "Unknown";

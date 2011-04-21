@@ -24,11 +24,10 @@ You can contact me at http://www.njcrawford.com/contact
 */
 
 require "inc/check-login.php";
-
-$page_title = "Updates by package name";
-require "inc/header.php";
-
 require "inc/db.php";
+
+$page_title = "Systems with updates for " . $_GET['name'];
+require "inc/header.php";
 
 ?>
 <a href="./">Back to summary page</a><br />
