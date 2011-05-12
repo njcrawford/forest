@@ -69,7 +69,7 @@ get_available_updates ()
 			#filter out wait messages when other instances of yum are running
 			updates=`echo "$updates" | grep -v "^Another app\|^Existing lock"`
 			#filter out HTTP errors when a mirror is down
-			updates=`echo "$updates" | grep "HTTP Error\|^Trying other mirror.$"`
+			updates=`echo "$updates" | grep -v "HTTP Error\|^Trying other mirror.$"`
 			#keep everything up to the first space (package name and arch)
 			updates=`echo "$updates" | cut -d " " -f 1`
 			#remove the architecture (.i386, .x86_64, etc)
@@ -91,6 +91,7 @@ spaces_to_commas ()
 }
 
 # Encodes special HTML characters
+# Only handles the few problem characters I've run across in testing.
 encode_for_html ()
 {
 	echo $1 | sed 's/+/%2b/g'
