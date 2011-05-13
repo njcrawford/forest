@@ -87,14 +87,14 @@ get_available_updates ()
 # Replaces spaces with commas
 spaces_to_commas ()
 {
-	echo $1 | sed 's/ \+/,/g'
+	echo ${1} | sed 's/ \+/,/g'
 }
 
 # Encodes special HTML characters
 # Only handles the few problem characters I've run across in testing.
 encode_for_html ()
 {
-	echo $1 | sed 's/+/%2b/g'
+	echo ${1} | sed 's/+/%2b/g'
 }
 
 # Returns true if a reboot is needed, false otherwise
@@ -134,14 +134,14 @@ is_reboot_needed()
 do_updates()
 {
 	if [ "x${current_distro}" = "xubuntu" ]; then
-		results=`apt-get -y -o DPkg::Options::\=--force-confold install $1 2>&1`
+		results=`apt-get -y -o DPkg::Options::\=--force-confold install ${1} 2>&1`
 		if [ $? -ne 0 ]; then
 			echo "apt-get install did not execute successfully"
 			echo "${results}"
 			exit 1
 		fi
 	elif [ "x${current_distro}" = "xcentos" ]; then
-		results=`yum -y update $1 2>&1`
+		results=`yum -y update ${1} 2>&1`
 		if [ $? -ne 0 ]; then
 			echo "yum update did not execute successfully"
 			echo "${results}"
@@ -153,7 +153,7 @@ do_updates()
 # Trims spaces from beginning and end
 trim_spaces()
 {
-	echo $1 | sed 's/^ *\(.*\) *$/\1/'
+	echo ${1} | sed 's/^ *\(.*\) *$/\1/'
 }
 
 # default server url in case config file is missing
@@ -233,7 +233,7 @@ formatted_rpc_version="rpc_version=${rpc_version}"
 curldata=`curl --silent --show-error --data "${formatted_rpc_version}" --data "${formatted_system_name}" --data "${formatted_updates}" --data "${formatted_reboot}" --data "${formatted_reboot_attempted}" ${post_url} 2>&1`
 
 # filter out success messege and return value of grep to avoid cron warning messages
-if [ "x$1" = "x--cron" ]; then
+if [ "x${1-none}" = "x--cron" ]; then
 	curldata=`echo "${curldata}" | grep -v "data_ok"`
 fi
 
