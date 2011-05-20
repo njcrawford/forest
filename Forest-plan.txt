@@ -1,0 +1,36 @@
+Forest plan
+System = A computer.
+Client = A computer that reports back to the server. Generally many per network.
+Server = Computer forest-server is installed on. Generally one per network. May also be a client. Hosts the web interface.
+Update = A new version of software that is ready to be installed on a system. May be a security, bugfix or feature update.
+AWOL = Absent With Out Leave - The system has not reported to the server in the configured amount of time.
+Accepted = A reported item that an administrator has approved the client to take action on. (update or reboot)
+
+Phase 1: Proof of concept
+Client can report updates to server
+Web interface can display updates for all systems, sorted by system name and by update name
+
+Phase 2: Fill out features
+Client:
+Can apply updates that are marked as accepted on server.
+Can report that a reboot is needed or not.
+Can reboot a system if reboot is accepted on server.
+Server:
+Main page displays reboot status for each system. (Yes, No or Unknown)
+Main page can display systems sorted by importance - based on the following: number of updates available and/or accepted, system reboot status, system AWOL status.
+Positive importance:
+	1. AWOL, unless ignore AWOL is set (offline system)
+	2. Total updates available (needs the most attention)
+	3. Locked updates (needs manual attention)
+	4. Reboot required
+Negative importance:
+	1. AWOL and ignore AWOL is set (offline system that's not critical - update list is likely out of date anyway)
+Updates can be "locked" so that they can not be accepted.
+User authentication by user list in configuration file or LDAP server, with DB planned. (table with users and passwords should due)
+Options for each system can be set. (ignore AWOL, allow reboot)
+The server's list of updates for a system can be cleared with a button, for diagnostic purposes.
+
+Phase 3: Security
+Client needs to only install updates - some backends (apt-get) will install any package name it gets
+Client needs to be sure it's reporting only to the configured server - SSL, possibly tokens of some kind to ID server? (similar to puppet)
+Server needs to be sure it's talking to the client it thinks its talking to - SSL, tokens of some kind to ID client?
