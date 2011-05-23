@@ -57,8 +57,8 @@ if(isset($_GET['name']))
 		}
 ?>
 			<li>
-				<input type="checkbox" <? echo $nice_checked ?>>
-				<a href="systems.php?name=<? echo $systems_row['name'] ?>"><? echo $systems_row['name'] ?></a>
+				<input type="checkbox" <?php echo $nice_checked ?>>
+				<a href="systems.php?name=<?php echo $systems_row['name'] ?>"><?php echo $systems_row['name'] ?></a>
 <?php
 		if($updates_row['locked'] == 1)
 		{
@@ -68,10 +68,10 @@ if(isset($_GET['name']))
 		{
 ?>
 				<form method="post" action="mark-accepted-updates.php">
-					<input type="hidden" name="accepted" value="<? echo $nice_accepted_value ?>">
-					<input type="hidden" name="system_id" value="<? echo $updates_row['system_id'] ?>">
-					<input type="hidden" name="package_name" value="<? echo $updates_row['package_name'] ?>">
-					<input type="submit" value="<? echo $nice_button_name ?>">
+					<input type="hidden" name="accepted" value="<?php echo $nice_accepted_value ?>">
+					<input type="hidden" name="system_id" value="<?php echo $updates_row['system_id'] ?>">
+					<input type="hidden" name="package_name" value="<?php echo $updates_row['package_name'] ?>">
+					<input type="submit" value="<?php echo $nice_button_name ?>">
 				</form>
 <?php
 		}
