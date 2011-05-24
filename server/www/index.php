@@ -150,7 +150,7 @@ if(count($systems) > 0)
 			<form method="post" action="mark-accepted-updates.php">
 				<input type="hidden" name="accepted" value="true">
 				<input type="hidden" name="system_id" value="<?php echo $this_system['id'] ?>">
-				<input type="submit" value="Accept all">
+				<input type="submit" value="Accept all" class="acceptupdates">
 			</form>
 <?php
 		}

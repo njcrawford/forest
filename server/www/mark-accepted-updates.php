@@ -34,13 +34,15 @@ function set_accepted($system_id, $package_name, $accepted, $die_if_locked)
 	$lock_result = mysql_query($lock_query);
 	if(!$lock_result)
 	{
-		die("Mysql error: " . mysql_error());
+		//die("Mysql error: " . mysql_error());
+		return false;
 	}
 	if(mysql_num_rows($lock_result) == 1)
 	{
 		if($die_if_locked)
 		{
-			die("This package is locked");
+			//die("This package is locked");
+			return false;
 		}
 		else
 		{
@@ -59,17 +61,20 @@ function set_accepted($system_id, $package_name, $accepted, $die_if_locked)
 // make sure the basic required POST stuff is here
 if(empty($_POST['system_id']) && empty($_POST['package_name']))
 {
-	die("No package or system specified");
+	//die("No package or system specified");
+	echo "0";
 }
-if(!isset($_POST['accepted']))
+if(!isset($_POST['action']))
 {
-	die("No accepted value");
+	//die("No accepted value");
+	echo "0";
 }
-elseif($_POST['accepted'] != "true" && $_POST['accepted'] != "false")
+elseif($_POST['action'] != "accept" && $_POST['action'] != "reject")
 {
-	die("Invalid accepted value");
+	//die("Invalid accepted value");
+	echo "0";
 }
-$nice_accepted = ($_POST['accepted'] == "true") ? 1 : 0;
+$nice_accepted = ($_POST['action'] == "accept") ? 1 : 0;
 
 if(!empty($_POST['system_id']) && !empty($_POST['package_name']))
 {
@@ -101,12 +106,28 @@ else
 	}
 }
 
+$is_ajax = (isset($_POST['ajax']) && $_POST['ajax'] == "true");
+
 if($result)
 {
-	redirect_back();
+	if($is_ajax)
+	{
+		echo "1";
+	}
+	else
+	{
+		redirect_back();
+	}
 }
 else
 {
-	echo "Error: " . mysql_error();
+	if($is_ajax)
+	{
+		echo "0";
+	}
+	else
+	{
+		echo "Error: " . mysql_error();
+	}
 }
 ?>

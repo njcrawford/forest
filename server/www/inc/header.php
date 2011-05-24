@@ -34,3 +34,5 @@ if(!isset($page_title))
 <link rel="stylesheet" type="text/css" href="forest.css" />
 </head>
 <body>
+<script src="jquery/jquery-1.6.1.min.js"></script>
+<script src="forest.js"></script>
