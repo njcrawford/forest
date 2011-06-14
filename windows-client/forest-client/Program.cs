@@ -25,13 +25,13 @@ namespace forest_client
                 if (update.AutoSelectOnWebSites)
                 {
                     if(update.KBArticleIDs.Count > 0)
-		    {
-			updates.Add("KB" + update.KBArticleIDs[0]);
-		    }
-			else
-			{
-				updates.Add(update.Title);
-			}
+		            {
+			        updates.Add("KB" + update.KBArticleIDs[0]);
+		            }
+			        else
+			        {
+				        updates.Add(update.Title);
+			        }
                 }
             }
         }
@@ -105,7 +105,15 @@ namespace forest_client
                 settings.save();
             }
             Console.WriteLine("Searching for available updates...");
-            getAvailableUpdates();
+            try
+            {
+                getAvailableUpdates();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error: " + ex.Message);
+                Environment.Exit(20);
+            }
             /*foreach (string s in updates)
             {
                 Console.WriteLine(s);

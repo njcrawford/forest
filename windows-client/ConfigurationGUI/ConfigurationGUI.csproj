@@ -30,7 +30,7 @@
   <ItemGroup>
     <Reference Include="IniFile, Version=1.2.2.1, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\windows-client\IniFile.dll</HintPath>
+      <HintPath>..\forest-client\IniFile.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
