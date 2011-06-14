@@ -43,10 +43,10 @@ Section "Forest Client for Windows (required)"
   SetOutPath $INSTDIR
   
   ; Put file there
-  File "forest-client.exe"
-  File "Interop.WUApiLib.dll"
-  File "IniFile.dll"
-  File "ConfigurationGUI.exe"
+  File "forest-client\bin\Release\forest-client.exe"
+  File "forest-client\bin\Release\Interop.WUApiLib.dll"
+  File "forest-client\bin\Release\IniFile.dll"
+  File "ConfigurationGUI\bin\Release\ConfigurationGUI.exe"
   
   ; Write the installation path into the registry
   WriteRegStr HKLM "SOFTWARE\Forest Client" "Install_Dir" "$INSTDIR"

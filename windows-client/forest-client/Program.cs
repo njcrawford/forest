@@ -112,7 +112,7 @@ namespace forest_client
             catch (Exception ex)
             {
                 Console.WriteLine("Error: " + ex.Message);
-                Environment.Exit(10);
+                Environment.Exit(20);
             }
             /*foreach (string s in updates)
             {
