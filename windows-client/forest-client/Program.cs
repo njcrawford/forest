@@ -45,6 +45,8 @@ namespace forest_client
             // Create POST data and convert it to a byte array.
             string postData = "rpc_version=" + rpcVersion;
             postData += "&system_name=" + System.Environment.MachineName.ToLower();
+            postData += "&client_can_apply_updates=false"; // this client can not yet apply updates
+            postData += "&client_can_apply_reboot=false"; // this client can not yet reboot systems
             if (updates.Count > 0)
             {
                 postData += "&available_updates=";

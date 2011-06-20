@@ -124,14 +124,33 @@ if($reboot_required == "'1'" && !empty($_POST['reboot_attempted']) && $_POST['re
 {
 	$reboot_required = "'0'";
 }
-// we want to update the reboot_required flag, even if it is null
-// reboot_required is already escaped
+// We want to update the reboot_required flag, even if it is null
+// Note: reboot_required is already escaped
 $query = "update systems set reboot_required = " . $reboot_required;
 // reset the accepted flag if the system no longer needs a reboot, or a reboot was attempted
 if($reboot_required != "'1'" || (!empty($_POST['reboot_attempted']) && $_POST['reboot_attempted'] == "true"))
 {
 	$query .= ", reboot_accepted = '0'";
 }
+//TODO: Change the DB so this query will actually work
+//$query .= ", can_apply_updates = ";
+//if(!empty($_POST['client_can_apply_updates']) && $_POST['client_can_apply_updates'] == "true")
+//{
+//	$query .= "'1'";
+//}
+//else
+//{
+//	$query .= "'0'";
+//}
+//$query .= ", can_apply_updates = ";
+//if(!empty($_POST['client_can_apply_reboot']) && $_POST['client_can_apply_reboot'] == "true")
+//{
+//	$query .= "'1'";
+//}
+//else
+//{
+//	$query .= "'0'";
+//}
 $query .= " where id = '" . $system_id . "'";
 
 mysql_query($query);

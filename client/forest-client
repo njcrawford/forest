@@ -230,7 +230,7 @@ formatted_reboot="reboot_required=`is_reboot_needed`"
 formatted_reboot_attempted="reboot_attempted=${do_reboot}"
 formatted_rpc_version="rpc_version=${rpc_version}"
 
-curldata=`curl --silent --show-error --data "${formatted_rpc_version}" --data "${formatted_system_name}" --data "${formatted_updates}" --data "${formatted_reboot}" --data "${formatted_reboot_attempted}" ${post_url} 2>&1`
+curldata=`curl --silent --show-error --data "${formatted_rpc_version}" --data "${formatted_system_name}" --data "client_can_apply_updates=true" --data "client_can_apply_reboot=true" --data "${formatted_updates}" --data "${formatted_reboot}" --data "${formatted_reboot_attempted}" ${post_url} 2>&1`
 
 # filter out success messege and return value of grep to avoid cron warning messages
 if [ "x${1-none}" = "x--cron" ]; then
