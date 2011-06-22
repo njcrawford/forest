@@ -42,6 +42,22 @@ elseif($_POST['accepted'] != "true" && $_POST['accepted'] != "false")
 {
 	die("Invalid accepted value");
 }
+
+$checks_query = "select allow_reboot, can_apply_reboot from systems where id = '" . mysql_real_escape_string($_POST['system_id']) . "'";
+$checks_result = mysql_query($checks_query);
+$checks_row = mysql_fetch_assoc($checks_result);
+
+// make sure this client is allowed to reboot
+if($checks_row['allow_reboot'] != 1)
+{
+	die("System is not allowed to reboot");
+}
+// make sure this client is able to reboot
+$checks_row['can_apply_updates'] != 1)
+{
+	die("Client is not capable of rebooting");
+}
+
 $nice_accepted = ($_POST['accepted'] == "true") ? 1 : 0;
 $query = "update systems set reboot_accepted = '" . $nice_accepted . "' where id = '" . mysql_real_escape_string($_POST['system_id']) . "'";
 

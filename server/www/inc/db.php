@@ -26,7 +26,7 @@ You can contact me at http://www.njcrawford.com/contact
 require "config-file.php";
 
 // Defines
-define("DB_VERSION", 2);
+define("DB_VERSION", 3);
 
 mysql_connect($forest_config['db_server'], $forest_config['db_user'], $forest_config['db_password']) or die("Could not connect to DB");
 mysql_select_db($forest_config['db_name']) or die("Could not select DB");

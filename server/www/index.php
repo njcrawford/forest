@@ -48,6 +48,8 @@ $systems_result = mysql_query(
         ignore_awol,
         reboot_accepted,
         allow_reboot,
+	can_apply_updates,
+	can_apply_reboot,
         sum(locked) as locked_count
     from systems 
         left join 
@@ -144,7 +146,7 @@ if(count($systems) > 0)
 		<td>
 			<?php echo $this_system['packages'] ?>
 <?php
-		if($this_system['packages'] > 0 && ($this_system['packages'] != $this_system['accepted_count']))
+		if($this_system['packages'] > 0 && ($this_system['packages'] != $this_system['accepted_count']) && $this_system['can_apply_updates'] == 1)
 		{
 ?>
 			<form method="post" action="mark-accepted-updates.php">
@@ -161,7 +163,7 @@ if(count($systems) > 0)
 		<td<?php echo $nice_reboot_class ?>>
 			<?php echo $this_system['reboot_required_text'] ?>
 <?php
-		if($this_system['reboot_required'] == 1 && $this_system['allow_reboot'] == 1)
+		if($this_system['reboot_required'] == 1 && $this_system['allow_reboot'] == 1 && $this_system['can_apply_reboot'] == 1)
 		{
 			if($this_system['reboot_accepted'] != 1)
 			{

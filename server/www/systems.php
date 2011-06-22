@@ -76,7 +76,9 @@ if(isset($_GET['system_id']))
 	<a href="clear_updates.php?system_id=<?php echo $systems_row['id'] ?>">Clear Updates</a><br />
 	<a href="delete_system.php?system_id=<?php echo $systems_row['id'] ?>">Delete system</a><br />
 <?php
-	if(($systems_row['packages'] - $systems_row['accepted_count'] - $systems_row['locked_count']) > 0 && (($systems_row['packages'] - $systems_row['locked_count']) != $systems_row['accepted_count']))
+	if(($systems_row['packages'] - $systems_row['accepted_count'] - $systems_row['locked_count']) > 0 && 
+		(($systems_row['packages'] - $systems_row['locked_count']) != $systems_row['accepted_count']) && 
+		$systems_row['can_apply_updates'] == 1) 
 	{
 ?>
 		<form method="post" action="mark-accepted-updates.php">

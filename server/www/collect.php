@@ -132,25 +132,25 @@ if($reboot_required != "'1'" || (!empty($_POST['reboot_attempted']) && $_POST['r
 {
 	$query .= ", reboot_accepted = '0'";
 }
-//TODO: Change the DB so this query will actually work
-//$query .= ", can_apply_updates = ";
-//if(!empty($_POST['client_can_apply_updates']) && $_POST['client_can_apply_updates'] == "true")
-//{
-//	$query .= "'1'";
-//}
-//else
-//{
-//	$query .= "'0'";
-//}
-//$query .= ", can_apply_updates = ";
-//if(!empty($_POST['client_can_apply_reboot']) && $_POST['client_can_apply_reboot'] == "true")
-//{
-//	$query .= "'1'";
-//}
-//else
-//{
-//	$query .= "'0'";
-//}
+// Collect reported client capabilities, if present
+$query .= ", can_apply_updates = ";
+if(!empty($_POST['client_can_apply_updates']) && $_POST['client_can_apply_updates'] == "true")
+{
+	$query .= "'1'";
+}
+else
+{
+	$query .= "'0'";
+}
+$query .= ", can_apply_reboot = ";
+if(!empty($_POST['client_can_apply_reboot']) && $_POST['client_can_apply_reboot'] == "true")
+{
+	$query .= "'1'";
+}
+else
+{
+	$query .= "'0'";
+}
 $query .= " where id = '" . $system_id . "'";
 
 mysql_query($query);
