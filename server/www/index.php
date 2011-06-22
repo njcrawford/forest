@@ -82,8 +82,8 @@ order by
     reboot_required desc, 
     last_checkin"
 );
-$systems_row = mysql_fetch_assoc($systems_result);
-while($systems_row)
+
+while($systems_row = mysql_fetch_assoc($systems_result); $systems_row; $systems_row = mysql_fetch_assoc($systems_result))
 {
 	// Copy this row into systems array, and translate variables as needed
 	$systems[$systems_row['id']] = $systems_row;
@@ -116,8 +116,6 @@ while($systems_row)
 
 	$accepted_temp = isset($systems[$systems_row['id']]['accepted_count']) ? $systems[$systems_row['id']]['accepted_count'] : 0;
 	$systems[$systems_row['id']]['packages'] -= $systems[$systems_row['id']]['locked_count'] + $accepted_temp;
-
-	$systems_row = mysql_fetch_assoc($systems_result);
 }
 
 if(count($systems) > 0)
@@ -204,32 +202,32 @@ if(count($systems) > 0)
 <tr><th rowspan="2">Name</th><th colspan="3">Systems       </th><th rowspan="2" style="width:4em">&nbsp;</th></tr>
 <tr>                         <th>Available</th><th>Accepted</th><th>Locked</th></tr>
 <?php
-$systems_result = mysql_query("select updates.package_name, 
+$updates_result = mysql_query("select updates.package_name, 
 count(updates.system_id) as systems, 
 sum(accepted) as accepted_count, 
 sum(if(update_locks.package_name is not null, 1, 0)) as locked_count 
 from updates left join (update_locks) 
 on (updates.package_name = update_locks.package_name and updates.system_id = update_locks.system_id) 
 group by updates.package_name");
-$systems_row = mysql_fetch_assoc($systems_result);
-while($systems_row)
+for($updates_row = mysql_fetch_assoc($updates_result); $updates_row; $updates_row = mysql_fetch_assoc($updates_result))
 {
 ?>
         <tr>
 		<td class="name">
-			<a href="packages.php?name=<?php echo $systems_row['package_name'] ?>"><?php echo $systems_row['package_name'] ?></a>
+			<a href="packages.php?name=<?php echo $updates_row['package_name'] ?>"><?php echo $updates_row['package_name'] ?></a>
 		</td>
-		<td><?php echo ($systems_row['systems'] - $systems_row['accepted_count'] - $systems_row['locked_count']) ?></td>
-		<td><?php echo $systems_row['accepted_count'] ?></td>
-		<td><?php echo $systems_row['locked_count'] ?></td>
+		<td><?php echo ($updates_row['systems'] - $updates_row['accepted_count'] - $updates_row['locked_count']) ?></td>
+		<td><?php echo $updates_row['accepted_count'] ?></td>
+		<td><?php echo $updates_row['locked_count'] ?></td>
 		<td>
 <?php
-	if(($systems_row['systems'] - $systems_row['accepted_count'] - $systems_row['locked_count']) > 0 && $systems_row['systems'] != $systems_row['accepted_count'])
+	if(($updates_row['systems'] - $updates_row['accepted_count'] - $updates_row['locked_count']) > 0 && 
+		($updates_row['systems'] != $updates_row['accepted_count']))
 	{
 ?>
 			<form method="post" action="mark-accepted-updates.php">
 				<input type="hidden" name="accepted" value="true">
-				<input type="hidden" name="package_name" value="<?php echo $systems_row['package_name'] ?>">
+				<input type="hidden" name="package_name" value="<?php echo $updates_row['package_name'] ?>">
 				<input type="submit" value="Accept all">
 			</form>
 <?php
@@ -242,8 +240,6 @@ while($systems_row)
 		</td>
 	</tr>
 <?php
-
-        $systems_row = mysql_fetch_assoc($systems_result);
 }
 ?>
 </table>

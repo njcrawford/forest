@@ -57,15 +57,24 @@ if(isset($_GET['name']))
 		}
 ?>
 			<li>
+<?php
+		if($systems_row['can_apply_updates'] == 1)
+		{
+?>
 				<input type="checkbox" <?php echo $nice_checked ?>>
+<?php
+		}
+?>
 				<a href="systems.php?name=<?php echo $systems_row['name'] ?>"><?php echo $systems_row['name'] ?></a>
 <?php
-		if($updates_row['locked'] == 1)
+		if($systems_row['can_apply_updates'] == 1)
 		{
-			echo " (locked)";
-		}
-		else
-		{
+			if($updates_row['locked'] == 1)
+			{
+				echo " (locked)";
+			}
+			else
+			{
 ?>
 				<form method="post" action="mark-accepted-updates.php">
 					<input type="hidden" name="accepted" value="<?php echo $nice_accepted_value ?>">
@@ -74,6 +83,7 @@ if(isset($_GET['name']))
 					<input type="submit" value="<?php echo $nice_button_name ?>">
 				</form>
 <?php
+			}
 		}
 ?>
 				<?php echo $updates_row['version'] ?>
