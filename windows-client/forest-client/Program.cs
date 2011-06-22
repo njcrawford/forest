@@ -13,6 +13,7 @@ namespace forest_client
         const int rpcVersion = 2;
 
         static List<string> updates = new List<string>();
+        static List<string> versions = new List<string>();
         static NJCrawford.IniFile settings = new NJCrawford.IniFile("forest-client.conf");
 
         static void getAvailableUpdates()
@@ -24,14 +25,8 @@ namespace forest_client
             {
                 if (update.AutoSelectOnWebSites)
                 {
-                    if(update.KBArticleIDs.Count > 0)
-		            {
-			        updates.Add("KB" + update.KBArticleIDs[0]);
-		            }
-			        else
-			        {
-				        updates.Add(update.Title);
-			        }
+                    updates.Add("KB" + update.KBArticleIDs[0]);
+		    versions.Add(update.Title);
                 }
             }
         }
@@ -52,6 +47,21 @@ namespace forest_client
                 postData += "&available_updates=";
                 bool isFirst = true;
                 foreach (string s in updates)
+                {
+                    if (isFirst)
+                    {
+                        isFirst = false;
+                    }
+                    else
+                    {
+                        postData += ",";
+                    }
+                    postData += s;
+                }
+
+                postData += "&versions=";
+                bool isFirst = true;
+                foreach (string s in versions)
                 {
                     if (isFirst)
                     {
