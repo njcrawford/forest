@@ -53,24 +53,56 @@ function upgrade_1_to_2()
 	}
 }
 
+function upgrade_2_to_3()
+{
+	$result = mysql_query("update settings set value = '3' where name = 'db_version'");
+	if(!$result)
+	{
+		die("Failed setting new db schema version\n");
+	}
+
+	$result = mysql_query("alter table systems add can_apply_updates tinyint(1) NOT NULL DEFAULT '0'");
+	if(!$result)
+	{
+		die("Failed to alter systems table\n");
+	}
+	$result = mysql_query("alter table systems add can_apply_reboot tinyint(1) NOT NULL DEFAULT '0'");
+	if(!$result)
+	{
+		die("Failed to alter systems table\n");
+	}
+}
+
 $result = mysql_query("select value from settings where name = 'db_version'");
 $row = mysql_fetch_assoc($result);
 $current_db_version = $row['value'];
 
-if(DB_VERSION == 2)
+if(DB_VERSION == 3)
 {
-	if($current_db_version == '1')
+	// Make sure it's something we can update before trying to update it
+	if($current_db_version > DB_VERSION)
+	{
+		die("The database is at schema version '" . $current_db_version . "', but this script expects less than '" . DB_VERSION . "'.\n";
+	}
+	if($current_db_version == DB_VERSION)
+	{
+		die("The database is already at schema version '" . DB_VERSION . "', no upgrades are needed.\n");
+	}
+
+	// do updates incrementally
+	if($current_db_version < 2)
 	{
 		upgrade_1_to_2();
-		echo "DB schema updated\n";
+		echo "DB schema updated to v2\n";
 	}
-	else
+	if($current_db_version < 3)
 	{
-		echo "This script does not know how to update DB schema version '" . $current_db_version . "' to version '" . DB_VERSION . "'\n";
+		upgrade_2_to_3();
+		echo "DB schema updated to v3\n";
 	}
 }
 else
 {
-	echo "This script has not been updated for DB schema version '" . DB_VERSION . "'\n";
+	echo "This script has not been updated for database schema version '" . DB_VERSION . "'\n";
 }
 ?>
