@@ -82,7 +82,7 @@ if(DB_VERSION == 3)
 	// Make sure it's something we can update before trying to update it
 	if($current_db_version > DB_VERSION)
 	{
-		die("The database is at schema version '" . $current_db_version . "', but this script expects less than '" . DB_VERSION . "'.\n";
+		die("The database is at schema version '" . $current_db_version . "', but this script expects less than '" . DB_VERSION . "'.\n");
 	}
 	if($current_db_version == DB_VERSION)
 	{
