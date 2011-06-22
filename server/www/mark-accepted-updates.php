@@ -48,6 +48,25 @@ function set_accepted($system_id, $package_name, $accepted, $die_if_locked)
 			return true;
 		}
 	}
+
+	// make sure the client can apply updates before trying to update it
+	$can_apply_updates_query = "select can_apply_updates from systems where id = '" . $system_id . "'";
+	$can_apply_updates_result = mysql_query($can_apply_updates_query);
+	$can_apply_updates_row = mysql_fetch_assoc($can_apply_updates_result);
+	// treat can_apply_updates the same as a lock for now
+	if($can_apply_updates_row['can_apply_updates'] != 1)
+	{
+		if($die_if_locked)
+		{
+			die("This client can not apply updates");
+		}
+		else
+		{
+			// this should be enough to fake a success
+			return true;
+		}
+	}
+	
 	$query = "update updates 
 		set accepted = '" . $accepted . "' 
 		where 

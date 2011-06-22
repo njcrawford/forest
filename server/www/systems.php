@@ -73,10 +73,17 @@ if(isset($_GET['system_id']))
 	Updates: <?php echo $systems_row['packages'] ?><br />
 	Reboot Needed: <?php echo $nice_reboot ?><br />
 	Last Check-in: <?php echo $systems_row['last_checkin'] ?><br />
+	Client capabilities:<br />
+	<ul>
+		<li>can_apply_updates: <?php echo $systems_row['can_apply_updates'] ?></li>
+		<li>can_apply_reboot: <?php echo $systems_row['can_apply_reboot'] ?></li>
+	</ul>
 	<a href="clear_updates.php?system_id=<?php echo $systems_row['id'] ?>">Clear Updates</a><br />
 	<a href="delete_system.php?system_id=<?php echo $systems_row['id'] ?>">Delete system</a><br />
 <?php
-	if(($systems_row['packages'] - $systems_row['accepted_count'] - $systems_row['locked_count']) > 0 && (($systems_row['packages'] - $systems_row['locked_count']) != $systems_row['accepted_count']))
+	if(($systems_row['packages'] - $systems_row['accepted_count'] - $systems_row['locked_count']) > 0 && 
+		(($systems_row['packages'] - $systems_row['locked_count']) != $systems_row['accepted_count']) && 
+		$systems_row['can_apply_updates'] == 1) 
 	{
 ?>
 		<form method="post" action="mark-accepted-updates.php">
@@ -106,12 +113,21 @@ if(isset($_GET['system_id']))
 		}
 ?>
 		<li>
+<?php
+		if($systems_row['can_apply_updates'] == 1)
+		{
+?>
 			<input type="checkbox" <?php echo $nice_checked ?>>
+<?php
+		}
+?>
 			<a href="packages.php?name=<?php echo $updates_row['package_name'] ?>"><?php echo $updates_row['package_name'] ?></a>
 			<?php echo $updates_row['version'] ?>
 <?php
-		if($updates_row['locked'] == 0)
+		if($systems_row['can_apply_updates'] == 1)
 		{
+			if($updates_row['locked'] == 0)
+			{
 ?>
 	                <form method="post" action="mark-accepted-updates.php">
 				<input type="hidden" name="accepted" value="<?php echo $nice_accepted_value ?>">
@@ -120,15 +136,15 @@ if(isset($_GET['system_id']))
 				<input type="submit" value="<?php echo $nice_button_name ?>">
 			</form>
 <?php
-		}
-		else
-		{
+			}
+			else
+			{
 ?>
 			(locked)
 <?php
+			}
 		}
 ?>
-			<?php echo $updates_row['version'] ?>
 		</li>
 <?php
 	}

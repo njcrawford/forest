@@ -41,7 +41,7 @@ if(isset($_GET['name']))
 	echo "<ul>";
 	for($updates_row = mysql_fetch_assoc($updates_result); $updates_row; $updates_row = mysql_fetch_assoc($updates_result))
 	{
-		$systems_result = mysql_query("select name from systems where id = '" . mysql_real_escape_string($updates_row['system_id']) . "'");
+		$systems_result = mysql_query("select name, can_apply_updates from systems where id = '" . mysql_real_escape_string($updates_row['system_id']) . "'");
 	        $systems_row = mysql_fetch_assoc($systems_result);
 		if($updates_row['accepted'] == 1)
 		{
@@ -57,15 +57,24 @@ if(isset($_GET['name']))
 		}
 ?>
 			<li>
+<?php
+		if($systems_row['can_apply_updates'] == 1)
+		{
+?>
 				<input type="checkbox" <?php echo $nice_checked ?>>
+<?php
+		}
+?>
 				<a href="systems.php?name=<?php echo $systems_row['name'] ?>"><?php echo $systems_row['name'] ?></a>
 <?php
-		if($updates_row['locked'] == 1)
+		if($systems_row['can_apply_updates'] == 1)
 		{
-			echo " (locked)";
-		}
-		else
-		{
+			if($updates_row['locked'] == 1)
+			{
+				echo " (locked)";
+			}
+			else
+			{
 ?>
 				<form method="post" action="mark-accepted-updates.php">
 					<input type="hidden" name="accepted" value="<?php echo $nice_accepted_value ?>">
@@ -74,6 +83,7 @@ if(isset($_GET['name']))
 					<input type="submit" value="<?php echo $nice_button_name ?>">
 				</form>
 <?php
+			}
 		}
 ?>
 				<?php echo $updates_row['version'] ?>
