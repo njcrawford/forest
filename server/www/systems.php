@@ -112,7 +112,7 @@ if(isset($_GET['system_id']))
 			<a href="packages.php?name=<?php echo $updates_row['package_name'] ?>"><?php echo $updates_row['package_name'] ?></a>
 			<?php echo $updates_row['version'] ?>
 <?php
-		if($updates_row['locked'] == 0 && $systems_row['can_apply_updates'] == 1)
+		if($updates_row['locked'] == 0)
 		{
 ?>
 	                <form method="post" action="mark-accepted-updates.php">
@@ -123,7 +123,7 @@ if(isset($_GET['system_id']))
 			</form>
 <?php
 		}
-		else
+		else if($systems_row['can_apply_updates'] == 1)
 		{
 ?>
 			(locked)
