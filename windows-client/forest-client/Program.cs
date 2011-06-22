@@ -5,6 +5,7 @@ using WUApiLib;
 using System.Management;
 using System.Net;
 using System.IO;
+using System.Web;
 
 namespace forest_client
 {
@@ -26,7 +27,7 @@ namespace forest_client
                 if (update.AutoSelectOnWebSites)
                 {
                     updates.Add("KB" + update.KBArticleIDs[0]);
-		    versions.Add(update.Title);
+                    versions.Add(update.Title);
                 }
             }
         }
@@ -60,7 +61,7 @@ namespace forest_client
                 }
 
                 postData += "&versions=";
-                bool isFirst = true;
+                isFirst = true;
                 foreach (string s in versions)
                 {
                     if (isFirst)
@@ -69,9 +70,9 @@ namespace forest_client
                     }
                     else
                     {
-                        postData += ",";
+                        postData += "|";
                     }
-                    postData += s;
+                    postData += HttpUtility.UrlPathEncode(s);
                 }
             }
             else
@@ -134,7 +135,7 @@ namespace forest_client
             try
             {
                 string serverResponse = contactServer();
-                if (serverResponse == "data_ok:")
+                if (serverResponse.Trim() == "data_ok:")
                 {
                     Console.WriteLine("Server contacted successfully");
                 }
