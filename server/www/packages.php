@@ -41,7 +41,7 @@ if(isset($_GET['name']))
 	echo "<ul>";
 	for($updates_row = mysql_fetch_assoc($updates_result); $updates_row; $updates_row = mysql_fetch_assoc($updates_result))
 	{
-		$systems_result = mysql_query("select name from systems where id = '" . mysql_real_escape_string($updates_row['system_id']) . "'");
+		$systems_result = mysql_query("select name, can_apply_updates from systems where id = '" . mysql_real_escape_string($updates_row['system_id']) . "'");
 	        $systems_row = mysql_fetch_assoc($systems_result);
 		if($updates_row['accepted'] == 1)
 		{
