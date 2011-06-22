@@ -73,6 +73,11 @@ if(isset($_GET['system_id']))
 	Updates: <?php echo $systems_row['packages'] ?><br />
 	Reboot Needed: <?php echo $nice_reboot ?><br />
 	Last Check-in: <?php echo $systems_row['last_checkin'] ?><br />
+	Client capabilities:<br />
+	<ul>
+		<li>can_apply_updates: <?php echo $systems_row['can_apply_updates'] ?></li>
+		<li>can_apply_reboot: <?php echo $systems_row['can_apply_reboot'] ?></li>
+	</ul>
 	<a href="clear_updates.php?system_id=<?php echo $systems_row['id'] ?>">Clear Updates</a><br />
 	<a href="delete_system.php?system_id=<?php echo $systems_row['id'] ?>">Delete system</a><br />
 <?php
