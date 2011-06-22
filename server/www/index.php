@@ -83,7 +83,7 @@ order by
     last_checkin"
 );
 
-while($systems_row = mysql_fetch_assoc($systems_result); $systems_row; $systems_row = mysql_fetch_assoc($systems_result))
+for($systems_row = mysql_fetch_assoc($systems_result); $systems_row; $systems_row = mysql_fetch_assoc($systems_result))
 {
 	// Copy this row into systems array, and translate variables as needed
 	$systems[$systems_row['id']] = $systems_row;
