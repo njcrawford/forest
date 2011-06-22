@@ -145,7 +145,6 @@ if(isset($_GET['system_id']))
 			}
 		}
 ?>
-			<?php echo $updates_row['version'] ?>
 		</li>
 <?php
 	}
