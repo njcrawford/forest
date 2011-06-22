@@ -13,7 +13,7 @@
 Name "Forest Client for Windows"
 
 ; The file to write
-OutFile "forest-client-install-vvv.exe"
+OutFile "forest-client-install-x.y.z.exe"
 
 ; The default installation directory
 InstallDir "$PROGRAMFILES\forest-client"
