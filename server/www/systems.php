@@ -113,7 +113,14 @@ if(isset($_GET['system_id']))
 		}
 ?>
 		<li>
+<?php
+		if($systems_row['can_apply_updates'] == 1)
+		{
+?>
 			<input type="checkbox" <?php echo $nice_checked ?>>
+<?php
+		}
+?>
 			<a href="packages.php?name=<?php echo $updates_row['package_name'] ?>"><?php echo $updates_row['package_name'] ?></a>
 			<?php echo $updates_row['version'] ?>
 <?php
