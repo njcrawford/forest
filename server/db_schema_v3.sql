@@ -2,7 +2,7 @@
 --
 -- Host: localhost    Database: forest
 -- ------------------------------------------------------
--- Server version	5.1.41-3ubuntu12.7-log
+-- Server version	5.1.41-3ubuntu12.10-log
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -35,7 +35,7 @@ CREATE TABLE `settings` (
 
 LOCK TABLES `settings` WRITE;
 /*!40000 ALTER TABLE `settings` DISABLE KEYS */;
-INSERT INTO `settings` VALUES ('db_version','2'),('awol_hours','36');
+INSERT INTO `settings` VALUES ('db_version','3'),('awol_hours','36');
 /*!40000 ALTER TABLE `settings` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -54,6 +54,8 @@ CREATE TABLE `systems` (
   `ignore_awol` tinyint(1) NOT NULL DEFAULT '0',
   `reboot_accepted` tinyint(1) NOT NULL DEFAULT '0',
   `allow_reboot` tinyint(1) NOT NULL DEFAULT '0',
+  `can_apply_updates` tinyint(1) NOT NULL DEFAULT '0',
+  `can_apply_reboot` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -98,4 +100,4 @@ CREATE TABLE `updates` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2010-12-30 15:09:00
+-- Dump completed on 2011-06-21 22:09:30
