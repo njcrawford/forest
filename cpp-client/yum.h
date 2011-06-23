@@ -1,8 +1,12 @@
 #ifndef _YUM_H
 #define _YUM_H
 
-#include "lineList.h"
+#include "PackageManager.h"
 
-int applyUpdatesYum(lineList* list);
-int getAvailableUpdatesYum(lineList* outList);
+class Yum : public PackageManager
+{
+public:
+    int applyUpdates(vector<string> * list);
+    int getAvailableUpdates(vector<string> * outList);
+}
 #endif

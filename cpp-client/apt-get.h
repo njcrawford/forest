@@ -1,8 +1,12 @@
 #ifndef _APTGET_H
 #define _APTGET_H
 
-#include "lineList.h"
+#include "PackageManager.h"
 
-int getAvailableUpdatesAptGet(lineList* outList);
-int applyUpdatesAptGet(lineList* list);
+class AptGet : public PackageManager
+{
+public:
+    int getAvailableUpdates(vector<string> * outlist);
+    int applyUpdates(vector<string> * list);
+}
 #endif

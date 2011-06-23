@@ -1,13 +1,11 @@
 all: forest-client
-forest-client: forest-client.c apt-get.o yum.o lineList.o wuaapi.o
-	gcc -g forest-client.c apt-get.o yum.o wuaapi.o lineList.o -o forest-client
-apt-get.o: apt-get.c apt-get.h
-	gcc -g -c apt-get.c -o apt-get.o
-yum.o: yum.c yum.h
-	gcc -g -c yum.c -o yum.o
-wuaapi.o: wuaapi.c wuaapi.h
-	gcc -g -c wuaapi.c -o wuaapi.o
-lineList.o: lineList.c lineList.h
-	gcc -g -c lineList.c -o lineList.o
+forest-client: forest-client.cpp apt-get.o yum.o wuaapi.o
+	gcc -g forest-client.cpp apt-get.o yum.o wuaapi.o -o forest-client
+apt-get.o: apt-get.cpp apt-get.h
+	gcc -g -c apt-get.cpp -o apt-get.o
+yum.o: yum.cpp yum.h
+	gcc -g -c yum.cpp -o yum.o
+wuaapi.o: wuaapi.cpp wuaapi.h
+	gcc -g -c wuaapi.cpp -o wuaapi.o
 clean:
 	rm forest-client

@@ -1,8 +1,12 @@
 #ifndef _WUAAPI_H
 #define _WUAAPI_H
 
-#include "lineList.h"
+#include "PackageManager.h"
 
-int getAvailableUpdatesWuaApi(lineList* outList);
-int applyUpdatesWuaApi(lineList* list);
+class WuaApi : public PackageManager
+{
+public:
+    int getAvailableUpdates(vector<string> * outlist);
+    int applyUpdates(vector<string> * list);
+}
 #endif
