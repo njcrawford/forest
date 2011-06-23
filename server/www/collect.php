@@ -146,22 +146,22 @@ if($reboot_required != "'1'" || (!empty($_POST['reboot_attempted']) && $_POST['r
 }
 // Collect reported client capabilities, if present
 $query .= ", can_apply_updates = ";
-if(!empty($_POST['client_can_apply_updates']) && $_POST['client_can_apply_updates'] == "false")
+if(!empty($_POST['client_can_apply_updates']) && $_POST['client_can_apply_updates'] == "true")
 {
-	$query .= "'0'";
+	$query .= "'1'";
 }
 else
 {
-	$query .= "'1'";
+	$query .= "'0'";
 }
 $query .= ", can_apply_reboot = ";
-if(!empty($_POST['client_can_apply_reboot']) && $_POST['client_can_apply_reboot'] == "false")
+if(!empty($_POST['client_can_apply_reboot']) && $_POST['client_can_apply_reboot'] == "true")
 {
-	$query .= "'0'";
+	$query .= "'1'";
 }
 else
 {
-	$query .= "'1'";
+	$query .= "'0'";
 }
 $query .= " where id = '" . $system_id . "'";
 
