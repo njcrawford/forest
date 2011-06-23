@@ -29,12 +29,26 @@
 /* Get HOST_NAME_MAX definition.  */
 #include <limits.h>
 // string functions
+#include <string>
 #include <string.h>
+// cerr, cout
+#include <iostream>
+// to_string
+#include <sstream>
 
+using namespace std;
+
+#include "forest-client.h"
+
+// package managers
 #include "apt-get.h"
 #include "yum.h"
 #include "wuaapi.h"
-#include "lineList.h"
+
+//reboot managers
+#include "RebootStub.h"
+#include "FilePresence.h"
+#include "KernelDifference.h"
 
 #define RPC_VERSION 2
 
@@ -49,39 +63,63 @@
 //#define PACKAGE_MANAGER_YUM
 //#define PACKAGE_MANAGER_WUAAPI
 
+// If no reboot manager is defined, the stub will be used
+#define REBOOT_MANAGER_FILEPRESENCE
+//#define REBOOT_MANAGER_KERNELDIFFERENCE
+//#define REBOOT_MANAGER_REBOOTSTUB
+
 typedef struct forestConfigStruct
 {
-	char * serverUrl;
+	string serverUrl;
 } forestConfig;
 
-int getAvailableUpdates(lineList* outList);
-int getAcceptedUpdates(lineList* outList, const char * serverUrl, const char * myHostname);
-int applyUpdates(lineList* list);
-int reportAvailableUpdates(lineList* list, const char * serverUrl, const char * myHostname);
+int getAvailableUpdates(vector<string> * outList);
+int getAcceptedUpdates(vector<string> * outList, string * serverUrl, string * myHostname);
+int applyUpdates(vector<string> * list);
+int reportAvailableUpdates(vector<string> * list, string * serverUrl, string * myHostname, rebootState rebootNeeded);
 void readConfigFile(forestConfig * config);
-void mySystem(const char* command, lineList* outList, int * returnVal);
+int isRebootNeeded();
 
-int main(char** args, int argc)
+int main(int argc, char** args)
 {
-	lineList availableUpdates;
-	lineList acceptedUpdates;
+	vector<string> availableUpdates;
+	vector<string> acceptedUpdates;
 	forestConfig config;
-	char hostname[HOST_NAME_MAX + 1];
+	string hostname;
 	int response = 0;
+	PackageManager * packageManager;
+	RebootManager * rebootManager;
 
-	memset(&availableUpdates, 0, sizeof(lineList));
-	memset(&acceptedUpdates, 0, sizeof(lineList));
-	memset(&config, 0, sizeof(forestConfig));
+#if defined PACKAGE_MANAGER_APTGET
+	packageManager = new AptGet();
+#elif defined PACKAGE_MANAGER_YUM
+	packageManager = new Yum();
+#elif defined PACKAGE_MANAGER_WUAAPI
+	packageManager = new WuaApi();
+#else
+	#error "No package manager defined!"
+#endif
 
-	hostname[HOST_NAME_MAX] = '\0';
+#if defined REBOOT_MANAGER_FILEPRESENCE
+	rebootManager = new FilePresence();
+#elif defined REBOOT_MANAGER_KERNELDIFFERENCE
+	rebootManager = new KernelDifference();
+#else
+	#warning "No reboot manager defined, using stub"
+	rebootManager = new RebootStub();
+#endif
+
+	char temp[HOST_NAME_MAX + 1];
+	temp[HOST_NAME_MAX] = '\0';
 	// get the current host name
-	response = gethostname(hostname, HOST_NAME_MAX);
+	response = gethostname(temp, HOST_NAME_MAX);
 	if(response == -1)
 	{
 		//fprintf(stderr, "Could not get hostname, exiting.");
 		perror("Error in main(): ");
 		exit(1);
 	}
+	hostname = temp;
 
 	// set a default for server url
 	config.serverUrl = "http://forest/forest";
@@ -90,48 +128,42 @@ int main(char** args, int argc)
 	readConfigFile(&config);
 
 	// determine what packages are available to update
-	getAvailableUpdates(&availableUpdates);
+	packageManager->getAvailableUpdates(&availableUpdates);
 
 	// get list of packages that have been accepted for update
-	getAcceptedUpdates(&acceptedUpdates, config.serverUrl, hostname);
+	getAcceptedUpdates(&acceptedUpdates, &config.serverUrl, &hostname);
 
 	// apply accepted updates (and only available updates)
-	if(acceptedUpdates.lineCount > 0)
+	if(acceptedUpdates.size() > 0)
 	{
-		applyUpdates(&acceptedUpdates);
+		packageManager->applyUpdates(&acceptedUpdates);
 	}
 
 	// report packages that are available to update
-	reportAvailableUpdates(&availableUpdates, config.serverUrl, hostname);
+	reportAvailableUpdates(&availableUpdates, &config.serverUrl, &hostname, rebootManager->isRebootNeeded());
 
 	return 0;
 }
 
-int getAvailableUpdates(lineList* outList)
-{
-#if defined PACKAGE_MANAGER_APTGET
-	return getAvailableUpdatesAptGet(outList);
-#elif defined PACKAGE_MANAGER_YUM
-	return getAvailableUpdatesYum(outList);
-#elif defined PACKAGE_MANAGER_WUAAPI
-	return getAvailableUpdatesWuaApi(outList);
-#endif
-}
-
 // fills outList with names of accepted packages
-int getAcceptedUpdates(lineList* outList, const char * serverUrl, const char * myHostname)
+int getAcceptedUpdates(vector<string> * outList, string * serverUrl, string * myHostname)
 {
-	char acceptedUrl[BUFFER_SIZE];
-	char command[BUFFER_SIZE];
+	string acceptedUrl;
+	string command;
 	int response = 0;
-	char wordBuffer[BUFFER_SIZE];
+	vector<string> curlOutput;
 
 	// build accepted URL
-	snprintf(acceptedUrl, BUFFER_SIZE, "%s/getaccepted.php?rpc_version=%d&system=%s", serverUrl, RPC_VERSION, myHostname);
+	acceptedUrl = *serverUrl;
+	acceptedUrl += "getaccepted.php?rpc_version=";
+	acceptedUrl += to_string(RPC_VERSION);
+	acceptedUrl += "&system=";
+	acceptedUrl += *myHostname;
 
 	// build command to run
-	snprintf(command, BUFFER_SIZE, "curl --silent --show-error \"%s\"", acceptedUrl);
-	mySystem(command, outList, &response);
+	//snprintf(command, BUFFER_SIZE, "curl --silent --show-error \"%s\"", acceptedUrl);
+	command = "curl --silent --show-error \"" + acceptedUrl + "\"";
+	mySystem(&command, &curlOutput, &response);
 	
 	// exit silently if curl fails
 	if(response != 0)
@@ -140,82 +172,94 @@ int getAcceptedUpdates(lineList* outList, const char * serverUrl, const char * m
 	}
 
 	// make sure the response was something we expected
-	sscanf(outList->lines[0], "%s", wordBuffer);
-	if(strcmp(wordBuffer, "data_ok:") != 0)
+	if(curlOutput[0].substr(0, 8) != "data_ok:")
 	{
-		fprintf(stderr, "Error getting accepted updates: %s\n", outList->lines[0]);
-		exit(1);
+		// lack of data_ok: is ok if this system is new to the server
+		if(curlOutput[0].substr(0, 28) == "System not found in database")
+		{
+			outList->clear();
+		}
+		else
+		{
+			cerr << "Error getting accepted updates: " << flattenStringList(&curlOutput, '\n') << endl;
+			exit(1);
+		}
 	}
 	else
 	{
-		// remove data_ok and reboot lines
+		// remove data_ok:
+		// TODO: this is pretty bad coding practice but I want to get going quickly
+		curlOutput[0] = trim_string(curlOutput[0].substr(9));
+		
+		string::size_type position = curlOutput[0].find(':', 0);
+		if(position == string::npos)
+		{
+			cerr << "Error getting accepted updates: " << flattenStringList(&curlOutput, '\n') << endl;
+			exit(1);
+		}
+		else
+		{
+			curlOutput[0] = trim_string(curlOutput[0].substr(position + 1));
+		}
+
+		outList->clear();
+		for(position = curlOutput[0].find(',', 0); position != string::npos; position = curlOutput[0].find(',', position + 1))
+		{
+			outList->push_back(curlOutput[0].substr(0, position - 1));
+			curlOutput[0] = curlOutput[0].substr(position + 1);
+		}
 	}
 }
 
-int applyUpdates(lineList* list)
+int reportAvailableUpdates(vector<string> * list, string * serverUrl, string * myHostname, rebootState rebootNeeded)
 {
-#if defined PACKAGE_MANAGER_APTGET
-	return applyUpdatesAptGet(list);
-#elif defined PACKAGE_MANAGER_YUM
-	return applyUpdatesYum(list);
-#elif defined PACKAGE_MANAGER_WUAAPI
-	return applyUpdatesWuaApi(list);
-#endif
-}
-
-int reportAvailableUpdates(lineList* list, const char * serverUrl, const char * myHostname)
-{
-	char * updateStr = NULL;
-	char command[BUFFER_SIZE];
-	lineList commandResponse;
+	string command;
+	vector<string> commandResponse;
 	int commandRetval;
-	int rebootNeeded = isRebootNeeded();
 
-	memset(&commandResponse, 0, sizeof(lineList));
+	command = "curl --silent --show-error --data \"rpc_version=";
+	command += to_string(RPC_VERSION);
+	command += "\" --data \"system_name=";
+	command += *myHostname;
+	command += "\"";
 
-	sprintf(command, "curl --silent --show-error --data \"rpc_version=%d\" --data \"system_name=%s\"", RPC_VERSION, myHostname);
-
-	if(list->lineCount == 0)
+	if(list->size() == 0)
 	{
-		strcat(command, " --data no_updates_available=true");
+		command += " --data \"no_updates_available=true\"";
 	}
 	else
 	{
 		// this output also needs to be escaped for HTML
-		updateStr = flattenStringList(list, ',');
-		strcat(command, " --data available_updates=");
-		strcat(command, updateStr);
-		free(updateStr);
+		command += " --data \"available_updates=";
+		command += flattenStringList(list, ',');
+		command += "\"";
 	}
 
-	strcat(command, " --data reboot_required=");
+	command += " --data \"reboot_required=";
 	if(rebootNeeded == 1)
 	{
-		strcat(command, "true");
+		command += "true";
 	}
 	else if(rebootNeeded == 0)
 	{
-		strcat(command, "false");
+		command += "false";
 	}
 	else
 	{
-		strcat(command, "unknown");
+		command += "unknown";
 	}
+	command += "\"";
 
 	//TODO: add reboot attempted
 
-	strcat(command, " ");
-	strcat(command, serverUrl);
+	command += " ";
+	command += *serverUrl;
+	command += "collect.php";
 
-	mySystem(command, &commandResponse, &commandRetval);
+	mySystem(&command, &commandResponse, &commandRetval);
+	cout << flattenStringList(&commandResponse, '\n') << endl;
 
 	// do something to check return value
-}
-
-// returns 1 if reboot is needed, 0 if not and -1 if unable to determine
-int isRebootNeeded()
-{
-	
 }
 
 void readConfigFile(forestConfig * config)
@@ -224,8 +268,8 @@ void readConfigFile(forestConfig * config)
 	char line[BUFFER_SIZE];
 	char * response = line;
 	char * splitPtr;
-	char confName[BUFFER_SIZE];
-	char confValue[BUFFER_SIZE];
+	string confName;
+	string confValue;
 	char * cleanupPtr = NULL;
 
 	configFile = fopen(CONFIG_FILE_PATH, "r");
@@ -266,16 +310,15 @@ void readConfigFile(forestConfig * config)
 					*cleanupPtr = '\0';
 				}
 				
-				strncpy(confName, line, BUFFER_SIZE);
-				strncpy(confValue, splitPtr + 1, BUFFER_SIZE);
-				if(strcmp(confName, "server_url") == 0)
+				confName = line;
+				confValue = (splitPtr + 1);
+				if(confName.substr(0, 10) == "server_url")
 				{
-					config->serverUrl = malloc(sizeof(char) * strlen(confValue));
-					strcpy(config->serverUrl, confValue);
+					config->serverUrl = confValue;
 				}
 				else
 				{
-					fprintf(stderr, "Unrecognized config item name: %s\n", confName);
+					cerr << "Unrecognized config item name: " << confName << "\n";
 				}
 			}
 		}
@@ -286,7 +329,7 @@ void readConfigFile(forestConfig * config)
 
 // Works like system(), but returns lines of stdout output in outList and the 
 // command's return value in returnVal.
-void mySystem(const char* command, lineList* outList, int * returnVal)
+void mySystem(string * command, vector<string> * outList, int * returnVal)
 {
 	FILE * pipe;
 	char line[BUFFER_SIZE];
@@ -296,7 +339,7 @@ void mySystem(const char* command, lineList* outList, int * returnVal)
 
 	line[0] = '\0';
 
-	pipe = popen(command, "r");
+	pipe = popen(command->c_str(), "r");
 
 	do
 	{
@@ -312,11 +355,46 @@ void mySystem(const char* command, lineList* outList, int * returnVal)
 		}
 
 		// add this line to outList
-		pushToStringList(outList, line);
+		outList->push_back(line);
 		
 	} while (response != NULL);
 
 	*returnVal = pclose(pipe);
 }
 
+string flattenStringList(vector<string> * list, char delimiter)
+{
+	string retval = "";
+	bool first = true;
+	for(int i = 0; i < list->size(); i++)
+	{
+		if(first)
+		{
+			first = false;
+		}
+		else
+		{
+			retval += delimiter;
+		}
+		retval += list->at(i);
+	}
+	return retval;
+}
+
+template <class T>
+inline std::string to_string (const T& t)
+{
+	std::stringstream ss;
+	ss << t;
+	return ss.str();
+}
+
+inline string trim_string(const string& s)
+{
+	std::stringstream trimmer;
+	trimmer << s;
+	string retval;
+	trimmer >> retval;
+	return retval;
+}
 

@@ -1,97 +1,62 @@
 #include <stdlib.h>
-#include <string.h>
-#include <stdio.h>
+#include <string>
+#include <iostream>
 
-#include "lineList.h"
+#include "yum.h"
+#include "forest-client.h"
 
-int getAvailableUpdatesYum(lineList* outList)
+int Yum::getAvailableUpdates(vector<string> * outList)
 {
-	char * command;
+	string command;
 	int commandRetval = 0;
 
 	//TODO: yum output will need further cleanup
 	command = "yum check-update -q -C 2>&1";
 
-	mySystem(command, outList, &commandRetval);
+	mySystem(&command, outList, &commandRetval);
 
 	// yum check-update returns 0 if no updates are available or 100 if 
 	// there is at least one update available
 	if(commandRetval == 0)
 	{
-		clearStringList(outList);
+		outList->clear();
 	}
 	else if(commandRetval == 100)
 	{
-		int lineNum;
 		int lineLen;
-		int letterNum;
-		char * tempLine;
-		for(lineNum = 0; lineNum < outList->lineCount; lineNum++)
+		string tempLine;
+		for(int lineNum = 0; lineNum < outList->size(); lineNum++)
 		{
-			lineLen = strlen(outList->lines[lineNum]);
+			string tempstring = outList->at(lineNum);
+			lineLen = tempstring.length();
 			// only keep everything up to the first '.'
-			for(letterNum = 0; letterNum < lineLen; letterNum++)
+			string::size_type position = tempstring.find(".", 0);
+			if(position != string::npos)
 			{
-				if(outList->lines[lineNum][letterNum] == '.')
-				{
-					// null terminate so we can use strcpy
-					outList->lines[lineNum][letterNum] = '\0';
-
-					// malloc space for shortened line
-					tempLine = malloc(sizeof(char) * letterNum);
-
-					// copy the shortened line into the new space
-					strcpy(tempLine, outList->lines[lineNum]);
-
-					// free the old line
-					free(outList->lines[lineNum]);
-
-					// put the shortened line into the list where the original was
-					outList->lines[lineNum] = tempLine;
-
-					// don't process this line any further
-					break;
-				}
+				outList->assign(lineNum, tempstring.substr(0, position));
 			}
 		}
 	}
 }
 
-int applyUpdatesYum(lineList* list)
+int Yum::applyUpdates(vector<string> * list)
 {
-	char * command = NULL;
-	int i;
-	int remainingBuf;
+	string command;
 	int commandResponse;
-	lineList commandOutput;	
-	char * flattenedOutput = NULL;
-	char * temp = NULL;
-
-	memset(&commandOutput, 0, sizeof(lineList));
+	vector<string> commandOutput;	
 
 	//TODO: yum output will need further cleanup
 	command = "yum -y update ";
+	command += flattenStringList(list, ' ');
+	command += " 2>&1";
 
-	flattenedOutput = flattenStringList(list, ' ');
-	temp = malloc(sizeof(char) * (strlen(command) + strlen(flattenedOutput) + 5));
-	sprintf(temp, "%s%s 2>&1", command, flattenedOutput);
-	command = temp;
+	mySystem(&command, &commandOutput, &commandResponse);
 
-	free(flattenedOutput);
-	flattenedOutput = NULL;
-
-	mySystem(command, &commandOutput, &commandResponse);
-
-	free(command);
-	command = NULL;
 	
 	if(commandResponse != 0)
 	{
-		flattenedOutput = flattenStringList(&commandOutput, ' ');
-		fprintf(stderr, "Error in applyUpdates: Package manager failed to apply updates:\n%s", flattenedOutput);
-		free(flattenedOutput);
+		cerr << "Error in applyUpdates: Package manager failed to apply updates:\n";
+		cerr << flattenStringList(&commandOutput, ' ');
 		exit(1);
 	}
-
-	clearStringList(&commandOutput);
 }

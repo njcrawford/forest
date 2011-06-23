@@ -1,14 +1,17 @@
 #include <stdlib.h>
+#include <string>
+#include <iostream>
 
-#include "lineList.h"
+#include "wuaapi.h"
+#include "forest-client.h"
 
-int getAvailableUpdatesWuaApi(lineList* outList)
+int WuaApi::getAvailableUpdates(vector<string> * outList)
 {
 	// I don't think there is a command that will do this directly under 
 	// windows. 
 }
 
-int applyUpdatesWuaApi(lineList* list)
+int WuaApi::applyUpdates(vector<string> * list)
 {
 	// I don't think there is a command that will do this under windows.
 	// This will probably need to be broken out into a seperate function.

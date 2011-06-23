@@ -1,54 +1,65 @@
+// exit()
 #include <stdlib.h>
-#include <string.h>
-#include <stdio.h>
 
-#include "lineList.h"
+// cerr
+#include <iostream>
 
-int getAvailableUpdatesAptGet(lineList* outList)
+#include "apt-get.h"
+#include "forest-client.h"
+
+int AptGet::getAvailableUpdates(vector<string> * outList)
 {
-	char * command;
+	string command;
 	int commandRetval = 0;
 
 	command = "apt-get dist-upgrade -Vs 2>&1";
 
-	mySystem(command, outList, &commandRetval);
+	mySystem(&command, outList, &commandRetval);
+
+	if(commandRetval == 0)
+	{
+		for(int i = outList->size() - 1; i >= 0; i--)
+		{
+			// grep ^Inst | cut -d " " -f 2
+			if(outList->at(i).substr(0, 4) == "Inst")
+			{
+				string::size_type pos = outList->at(i).find(' ', 0);
+				string::size_type len = outList->at(i).find(' ', pos + 1) - pos - 1;
+				outList->assign(i, outList->at(i).substr(pos, len));
+			}
+			else
+			{
+				outList->erase(outList->begin() + i);
+			}
+		}
+	}
+	else
+	{
+		cerr << "apt-get failed:" << endl << flattenStringList(outList, '\n') << endl;
+		exit(10);
+	}
 
 }
 
-int applyUpdatesAptGet(lineList* list)
+int AptGet::applyUpdates(vector<string> * list)
 {
-	char * command = NULL;
-	int i;
-	int remainingBuf;
+	string command;
 	int commandResponse;
-	lineList commandOutput;	
-	char * flattenedOutput = NULL;
-	char * temp = NULL;
-
-	memset(&commandOutput, 0, sizeof(lineList));
+	vector<string> commandOutput;	
 
 	command = "apt-get -y -o DPkg::Options::\\=--force-confold install ";
+	cerr << command << endl;
+	command += flattenStringList(list, ' ');
+	cerr << command << endl;
+	command += " 2>&1";
+	cerr << command << endl;
 
-	flattenedOutput = flattenStringList(list, ' ');
-	temp = malloc(sizeof(char) * (strlen(command) + strlen(flattenedOutput) + 5));
-	sprintf(temp, "%s%s 2>&1", command, flattenedOutput);
-	command = temp;
-
-	free(flattenedOutput);
-	flattenedOutput = NULL;
-
-	mySystem(command, &commandOutput, &commandResponse);
-
-	free(command);
-	command = NULL;
+	mySystem(&command, &commandOutput, &commandResponse);
 	
 	if(commandResponse != 0)
 	{
-		flattenedOutput = flattenStringList(&commandOutput, ' ');
-		fprintf(stderr, "Error in applyUpdates: Package manager failed to apply updates:\n%s", flattenedOutput);
-		free(flattenedOutput);
+		cerr << "Error in applyUpdates: Package manager failed to apply updates:\n"; 
+		cerr << flattenStringList(&commandOutput, ' ');
 		exit(1);
 	}
-
-	clearStringList(&commandOutput);
 }
