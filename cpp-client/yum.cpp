@@ -10,12 +10,11 @@ int Yum::getAvailableUpdates(vector<string> * outList)
 	string command;
 	int commandRetval = 0;
 
-	//TODO: yum output will need further cleanup
 	command = "yum check-update -q -C 2>&1";
 
 	mySystem(&command, outList, &commandRetval);
 
-	for(int i = outList->size(); i >= 0; i--)
+	for(int i = outList->size() - 1; i >= 0; i--)
 	{
 		//filter out empty lines
 		//updates=`echo "${updates}" | grep -v " \* \|^$"`
@@ -45,7 +44,7 @@ int Yum::getAvailableUpdates(vector<string> * outList)
 		//updates=`echo "${updates}" | sed 's/\(.*\)\..*/\1/'`
 		outList->assign(i, outList->at(i).substr(0, pos - 1));
 	}
-	for(int i = outList->size(); i >= 0; i--)
+	for(int i = outList->size() - 1; i >= 0; i--)
 	{
 		//remove duplicates from the list (produced by removing architecture)
 		//the list may need to be sorted before running uniq
