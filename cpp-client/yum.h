@@ -10,8 +10,8 @@ using namespace std;
 class Yum : public PackageManager
 {
 public:
-    int applyUpdates(vector<string> * list);
-    int getAvailableUpdates(vector<string> * outList);
+    int applyUpdates(vector<string> & list);
+    int getAvailableUpdates(vector<string> & outList);
 };
 
 #endif

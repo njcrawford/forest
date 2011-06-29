@@ -60,10 +60,10 @@ typedef struct forestConfigStruct
 	string serverUrl;
 } forestConfig;
 
-int getAvailableUpdates(vector<string> * outList);
-int getAcceptedUpdates(vector<string> * outList, string * serverUrl, string * myHostname);
-int applyUpdates(vector<string> * list);
-int reportAvailableUpdates(vector<string> * list, string * serverUrl, string * myHostname, rebootState rebootNeeded);
+int getAvailableUpdates(vector<string> & outList);
+int getAcceptedUpdates(vector<string> & outList, string * serverUrl, string * myHostname);
+int applyUpdates(vector<string> & list);
+int reportAvailableUpdates(vector<string> & list, string * serverUrl, string * myHostname, rebootState rebootNeeded);
 void readConfigFile(forestConfig * config);
 int isRebootNeeded();
 
@@ -115,25 +115,25 @@ int main(int argc, char** args)
 	readConfigFile(&config);
 
 	// determine what packages are available to update
-	packageManager->getAvailableUpdates(&availableUpdates);
+	packageManager->getAvailableUpdates(availableUpdates);
 
 	// get list of packages that have been accepted for update
-	getAcceptedUpdates(&acceptedUpdates, &config.serverUrl, &hostname);
+	getAcceptedUpdates(acceptedUpdates, &config.serverUrl, &hostname);
 
 	// apply accepted updates (and only available updates)
 	if(acceptedUpdates.size() > 0)
 	{
-		packageManager->applyUpdates(&acceptedUpdates);
+		packageManager->applyUpdates(acceptedUpdates);
 	}
 
 	// report packages that are available to update
-	reportAvailableUpdates(&availableUpdates, &config.serverUrl, &hostname, rebootManager->isRebootNeeded());
+	reportAvailableUpdates(availableUpdates, &config.serverUrl, &hostname, rebootManager->isRebootNeeded());
 
 	return 0;
 }
 
 // fills outList with names of accepted packages
-int getAcceptedUpdates(vector<string> * outList, string * serverUrl, string * myHostname)
+int getAcceptedUpdates(vector<string> & outList, string * serverUrl, string * myHostname)
 {
 	string acceptedUrl;
 	string command;
@@ -150,7 +150,7 @@ int getAcceptedUpdates(vector<string> * outList, string * serverUrl, string * my
 	// build command to run
 	//snprintf(command, BUFFER_SIZE, "curl --silent --show-error \"%s\"", acceptedUrl);
 	command = "curl --silent --show-error \"" + acceptedUrl + "\"";
-	mySystem(&command, &curlOutput, &response);
+	mySystem(&command, curlOutput, &response);
 	
 	// exit silently if curl fails
 	if(response != 0)
@@ -164,11 +164,11 @@ int getAcceptedUpdates(vector<string> * outList, string * serverUrl, string * my
 		// lack of data_ok: is ok if this system is new to the server
 		if(curlOutput[0].substr(0, 28) == "System not found in database")
 		{
-			outList->clear();
+			outList.clear();
 		}
 		else
 		{
-			cerr << "Error getting accepted updates: " << flattenStringList(&curlOutput, '\n') << endl;
+			cerr << "Error getting accepted updates: " << flattenStringList(curlOutput, '\n') << endl;
 			exit(1);
 		}
 	}
@@ -181,7 +181,7 @@ int getAcceptedUpdates(vector<string> * outList, string * serverUrl, string * my
 		string::size_type position = curlOutput[0].find(':', 0);
 		if(position == string::npos)
 		{
-			cerr << "Error getting accepted updates: " << flattenStringList(&curlOutput, '\n') << endl;
+			cerr << "Error getting accepted updates: " << flattenStringList(curlOutput, '\n') << endl;
 			exit(1);
 		}
 		else
@@ -189,16 +189,16 @@ int getAcceptedUpdates(vector<string> * outList, string * serverUrl, string * my
 			curlOutput[0] = trim_string(curlOutput[0].substr(position + 1));
 		}
 
-		outList->clear();
+		outList.clear();
 		for(position = curlOutput[0].find(',', 0); position != string::npos; position = curlOutput[0].find(',', position + 1))
 		{
-			outList->push_back(curlOutput[0].substr(0, position - 1));
+			outList.push_back(curlOutput[0].substr(0, position - 1));
 			curlOutput[0] = curlOutput[0].substr(position + 1);
 		}
 	}
 }
 
-int reportAvailableUpdates(vector<string> * list, string * serverUrl, string * myHostname, rebootState rebootNeeded)
+int reportAvailableUpdates(vector<string> & list, string * serverUrl, string * myHostname, rebootState rebootNeeded)
 {
 	string command;
 	vector<string> commandResponse;
@@ -210,7 +210,7 @@ int reportAvailableUpdates(vector<string> * list, string * serverUrl, string * m
 	command += *myHostname;
 	command += "\"";
 
-	if(list->size() == 0)
+	if(list.size() == 0)
 	{
 		command += " --data \"no_updates_available=true\"";
 	}
@@ -243,8 +243,8 @@ int reportAvailableUpdates(vector<string> * list, string * serverUrl, string * m
 	command += *serverUrl;
 	command += "collect.php";
 
-	mySystem(&command, &commandResponse, &commandRetval);
-	cout << flattenStringList(&commandResponse, '\n') << endl;
+	mySystem(&command, commandResponse, &commandRetval);
+	cout << flattenStringList(commandResponse, '\n') << endl;
 
 	// do something to check return value
 }
@@ -316,7 +316,7 @@ void readConfigFile(forestConfig * config)
 
 // Works like system(), but returns lines of stdout output in outList and the 
 // command's return value in returnVal.
-void mySystem(string * command, vector<string> * outList, int * returnVal)
+void mySystem(string * command, vector<string> & outList, int * returnVal)
 {
 	FILE * pipe;
 	char line[BUFFER_SIZE];
@@ -342,18 +342,18 @@ void mySystem(string * command, vector<string> * outList, int * returnVal)
 		}
 
 		// add this line to outList
-		outList->push_back(line);
+		outList.push_back(line);
 		
 	} while (response != NULL);
 
 	*returnVal = pclose(pipe);
 }
 
-string flattenStringList(vector<string> * list, char delimiter)
+string flattenStringList(vector<string> & list, char delimiter)
 {
 	string retval = "";
 	bool first = true;
-	for(int i = 0; i < list->size(); i++)
+	for(int i = 0; i < list.size(); i++)
 	{
 		if(first)
 		{
@@ -363,7 +363,7 @@ string flattenStringList(vector<string> * list, char delimiter)
 		{
 			retval += delimiter;
 		}
-		retval += list->at(i);
+		retval += list[i];
 	}
 	return retval;
 }

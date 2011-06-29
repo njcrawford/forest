@@ -10,8 +10,8 @@ using namespace std;
 class WuaApi : public PackageManager
 {
 public:
-    int getAvailableUpdates(vector<string> * outlist);
-    int applyUpdates(vector<string> * list);
+    int getAvailableUpdates(vector<string> & outlist);
+    int applyUpdates(vector<string> & list);
 };
 
 #endif

@@ -7,7 +7,7 @@
 #include "apt-get.h"
 #include "forest-client.h"
 
-int AptGet::getAvailableUpdates(vector<string> * outList)
+int AptGet::getAvailableUpdates(vector<string> & outList)
 {
 	string command;
 	int commandRetval = 0;
@@ -18,18 +18,18 @@ int AptGet::getAvailableUpdates(vector<string> * outList)
 
 	if(commandRetval == 0)
 	{
-		for(int i = outList->size() - 1; i >= 0; i--)
+		for(int i = outList.size() - 1; i >= 0; i--)
 		{
 			// grep ^Inst | cut -d " " -f 2
-			if(outList->at(i).substr(0, 4) == "Inst")
+			if(outList[i].substr(0, 4) == "Inst")
 			{
-				string::size_type pos = outList->at(i).find(' ', 0);
-				string::size_type len = outList->at(i).find(' ', pos + 1) - pos - 1;
-				outList->assign(i, outList->at(i).substr(pos, len));
+				string::size_type pos = outList[i].find(' ', 0);
+				string::size_type len = outList[i].find(' ', pos + 1) - pos - 1;
+				outList[i] = outList[i].substr(pos, len);
 			}
 			else
 			{
-				outList->erase(outList->begin() + i);
+				outList.erase(outList.begin() + i);
 			}
 		}
 	}
@@ -41,7 +41,7 @@ int AptGet::getAvailableUpdates(vector<string> * outList)
 
 }
 
-int AptGet::applyUpdates(vector<string> * list)
+int AptGet::applyUpdates(vector<string> & list)
 {
 	string command;
 	int commandResponse;
@@ -54,12 +54,12 @@ int AptGet::applyUpdates(vector<string> * list)
 	command += " 2>&1";
 	cerr << command << endl;
 
-	mySystem(&command, &commandOutput, &commandResponse);
+	mySystem(&command, commandOutput, &commandResponse);
 	
 	if(commandResponse != 0)
 	{
 		cerr << "Error in applyUpdates: Package manager failed to apply updates:\n"; 
-		cerr << flattenStringList(&commandOutput, ' ');
+		cerr << flattenStringList(commandOutput, ' ');
 		exit(1);
 	}
 }

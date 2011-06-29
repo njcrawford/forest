@@ -5,7 +5,7 @@
 #include "yum.h"
 #include "forest-client.h"
 
-int Yum::getAvailableUpdates(vector<string> * outList)
+int Yum::getAvailableUpdates(vector<string> & outList)
 {
 	string command;
 	int commandRetval = 0;
@@ -14,7 +14,7 @@ int Yum::getAvailableUpdates(vector<string> * outList)
 
 	mySystem(&command, outList, &commandRetval);
 
-	for(int i = outList->size() - 1; i >= 0; i--)
+	for(int i = outList.size() - 1; i >= 0; i--)
 	{
 		//filter out empty lines
 		//updates=`echo "${updates}" | grep -v " \* \|^$"`
@@ -23,43 +23,43 @@ int Yum::getAvailableUpdates(vector<string> * outList)
 
 		//filter out HTTP errors when a mirror is down
 		//updates=`echo "${updates}" | grep -v "HTTP Error\|^Trying other mirror.$"`
-		if(trim_string(outList->at(i)).size() == 0 || 
-			outList->at(i).substr(0, 11) == "Another app" ||
-			outList->at(i).substr(0, 13) == "Existing lock" ||
-			outList->at(i).find("HTTP Error", 0) != string::npos ||
-			outList->at(i) == "Trying other mirror.")
+		if(trim_string(outList[i]).size() == 0 || 
+			outList[i].substr(0, 11) == "Another app" ||
+			outList[i].substr(0, 13) == "Existing lock" ||
+			outList[i].find("HTTP Error", 0) != string::npos ||
+			outList[i] == "Trying other mirror.")
 		{
 			// remove this line and don't process it any further
-			outList->erase(outList->begin() + i);
+			outList.erase(outList.begin() + i);
 			continue;
 		}
 
-		string::size_type pos = outList->at(i).find(' ', 0);
+		string::size_type pos = outList[i].find(' ', 0);
 		if(pos != string::npos)
 		{
 			//keep everything up to the first space (package name and arch)
 			//updates=`echo "${updates}" | cut -d " " -f 1`
-			outList->assign(i, outList->at(i).substr(0, pos - 1));
+			outList[i] = outList[i].substr(0, pos - 1);
 		}
 
-		pos = outList->at(i).rfind('.', string::npos);
+		pos = outList[i].rfind('.', string::npos);
 		if(pos != string::npos)
 		{
 			//remove the architecture (.i386, .x86_64, etc)
 			//updates=`echo "${updates}" | sed 's/\(.*\)\..*/\1/'`
-			outList->assign(i, outList->at(i).substr(0, pos - 1));
+			outList[i] = outList[i].substr(0, pos - 1);
 		}
 	}
-	for(int i = outList->size() - 1; i >= 0; i--)
+	for(int i = outList.size() - 1; i >= 0; i--)
 	{
 		//remove duplicates from the list (produced by removing architecture)
 		//the list may need to be sorted before running uniq
 		//updates=`echo "${updates}" | uniq`
 		for(int j = i; i >= 0; j--)
 		{
-			if(outList->at(i) == outList->at(j))
+			if(outList[i] == outList[j])
 			{
-				outList->erase(outList->begin() + i);
+				outList.erase(outList.begin() + i);
 			}
 		}
 	}
@@ -68,27 +68,27 @@ int Yum::getAvailableUpdates(vector<string> * outList)
 	// there is at least one update available
 	if(commandRetval == 0)
 	{
-		outList->clear();
+		outList.clear();
 	}
 	else if(commandRetval == 100)
 	{
 		int lineLen;
 		string tempLine;
-		for(size_t lineNum = 0; lineNum < outList->size(); lineNum++)
+		for(size_t lineNum = 0; lineNum < outList.size(); lineNum++)
 		{
-			string tempstring = outList->at(lineNum);
+			string tempstring = outList[lineNum];
 			lineLen = tempstring.length();
 			// only keep everything up to the first '.'
 			string::size_type position = tempstring.find(".", 0);
 			if(position != string::npos)
 			{
-				outList->assign(lineNum, tempstring.substr(0, position));
+				outList[lineNum] = tempstring.substr(0, position);
 			}
 		}
 	}
 }
 
-int Yum::applyUpdates(vector<string> * list)
+int Yum::applyUpdates(vector<string> & list)
 {
 	string command;
 	int commandResponse;
@@ -99,13 +99,13 @@ int Yum::applyUpdates(vector<string> * list)
 	command += flattenStringList(list, ' ');
 	command += " 2>&1";
 
-	mySystem(&command, &commandOutput, &commandResponse);
+	mySystem(&command, commandOutput, &commandResponse);
 
 	
 	if(commandResponse != 0)
 	{
 		cerr << "Error in applyUpdates: Package manager failed to apply updates:\n";
-		cerr << flattenStringList(&commandOutput, ' ');
+		cerr << flattenStringList(commandOutput, ' ');
 		exit(1);
 	}
 }
