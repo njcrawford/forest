@@ -55,7 +55,7 @@ int Yum::getAvailableUpdates(vector<string> & outList)
 		//remove duplicates from the list (produced by removing architecture)
 		//the list may need to be sorted before running uniq
 		//updates=`echo "${updates}" | uniq`
-		for(int j = i; i >= 0; j--)
+		for(int j = i - 1; i >= 0; j--)
 		{
 			if(outList[i] == outList[j])
 			{
