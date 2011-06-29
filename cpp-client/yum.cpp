@@ -35,14 +35,20 @@ int Yum::getAvailableUpdates(vector<string> * outList)
 		}
 
 		string::size_type pos = outList->at(i).find(' ', 0);
-		//keep everything up to the first space (package name and arch)
-		//updates=`echo "${updates}" | cut -d " " -f 1`
-		outList->assign(i, outList->at(i).substr(0, pos - 1));
+		if(pos != string::npos)
+		{
+			//keep everything up to the first space (package name and arch)
+			//updates=`echo "${updates}" | cut -d " " -f 1`
+			outList->assign(i, outList->at(i).substr(0, pos - 1));
+		}
 
 		pos = outList->at(i).rfind('.', string::npos);
-		//remove the architecture (.i386, .x86_64, etc)
-		//updates=`echo "${updates}" | sed 's/\(.*\)\..*/\1/'`
-		outList->assign(i, outList->at(i).substr(0, pos - 1));
+		if(pos != string::npos)
+		{
+			//remove the architecture (.i386, .x86_64, etc)
+			//updates=`echo "${updates}" | sed 's/\(.*\)\..*/\1/'`
+			outList->assign(i, outList->at(i).substr(0, pos - 1));
+		}
 	}
 	for(int i = outList->size() - 1; i >= 0; i--)
 	{
