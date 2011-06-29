@@ -23,7 +23,7 @@ int Yum::getAvailableUpdates(vector<string> * outList)
 
 		//filter out HTTP errors when a mirror is down
 		//updates=`echo "${updates}" | grep -v "HTTP Error\|^Trying other mirror.$"`
-		if(trim_string(outList->at(i)) == "" || 
+		if(trim_string(outList->at(i)).size() == 0 || 
 			outList->at(i).substr(0, 11) == "Another app" ||
 			outList->at(i).substr(0, 13) == "Existing lock" ||
 			outList->at(i).find("HTTP Error", 0) != string::npos ||
