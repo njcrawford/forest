@@ -8,6 +8,7 @@ class RebootManager
 public:
     virtual rebootState isRebootNeeded() = 0;
     virtual void applyReboot() = 0;
+    bool canApplyReboot();
 };
 
 #endif
