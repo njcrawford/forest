@@ -87,7 +87,7 @@ if(isset($_GET['system_id']))
 	{
 ?>
 		<form method="post" action="mark-accepted-updates.php">
-			<input type="hidden" name="accepted" value="true">
+			<input type="hidden" name="action" value="accept">
 			<input type="hidden" name="system_id" value="<?php echo $systems_row['id'] ?>">
 			<input type="submit" value="Accept all">
 		</form>
@@ -101,13 +101,13 @@ if(isset($_GET['system_id']))
 	{
 		if($updates_row['accepted'] == 1)
 		{
-			$nice_accepted_value = "false";
+			$nice_action = "reject";
 			$nice_button_name = "Reject";
 			$nice_checked = "checked=\"checked\"";
 		}
 		else
 		{
-			$nice_accepted_value = "true";
+			$nice_action = "accept";
 			$nice_button_name = "Accept";
 			$nice_checked = "";
 		}
@@ -130,7 +130,7 @@ if(isset($_GET['system_id']))
 			{
 ?>
 	                <form method="post" action="mark-accepted-updates.php">
-				<input type="hidden" name="accepted" value="<?php echo $nice_accepted_value ?>">
+				<input type="hidden" name="action" value="<?php echo $nice_action ?>">
 				<input type="hidden" name="system_id" value="<?php echo $systems_row['id'] ?>">
 				<input type="hidden" name="package_name" value="<?php echo $updates_row['package_name'] ?>">
 				<input type="submit" value="<?php echo $nice_button_name ?>">

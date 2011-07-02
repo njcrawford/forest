@@ -70,7 +70,7 @@ if(!empty($_POST['available_updates']))
 	$packages = explode(",", $_POST['available_updates']);
 	if(!empty($_POST['versions']))
 	{
-		$versions = explode(",", $_POST['versions']);
+		$versions = explode("|", $_POST['versions']);
 		if(count($versions) == count($packages))
 		{
 			$use_versions = true;

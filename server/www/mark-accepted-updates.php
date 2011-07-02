@@ -80,15 +80,15 @@ if(empty($_POST['system_id']) && empty($_POST['package_name']))
 {
 	die("No package or system specified");
 }
-if(!isset($_POST['accepted']))
+if(!isset($_POST['action']))
 {
 	die("No accepted value");
 }
-elseif($_POST['accepted'] != "true" && $_POST['accepted'] != "false")
+elseif($_POST['action'] != "accept" && $_POST['action'] != "reject")
 {
 	die("Invalid accepted value");
 }
-$nice_accepted = ($_POST['accepted'] == "true") ? 1 : 0;
+$nice_accepted = ($_POST['action'] == "accept") ? 1 : 0;
 
 if(!empty($_POST['system_id']) && !empty($_POST['package_name']))
 {
