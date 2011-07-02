@@ -10,8 +10,8 @@ using namespace std;
 class AptGet : public PackageManager
 {
 public:
-    int getAvailableUpdates(vector<string> & outlist);
-    int applyUpdates(vector<string> & list);
+    void getAvailableUpdates(vector<string> & outlist);
+    void applyUpdates(vector<string> & list);
 };
 
 #endif

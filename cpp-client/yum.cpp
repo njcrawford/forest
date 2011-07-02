@@ -5,7 +5,7 @@
 #include "yum.h"
 #include "forest-client.h"
 
-int Yum::getAvailableUpdates(vector<string> & outList)
+void Yum::getAvailableUpdates(vector<string> & outList)
 {
 	string command;
 	int commandRetval = 0;
@@ -88,7 +88,7 @@ int Yum::getAvailableUpdates(vector<string> & outList)
 	}
 }
 
-int Yum::applyUpdates(vector<string> & list)
+void Yum::applyUpdates(vector<string> & list)
 {
 	string command;
 	int commandResponse;

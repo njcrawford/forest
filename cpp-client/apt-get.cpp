@@ -7,7 +7,7 @@
 #include "apt-get.h"
 #include "forest-client.h"
 
-int AptGet::getAvailableUpdates(vector<string> & outList)
+void AptGet::getAvailableUpdates(vector<string> & outList)
 {
 	string command;
 	int commandRetval = 0;
@@ -41,7 +41,7 @@ int AptGet::getAvailableUpdates(vector<string> & outList)
 
 }
 
-int AptGet::applyUpdates(vector<string> & list)
+void AptGet::applyUpdates(vector<string> & list)
 {
 	string command;
 	int commandResponse;

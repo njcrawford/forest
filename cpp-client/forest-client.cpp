@@ -22,19 +22,22 @@
 // You can contact me at http://www.njcrawford.com/contact
 //#############################################################################
 
+// exit()
 #include <stdlib.h>
 #include <stdio.h>
+
 /* Get gethostname() declaration.  */
 #include <unistd.h>
+
 /* Get HOST_NAME_MAX definition.  */
 #include <limits.h>
+
 // string functions
 #include <string>
 #include <string.h>
+
 // cerr, cout
 #include <iostream>
-// to_string
-#include <sstream>
 
 using namespace std;
 
@@ -60,10 +63,10 @@ typedef struct forestConfigStruct
 	string serverUrl;
 } forestConfig;
 
-int getAvailableUpdates(vector<string> & outList);
-int getAcceptedUpdates(vector<string> & outList, string * serverUrl, string * myHostname);
-int applyUpdates(vector<string> & list);
-int reportAvailableUpdates(vector<string> & list, string * serverUrl, string * myHostname, rebootState rebootNeeded);
+//int getAvailableUpdates(vector<string> & outList);
+void getAcceptedUpdates(vector<string> & outList, string * serverUrl, string * myHostname);
+//int applyUpdates(vector<string> & list);
+void reportAvailableUpdates(vector<string> & list, string * serverUrl, string * myHostname, rebootState rebootNeeded);
 void readConfigFile(forestConfig * config);
 int isRebootNeeded();
 
@@ -133,7 +136,7 @@ int main(int argc, char** args)
 }
 
 // fills outList with names of accepted packages
-int getAcceptedUpdates(vector<string> & outList, string * serverUrl, string * myHostname)
+void getAcceptedUpdates(vector<string> & outList, string * serverUrl, string * myHostname)
 {
 	string acceptedUrl;
 	string command;
@@ -198,7 +201,7 @@ int getAcceptedUpdates(vector<string> & outList, string * serverUrl, string * my
 	}
 }
 
-int reportAvailableUpdates(vector<string> & list, string * serverUrl, string * myHostname, rebootState rebootNeeded)
+void reportAvailableUpdates(vector<string> & list, string * serverUrl, string * myHostname, rebootState rebootNeeded)
 {
 	string command;
 	vector<string> commandResponse;
@@ -353,7 +356,7 @@ string flattenStringList(vector<string> & list, char delimiter)
 {
 	string retval = "";
 	bool first = true;
-	for(int i = 0; i < list.size(); i++)
+	for(size_t i = 0; i < list.size(); i++)
 	{
 		if(first)
 		{
@@ -365,23 +368,6 @@ string flattenStringList(vector<string> & list, char delimiter)
 		}
 		retval += list[i];
 	}
-	return retval;
-}
-
-template <class T>
-inline std::string to_string (const T& t)
-{
-	std::stringstream ss;
-	ss << t;
-	return ss.str();
-}
-
-inline string trim_string(const string& s)
-{
-	std::stringstream trimmer;
-	trimmer << s;
-	string retval;
-	trimmer >> retval;
 	return retval;
 }
 
