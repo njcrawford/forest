@@ -39,7 +39,7 @@ void Yum::getAvailableUpdates(vector<string> & outList)
 		{
 			//keep everything up to the first space (package name and arch)
 			//updates=`echo "${updates}" | cut -d " " -f 1`
-			outList[i] = outList[i].substr(0, pos - 1);
+			outList[i] = outList[i].substr(0, pos);
 		}
 
 		pos = outList[i].rfind('.', string::npos);
@@ -47,7 +47,7 @@ void Yum::getAvailableUpdates(vector<string> & outList)
 		{
 			//remove the architecture (.i386, .x86_64, etc)
 			//updates=`echo "${updates}" | sed 's/\(.*\)\..*/\1/'`
-			outList[i] = outList[i].substr(0, pos - 1);
+			outList[i] = outList[i].substr(0, pos);
 		}
 	}
 	for(int i = outList.size() - 1; i >= 0; i--)
