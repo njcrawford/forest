@@ -29,4 +29,10 @@ inline string trim_string(const string& s)
 	return retval;
 }
 
+typedef struct updateInfoStruct
+{
+	string name;
+	string version;
+} updateInfo;
+
 #endif

@@ -72,7 +72,7 @@ int isRebootNeeded();
 
 int main(int argc, char** args)
 {
-	vector<string> availableUpdates;
+	vector<updateInfo> availableUpdates;
 	vector<string> acceptedUpdates;
 	forestConfig config;
 	string hostname;
@@ -117,9 +117,6 @@ int main(int argc, char** args)
 	// read config file
 	readConfigFile(&config);
 
-	// determine what packages are available to update
-	packageManager->getAvailableUpdates(availableUpdates);
-
 	// get list of packages that have been accepted for update
 	getAcceptedUpdates(acceptedUpdates, &config.serverUrl, &hostname);
 
@@ -128,6 +125,9 @@ int main(int argc, char** args)
 	{
 		packageManager->applyUpdates(acceptedUpdates);
 	}
+
+	// determine what packages are available to update
+	packageManager->getAvailableUpdates(availableUpdates);
 
 	// report packages that are available to update
 	reportAvailableUpdates(availableUpdates, &config.serverUrl, &hostname, rebootManager->isRebootNeeded());
@@ -201,7 +201,7 @@ void getAcceptedUpdates(vector<string> & outList, string * serverUrl, string * m
 	}
 }
 
-void reportAvailableUpdates(vector<string> & list, string * serverUrl, string * myHostname, rebootState rebootNeeded)
+void reportAvailableUpdates(vector<updateInfo> & list, string * serverUrl, string * myHostname, rebootState rebootNeeded)
 {
 	string command;
 	vector<string> commandResponse;
@@ -221,7 +221,25 @@ void reportAvailableUpdates(vector<string> & list, string * serverUrl, string * 
 	{
 		// this output also needs to be escaped for HTML
 		command += " --data \"available_updates=";
-		command += flattenStringList(list, ',');
+		for(int i = 0; i < list.size(); i++)
+		{
+			if(i != 0)
+			{
+				command += ",";
+			}
+			command += list[i].name;
+		}
+		command += "\"";
+		// also add version info
+		command += " --data \"versions=";
+		for(int i = 0; i < list.size(); i++)
+		{
+			if(i != 0)
+			{
+				command += "|";
+			}
+			command += list[i].version;
+		}
 		command += "\"";
 	}
 

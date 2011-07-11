@@ -5,84 +5,103 @@
 #include "yum.h"
 #include "forest-client.h"
 
-void Yum::getAvailableUpdates(vector<string> & outList)
+void Yum::getAvailableUpdates(vector<updateInfo> & outList)
 {
 	string command;
 	int commandRetval = 0;
+	vector<string> commandOutput;
 
 	command = "yum check-update -q -C 2>&1";
 
-	mySystem(&command, outList, &commandRetval);
-
-	for(int i = outList.size() - 1; i >= 0; i--)
-	{
-		//filter out empty lines
-		//updates=`echo "${updates}" | grep -v " \* \|^$"`
-		//filter out wait messages when other instances of yum are running
-		//updates=`echo "${updates}" | grep -v "^Another app\|^Existing lock"`
-
-		//filter out HTTP errors when a mirror is down
-		//updates=`echo "${updates}" | grep -v "HTTP Error\|^Trying other mirror.$"`
-		if(trim_string(outList[i]).size() == 0 || 
-			outList[i].substr(0, 11) == "Another app" ||
-			outList[i].substr(0, 13) == "Existing lock" ||
-			outList[i].find("HTTP Error", 0) != string::npos ||
-			outList[i] == "Trying other mirror.")
-		{
-			// remove this line and don't process it any further
-			outList.erase(outList.begin() + i);
-			continue;
-		}
-
-		string::size_type pos = outList[i].find(' ', 0);
-		if(pos != string::npos)
-		{
-			//keep everything up to the first space (package name and arch)
-			//updates=`echo "${updates}" | cut -d " " -f 1`
-			outList[i] = outList[i].substr(0, pos);
-		}
-
-		pos = outList[i].rfind('.', string::npos);
-		if(pos != string::npos)
-		{
-			//remove the architecture (.i386, .x86_64, etc)
-			//updates=`echo "${updates}" | sed 's/\(.*\)\..*/\1/'`
-			outList[i] = outList[i].substr(0, pos);
-		}
-	}
-	for(int i = outList.size() - 1; i >= 0; i--)
-	{
-		//remove duplicates from the list (produced by removing architecture)
-		//the list may need to be sorted before running uniq
-		//updates=`echo "${updates}" | uniq`
-		for(int dupIndex = i - 1; dupIndex >= 0; dupIndex--)
-		{
-			if(outList[i] == outList[dupIndex])
-			{
-				outList.erase(outList.begin() + i);
-			}
-		}
-	}
+	mySystem(&command, &commandOutput, &commandRetval);
 
 	// yum check-update returns 0 if no updates are available or 100 if 
 	// there is at least one update available
-	if(commandRetval == 0)
+	if(commandRetval == 100)
 	{
-		outList.clear();
-	}
-	else if(commandRetval == 100)
-	{
-		int lineLen;
-		string tempLine;
-		for(size_t lineNum = 0; lineNum < outList.size(); lineNum++)
+		for(int i = commandOutput.size() - 1; i >= 0; i--)
 		{
-			string tempstring = outList[lineNum];
-			lineLen = tempstring.length();
-			// only keep everything up to the first '.'
-			string::size_type position = tempstring.find(".", 0);
-			if(position != string::npos)
+			//filter out empty lines
+			//updates=`echo "${updates}" | grep -v " \* \|^$"`
+			//filter out wait messages when other instances of yum are running
+			//updates=`echo "${updates}" | grep -v "^Another app\|^Existing lock"`
+
+			//filter out HTTP errors when a mirror is down
+			//updates=`echo "${updates}" | grep -v "HTTP Error\|^Trying other mirror.$"`
+			if(trim_string(commandOutput[i]).size() == 0 || 
+				commandOutput[i].substr(0, 11) == "Another app" ||
+				commandOutput[i].substr(0, 13) == "Existing lock" ||
+				commandOutput[i].find("HTTP Error", 0) != string::npos ||
+				commandOutput[i] == "Trying other mirror.")
 			{
-				outList[lineNum] = tempstring.substr(0, position);
+				// remove this line and don't process it any further
+				commandOutput.erase(commandOutput.begin() + i);
+				continue;
+			}
+			
+			updateInfo temp;
+			
+			string::size_type pos = commandOutput[i].find(' ', 0);
+			if(pos != string::npos)
+			{
+				//keep everything up to the first space (package name and arch)
+				//updates=`echo "${updates}" | cut -d " " -f 1`
+				temp.name = commandOutput[i].substr(0, pos);
+			}
+
+			pos = temp.name.rfind('.', string::npos);
+			if(pos != string::npos)
+			{
+				//remove the architecture (.i386, .x86_64, etc)
+				//updates=`echo "${updates}" | sed 's/\(.*\)\..*/\1/'`
+				temp.name = temp.name.substr(0, pos);
+			}
+
+			// don't duplicate items in the list
+			// on rpm based systems, multiple architectures of the same package may be installed
+			// removing the architecture will create duplicates, this will filter them out
+			bool alreadyInList = false;
+			for(int i = 0; i < outList.size(); i++)
+			{
+				if(temp.name == outList[i].name)
+				{
+					alreadyInList = true;
+					break;
+				}
+			}
+			if(alreadyInList)
+			{
+				continue;
+			}
+
+			// get the version number
+			// there is a variable amount of space between the name and version
+			pos = commandOutput[i].find(' ', 0);
+			if(pos != string::npos)
+			{
+				// remove the package name, and trim the extra leading spaces
+				temp.version = trim_string(commandOutput[i].substr(pos));
+			}
+			// there is more info after the version, so the rest will need to be cut off
+			pos = temp.version.find(' ', 0);
+			if(pos != string::npos)
+			{
+				temp.version = temp.version.substr(0, pos);
+			}
+			
+			outList.push_back(temp);
+		}
+		for(int i = commandOutput.size() - 1; i >= 0; i--)
+		{
+			//remove duplicates from the list (produced by removing architecture)
+			//the list may need to be sorted before running uniq
+			//updates=`echo "${updates}" | uniq`
+			for(int dupIndex = i - 1; dupIndex >= 0; dupIndex--)
+			{
+				if(commandOutput[i] == commandOutput[dupIndex])
+				{
+					commandOutput.erase(commandOutput.begin() + i);
+				}
 			}
 		}
 	}

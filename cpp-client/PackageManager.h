@@ -9,7 +9,7 @@ class PackageManager
 {
 public:
     virtual void applyUpdates(vector<string> & list) = 0;
-    virtual void getAvailableUpdates(vector<string> & outList) = 0;
+    virtual void getAvailableUpdates(vector<updateInfo> & outList) = 0;
     bool canApplyUpdates();
 };
 

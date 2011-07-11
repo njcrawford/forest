@@ -11,7 +11,7 @@ class Yum : public PackageManager
 {
 public:
     void applyUpdates(vector<string> & list);
-    void getAvailableUpdates(vector<string> & outList);
+    void getAvailableUpdates(vector<updateInfo> & outList);
 };
 
 #endif
