@@ -66,7 +66,7 @@ typedef struct forestConfigStruct
 //int getAvailableUpdates(vector<string> & outList);
 void getAcceptedUpdates(vector<string> & outList, string * serverUrl, string * myHostname);
 //int applyUpdates(vector<string> & list);
-void reportAvailableUpdates(vector<string> & list, string * serverUrl, string * myHostname, rebootState rebootNeeded);
+void reportAvailableUpdates(vector<updateInfo> & list, string * serverUrl, string * myHostname, rebootState rebootNeeded);
 void readConfigFile(forestConfig * config);
 int isRebootNeeded();
 
@@ -366,8 +366,8 @@ void mySystem(string * command, vector<string> & outList, int * returnVal)
 		outList.push_back(line);
 		
 	} while (response != NULL);
-
-	*returnVal = pclose(pipe);
+	int pcloseVal = pclose(pipe);
+	*returnVal = WEXITSTATUS(pcloseVal);
 }
 
 string flattenStringList(vector<string> & list, char delimiter)

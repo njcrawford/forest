@@ -5,6 +5,7 @@
 #include <string>
 // to_string and trim_string
 #include <sstream>
+using namespace std;
 
 // Works like system(), but returns lines of stdout output in outList and the 
 // command's return value in returnVal.

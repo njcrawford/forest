@@ -12,7 +12,7 @@ void AptGet::getAvailableUpdates(vector<string> & outList)
 	string command;
 	int commandRetval = 0;
 
-	command = "apt-get dist-upgrade -Vs 2>&1";
+	command = "/usr/bin/apt-get dist-upgrade -Vs 2>&1";
 
 	mySystem(&command, outList, &commandRetval);
 
