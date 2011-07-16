@@ -53,7 +53,7 @@ if($checks_row['allow_reboot'] != 1)
 	die("System is not allowed to reboot");
 }
 // make sure this client is able to reboot
-$checks_row['can_apply_updates'] != 1)
+if($checks_row['can_apply_reboot'] != 1)
 {
 	die("Client is not capable of rebooting");
 }
