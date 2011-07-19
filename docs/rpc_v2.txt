@@ -1,0 +1,25 @@
+A brief description of specifications for RPC interface v2
+
+Client report (write) interface located at {forest_root}/collect.php
+Client request (read) interface located at {forest_root}/getaccepted.php
+
+Report (write) interface must have these values in the POST:
+rpc_version: RPC version the client is expecting to use. Must match the version the server is expecting to use, or an error is returned.
+system_name: Name of the system as it is referenced in the database, usually hostname.
+available_updates -OR- no_updates_available: available_updates is a comma delimited list of updates that are available on the client. If there are no updates available, no_updates_available must be present instead. Any value is acceptable for no_updates_available, only its presence is checked.
+
+Optional values:
+reboot_required: either "true" or "false" indicating that the client needs a reboot
+reboot_attempted: either "true" or "false" indicating that the client has attempted a reboot
+client_can_apply_updates: "true" if the client is capable of applying accepted updates
+client_can_apply_reboot: "true" if the client is capable of applying an accepted reboot
+
+Return value:
+On success, "data_ok:" is returned.
+
+Request (read) interface must have these value in the GET:
+rpc_version: RPC version the client is expecting to use. Must match the version the server is expecting to use, or an error is returned.
+system: name of the client system as it is referenced in the database, usually hostname.
+
+Return value:
+On success, "data_ok:" followed by either "reboot-true:" or "reboot-false:" and a space separated list of accepted updates is returned. The client should attempt to apply these updates.
