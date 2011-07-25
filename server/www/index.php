@@ -148,7 +148,7 @@ if(count($systems) > 0)
 		{
 ?>
 			<form method="post" action="mark-accepted-updates.php">
-				<input type="hidden" name="accepted" value="true">
+				<input type="hidden" name="action" value="accept">
 				<input type="hidden" name="system_id" value="<?php echo $this_system['id'] ?>">
 				<input type="submit" value="Accept all" class="acceptupdates">
 			</form>
@@ -226,7 +226,7 @@ for($updates_row = mysql_fetch_assoc($updates_result); $updates_row; $updates_ro
 	{
 ?>
 			<form method="post" action="mark-accepted-updates.php">
-				<input type="hidden" name="accepted" value="true">
+				<input type="hidden" name="action" value="accept">
 				<input type="hidden" name="package_name" value="<?php echo $updates_row['package_name'] ?>">
 				<input type="submit" value="Accept all">
 			</form>
