@@ -36,11 +36,21 @@ PATH=$PATH:/usr/local/sbin:/usr/sbin:/sbin
 # global variables
 rpc_version="2"
 current_distro=""
+current_distro_version_major=""
+current_distro_version_minor=""
 # detect which distro we're on so we know what commands to run
 if [ -f /etc/lsb-release ] ; then
 	current_distro="ubuntu"
+	current_distro_version_major=`grep DISTRIB_RELEASE /etc/lsb-release | cut -d"=" -f 2 | cut -d"." -f 1`
+	current_distro_version_minor=`grep DISTRIB_RELEASE /etc/lsb-release | cut -d"=" -f 2 | cut -d"." -f 2`
 elif [ -f /etc/redhat-release ] ; then
 	current_distro="centos"
+	# split the version string on the point
+	version_major=`cat /etc/redhat-release | cut -d"." -f 1`
+	# get the last character in the first half
+	current_distro_version_major=`echo ${version_major} | sed -e "s/^.*\(.\)$/\1/"`
+	# get the first character in the second half
+	current_distro_version_minor=`cat /etc/redhat-release | cut -d"." -f 2 | cut -c1`
 fi
 
 # This function does not output anything if there are no packages to update or
@@ -109,17 +119,20 @@ is_reboot_needed()
 	elif [ "x${current_distro}" = "xcentos" ]; then
 		# I assume that a kernel is the only thing that would require a
 		# reboot. There could be other things that need it as well.
-		running_kernel=`uname -a | cut -d " " -f 3`
-		newest_kernel=`yum -q list kernel 2>&1`
-		# filter out anything that's not installed
-		newest_kernel=`echo "${newest_kernel}" | grep "installed"`
+		running_kernel=`uname -r`
+		newest_kernel=`yum -q list installed kernel 2>&1 | grep -v "Installed Packages"`
 		# cut out and keep version numbers
 		newest_kernel=`echo "${newest_kernel}" | awk -F" " '{ print $2 }'`
 		# sort version numbers numerically
 		newest_kernel=`echo "${newest_kernel}" | sort -n -s`
-		# don't remember what this does... maybe keep only the first line?
+		# keep only the first line
 		newest_kernel=`echo "${newest_kernel}" | sed '$!d'`
-		if [ "x${running_kernel}" != "x${newest_kernel}"  ]; then
+		if [ "${current_distro_version_major}" = "6" ]; then
+			# centos 6 adds kernel arch to uname output
+	                kernel_arch=`uname -m`
+			newest_kernel=${newest_kernel}.${kernel_arch}
+		fi
+		if [ "x${running_kernel}" != "x${newest_kernel}" ]; then
 			echo "true"
 		else
 			echo "false"
