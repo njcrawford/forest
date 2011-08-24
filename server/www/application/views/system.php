@@ -13,11 +13,12 @@ function AcceptButton(system_id, package_name, accepted_state, update_div) {
 }
 //-->
 </script>
-
+<a href="<?php echo site_url() ?>">Back to summary page</a><br />
+<a href="<?php echo site_url('browser/edit_system/' . $system_info['id']) ?>">Edit system</a><br />
 Name: <?php echo $system_info['name'] ?><br />
 Updates: <?php echo count($updates) ?><br />
 Reboot Needed: <?php echo $system_info['reboot_required'] ?><br />
-Last checkin: <?php echo $system_info['last_checkin'] ?><br />
+Last Check-in: <?php echo $system_info['last_checkin'] ?><br />
 Client capabilities:
 <ul>
 	<li>can_apply_updates: <?php echo $system_info['can_apply_updates'] ?></li>

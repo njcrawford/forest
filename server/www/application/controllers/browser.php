@@ -148,7 +148,7 @@ class Browser extends CI_Controller {
 		}
 		$this->load->model('forest_db');
 		$this->forest_db->do_something();
-		$this->load->view('redirect');
+		redirect();
 	}
 
 	function remove_update_lock($system_id, $package_name)
@@ -159,7 +159,7 @@ class Browser extends CI_Controller {
 		}
 		$this->load->model('forest_db');
 		$this->forest_db->do_something();
-		$this->load->view('redirect');
+		redirect();
 	}
 
 	function clear_updates($system_id)
@@ -170,7 +170,7 @@ class Browser extends CI_Controller {
 		}
 		$this->load->model('forest_db');
 		$this->forest_db->do_something();
-		$this->load->view('redirect');
+		redirect();
 	}
 
 	function delete_system($system_id)
@@ -181,7 +181,7 @@ class Browser extends CI_Controller {
 		}
 		$this->load->model('forest_db');
 		$this->forest_db->do_something();
-		$this->load->view('redirect');
+		redirect();
 	}
 
 	function mark_accepted_reboot($system_id)
@@ -192,7 +192,7 @@ class Browser extends CI_Controller {
 		}
 		$this->load->model('forest_db');
 		$this->forest_db->do_something();
-		$this->load->view('redirect');
+		redirect();
 	}
 
 	function mark_accepted_updates()
