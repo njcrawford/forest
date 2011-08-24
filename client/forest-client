@@ -182,9 +182,10 @@ accepted_url="${server_url}getaccepted.php?rpc_version=${rpc_version}&system=`ho
 
 # check for accepted updates and apply them
 accepted_updates=`curl --silent --show-error ${accepted_url} 2>&1`
-# quit here silently if curl can't connect
+# quit here if curl can't connect
 if [ $? -ne 0 ]; then
-	exit 0
+	echo ${accepted_updates}
+	exit 1
 fi
 
 error_check=`echo ${accepted_updates} | cut -d ":" -f 1`
