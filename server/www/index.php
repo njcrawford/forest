@@ -1,248 +1,204 @@
 <?php
+
 /*
-Forest - a web-based multi-system update manager
+ *---------------------------------------------------------------
+ * APPLICATION ENVIRONMENT
+ *---------------------------------------------------------------
+ *
+ * You can load different configurations depending on your
+ * current environment. Setting the environment also influences
+ * things like logging and error reporting.
+ *
+ * This can be set to anything, but default usage is:
+ *
+ *     development
+ *     testing
+ *     production
+ *
+ * NOTE: If you change these, also change the error_reporting() code below
+ *
+ */
+	define('ENVIRONMENT', 'development');
+/*
+ *---------------------------------------------------------------
+ * ERROR REPORTING
+ *---------------------------------------------------------------
+ *
+ * Different environments will require different levels of error reporting.
+ * By default development will show errors but testing and live will hide them.
+ */
 
-Copyright (C) 2011 Nathan Crawford
- 
-This program is free software; you can redistribute it and/or
-modify it under the terms of the GNU General Public License
-as published by the Free Software Foundation; either version 2
-of the License, or (at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
- 
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
-02111-1307, USA.
-
-A copy of the full GPL 2 license can be found in the docs directory.
-You can contact me at http://www.njcrawford.com/contact
-*/
-
-require "inc/check-login.php";
-
-$page_title = "Summary";
-require "inc/header.php";
-
-require_once "inc/db.php";
-
-//init systems array to avoid errors later
-$systems = array();
-
-// Get data from mysql
-$systems_result = mysql_query(
-"select * from (
-        select 
-        systems.id, 
-        name,
-        count(c.package_name) as packages, 
-        sum(if(accepted is null, 0, accepted)) as accepted_count,
-        reboot_required, 
-        last_checkin,
-        if(last_checkin < DATE_SUB(NOW(), INTERVAL 36 HOUR), 1, 0) as awol,
-        if((last_checkin < DATE_SUB(NOW(), INTERVAL 36 HOUR)) and ignore_awol = 0, 1, 0) as important_awol,
-        ignore_awol,
-        reboot_accepted,
-        allow_reboot,
-	can_apply_updates,
-	can_apply_reboot,
-        sum(locked) as locked_count
-    from systems 
-        left join 
-        (
-            (
-                select 
-                    updates.system_id, 
-                    updates.package_name, 
-                    updates.accepted, 
-                    if(update_locks.package_name is null, 0, 1) as locked 
-                from updates 
-                left outer join (update_locks) on 
-                (
-                    updates.package_name = update_locks.package_name and 
-                    updates.system_id = update_locks.system_id
-                )
-            ) 
-            as c
-        ) 
-        on 
-        (
-            c.system_id = systems.id
-        ) 
-    group by systems.id
-) b 
-order by
-    important_awol desc,
-    awol, 
-    packages desc, 
-    reboot_required desc, 
-    last_checkin"
-);
-
-for($systems_row = mysql_fetch_assoc($systems_result); $systems_row; $systems_row = mysql_fetch_assoc($systems_result))
+if (defined('ENVIRONMENT'))
 {
-	// Copy this row into systems array, and translate variables as needed
-	$systems[$systems_row['id']] = $systems_row;
+	switch (ENVIRONMENT)
+	{
+		case 'development':
+			error_reporting(E_ALL);
+		break;
+	
+		case 'testing':
+		case 'production':
+			error_reporting(0);
+		break;
 
-	// Translate reboot_required values
-	if($systems[$systems_row['id']]['reboot_required'] == null)
-	{
-		$systems[$systems_row['id']]['reboot_required_text'] = "Unknown";
+		default:
+			exit('The application environment is not set correctly.');
 	}
-	elseif($systems[$systems_row['id']]['reboot_required'] == 1)
+}
+
+/*
+ *---------------------------------------------------------------
+ * SYSTEM FOLDER NAME
+ *---------------------------------------------------------------
+ *
+ * This variable must contain the name of your "system" folder.
+ * Include the path if the folder is not in the same  directory
+ * as this file.
+ *
+ */
+	$system_path = 'system';
+
+/*
+ *---------------------------------------------------------------
+ * APPLICATION FOLDER NAME
+ *---------------------------------------------------------------
+ *
+ * If you want this front controller to use a different "application"
+ * folder then the default one you can set its name here. The folder
+ * can also be renamed or relocated anywhere on your server.  If
+ * you do, use a full server path. For more info please see the user guide:
+ * http://codeigniter.com/user_guide/general/managing_apps.html
+ *
+ * NO TRAILING SLASH!
+ *
+ */
+	$application_folder = 'application';
+
+/*
+ * --------------------------------------------------------------------
+ * DEFAULT CONTROLLER
+ * --------------------------------------------------------------------
+ *
+ * Normally you will set your default controller in the routes.php file.
+ * You can, however, force a custom routing by hard-coding a
+ * specific controller class/function here.  For most applications, you
+ * WILL NOT set your routing here, but it's an option for those
+ * special instances where you might want to override the standard
+ * routing in a specific front controller that shares a common CI installation.
+ *
+ * IMPORTANT:  If you set the routing here, NO OTHER controller will be
+ * callable. In essence, this preference limits your application to ONE
+ * specific controller.  Leave the function name blank if you need
+ * to call functions dynamically via the URI.
+ *
+ * Un-comment the $routing array below to use this feature
+ *
+ */
+	// The directory name, relative to the "controllers" folder.  Leave blank
+	// if your controller is not in a sub-folder within the "controllers" folder
+	// $routing['directory'] = '';
+
+	// The controller class file name.  Example:  Mycontroller.php
+	// $routing['controller'] = '';
+
+	// The controller function you wish to be called.
+	// $routing['function']	= '';
+
+
+/*
+ * -------------------------------------------------------------------
+ *  CUSTOM CONFIG VALUES
+ * -------------------------------------------------------------------
+ *
+ * The $assign_to_config array below will be passed dynamically to the
+ * config class when initialized. This allows you to set custom config
+ * items or override any default config values found in the config.php file.
+ * This can be handy as it permits you to share one application between
+ * multiple front controller files, with each file containing different
+ * config values.
+ *
+ * Un-comment the $assign_to_config array below to use this feature
+ *
+ */
+	// $assign_to_config['name_of_config_item'] = 'value of config item';
+
+
+
+// --------------------------------------------------------------------
+// END OF USER CONFIGURABLE SETTINGS.  DO NOT EDIT BELOW THIS LINE
+// --------------------------------------------------------------------
+
+/*
+ * ---------------------------------------------------------------
+ *  Resolve the system path for increased reliability
+ * ---------------------------------------------------------------
+ */
+
+	// Set the current directory correctly for CLI requests
+	if (defined('STDIN'))
 	{
-		if($systems[$systems_row['id']]['reboot_accepted'] == 1)
-		{
-			$systems[$systems_row['id']]['reboot_required_text'] = "Accepted";
-		}
-		else
-		{
-			$systems[$systems_row['id']]['reboot_required_text'] = "Yes";
-		}
+		chdir(dirname(__FILE__));
+	}
+
+	if (realpath($system_path) !== FALSE)
+	{
+		$system_path = realpath($system_path).'/';
+	}
+
+	// ensure there's a trailing slash
+	$system_path = rtrim($system_path, '/').'/';
+
+	// Is the system path correct?
+	if ( ! is_dir($system_path))
+	{
+		exit("Your system folder path does not appear to be set correctly. Please open the following file and correct this: ".pathinfo(__FILE__, PATHINFO_BASENAME));
+	}
+
+/*
+ * -------------------------------------------------------------------
+ *  Now that we know the path, set the main path constants
+ * -------------------------------------------------------------------
+ */
+	// The name of THIS file
+	define('SELF', pathinfo(__FILE__, PATHINFO_BASENAME));
+
+	// The PHP file extension
+	define('EXT', '.php');
+
+	// Path to the system folder
+	define('BASEPATH', str_replace("\\", "/", $system_path));
+
+	// Path to the front controller (this file)
+	define('FCPATH', str_replace(SELF, '', __FILE__));
+
+	// Name of the "system folder"
+	define('SYSDIR', trim(strrchr(trim(BASEPATH, '/'), '/'), '/'));
+
+
+	// The path to the "application" folder
+	if (is_dir($application_folder))
+	{
+		define('APPPATH', $application_folder.'/');
 	}
 	else
 	{
-		$systems[$systems_row['id']]['reboot_required_text'] = "No";
+		if ( ! is_dir(BASEPATH.$application_folder.'/'))
+		{
+			exit("Your application folder path does not appear to be set correctly. Please open the following file and correct this: ".SELF);
+		}
+
+		define('APPPATH', BASEPATH.$application_folder.'/');
 	}
 
-	if($systems[$systems_row['id']]['locked_count'] == null)
-	{
-		$systems[$systems_row['id']]['locked_count'] = 0;
-	}
+/*
+ * --------------------------------------------------------------------
+ * LOAD THE BOOTSTRAP FILE
+ * --------------------------------------------------------------------
+ *
+ * And away we go...
+ *
+ */
+require_once BASEPATH.'core/CodeIgniter'.EXT;
 
-	$accepted_temp = isset($systems[$systems_row['id']]['accepted_count']) ? $systems[$systems_row['id']]['accepted_count'] : 0;
-	$systems[$systems_row['id']]['packages'] -= $systems[$systems_row['id']]['locked_count'] + $accepted_temp;
-}
-
-if(count($systems) > 0)
-{
-?>
-<br />
-<h3>Updates available by system</h3>
-<br />
-<table>
-<tr><th rowspan="2">System Name</th><th colspan="3">Updates       </th><th rowspan="2">Reboot<br />Required</th><th rowspan="2">Last Checkin</th></tr>
-<tr>                                <th>Available</th><th>Accepted</th><th>Locked</th></tr>
-<?php
-	foreach($systems as $this_system)
-	{
-		$nice_checkin_class = "";
-		if( ($this_system['awol'] == 1) && ($this_system['ignore_awol'] == 0) )
-		{
-			$nice_checkin_class = " class=\"awol\"";
-		}
-		$nice_reboot_class = (($this_system['reboot_required_text'] == "Yes") && ($this_system['awol'] == 0)) ? " class=\"reboot\"" : "";
-?>
-	<tr>
-		<td class="name">
-			<a href="systems.php?system_id=<?php echo $this_system['id'] ?>"><?php echo $this_system['name'] ?></a>
-		</td>
-		<td>
-			<?php echo $this_system['packages'] ?>
-<?php
-		if($this_system['packages'] > 0 && ($this_system['packages'] != $this_system['accepted_count']) && $this_system['can_apply_updates'] == 1)
-		{
-?>
-			<form method="post" action="mark-accepted-updates.php">
-				<input type="hidden" name="action" value="accept">
-				<input type="hidden" name="system_id" value="<?php echo $this_system['id'] ?>">
-				<input type="submit" value="Accept all" class="acceptupdates">
-			</form>
-<?php
-		}
-?>
-		</td>
-		<td><?php echo $this_system['accepted_count'] ?></td>
-		<td><?php echo $this_system['locked_count'] ?></td>
-		<td<?php echo $nice_reboot_class ?>>
-			<?php echo $this_system['reboot_required_text'] ?>
-<?php
-		if($this_system['reboot_required'] == 1 && $this_system['allow_reboot'] == 1 && $this_system['can_apply_reboot'] == 1)
-		{
-			if($this_system['reboot_accepted'] != 1)
-			{
-?>
-			<form method="post" action="mark-accepted-reboot.php">
-				<input type="hidden" name="accepted" value="true">
-				<input type="hidden" name="system_id" value="<?php echo $this_system['id'] ?>">
-				<input type="submit" value="Accept">
-			</form>
-<?php
-			}
-			else
-			{
-?>
-			<form method="post" action="mark-accepted-reboot.php">
-				<input type="hidden" name="accepted" value="false">
-				<input type="hidden" name="system_id" value="<?php echo $this_system['id'] ?>">
-				<input type="submit" value="Reject">
-			</form>
-<?php
-			}
-		}
-?>
-		</td>
-		<td<?php echo $nice_checkin_class ?>><?php echo $this_system['last_checkin'] ?></td>
-	</tr>
-<?php
-	}
-?>
-</table>
-<?php
-}
-?>
-<br />
-<h3>Updates available by package name</h3>
-<br />
-<table>
-<tr><th rowspan="2">Name</th><th colspan="3">Systems       </th><th rowspan="2" style="width:4em">&nbsp;</th></tr>
-<tr>                         <th>Available</th><th>Accepted</th><th>Locked</th></tr>
-<?php
-$updates_result = mysql_query("select updates.package_name, 
-count(updates.system_id) as systems, 
-sum(accepted) as accepted_count, 
-sum(if(update_locks.package_name is not null, 1, 0)) as locked_count 
-from updates left join (update_locks) 
-on (updates.package_name = update_locks.package_name and updates.system_id = update_locks.system_id) 
-group by updates.package_name");
-for($updates_row = mysql_fetch_assoc($updates_result); $updates_row; $updates_row = mysql_fetch_assoc($updates_result))
-{
-?>
-        <tr>
-		<td class="name">
-			<a href="packages.php?name=<?php echo $updates_row['package_name'] ?>"><?php echo $updates_row['package_name'] ?></a>
-		</td>
-		<td><?php echo ($updates_row['systems'] - $updates_row['accepted_count'] - $updates_row['locked_count']) ?></td>
-		<td><?php echo $updates_row['accepted_count'] ?></td>
-		<td><?php echo $updates_row['locked_count'] ?></td>
-		<td>
-<?php
-	if(($updates_row['systems'] - $updates_row['accepted_count'] - $updates_row['locked_count']) > 0 && 
-		($updates_row['systems'] != $updates_row['accepted_count']))
-	{
-?>
-			<form method="post" action="mark-accepted-updates.php">
-				<input type="hidden" name="action" value="accept">
-				<input type="hidden" name="package_name" value="<?php echo $updates_row['package_name'] ?>">
-				<input type="submit" value="Accept all">
-			</form>
-<?php
-	}
-	else
-	{
-		echo "&nbsp;";
-	}
-?>
-		</td>
-	</tr>
-<?php
-}
-?>
-</table>
-<?php
-require "inc/footer.php";
-?>
+/* End of file index.php */
+/* Location: ./index.php */

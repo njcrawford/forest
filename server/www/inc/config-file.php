@@ -24,13 +24,13 @@ You can contact me at http://www.njcrawford.com/contact
 */
 
 // set defaults
-$forest_config['email_to'] = "root@localhost";
-$forest_config['server_url'] = "http://forest/forest";
-$forest_config['login_required'] = false;
-$forest_config['db_server'] = "localhost";
-$forest_config['db_user'] = "forest_user";
-$forest_config['db_password'] = "forest_pass";
-$forest_config['db_name'] = "forest";
+$config['email_to'] = "root@localhost";
+$config['base_url'] = "http://forest/forest";
+$config['login_required'] = false;
+$config['db_hostname'] = "localhost";
+$config['db_username'] = "forest_user";
+$config['db_password'] = "forest_pass";
+$config['db_name'] = "forest";
 
 // now read in any changed values from the config file
 include "/etc/forest-server.conf";

@@ -22,24 +22,18 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
 A copy of the full GPL 2 license can be found in the docs directory.
 You can contact me at http://www.njcrawford.com/contact
 */
+$this->load->helper('url');
 
-require_once "inc/login-common.php";
-if(is_login_token_set())
+if(!isset($page_title))
 {
-	require "inc/redirect.php";
-	redirect($forest_config['server_url']);
-}
-else
-{
-$page_title = "Login";
-require "inc/header.php";
-?>
-<form method="post" action="do-login.php">
-Username: <input name="username"></input><br />
-Password: <input type="password" name="password"></input><br />
-<input type="submit" value="Login">
-</form>
-<?php
-require "inc/footer.php";
+	$page_title = "(Page Title)";
 }
 ?>
+<html>
+<head>
+<title><?php echo $page_title ?> - Forest</title>
+<link rel="stylesheet" type="text/css" href="<?php echo site_url("forest.css") ?>" />
+</head>
+<body>
+<script language="javascript" src="<?php echo site_url("jquery/jquery-1.6.1.min.js") ?>"></script>
+<script language="javascript" src="<?php echo site_url("forest.js") ?>"></script>
