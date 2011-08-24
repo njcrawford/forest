@@ -19,12 +19,12 @@ $this->load->helper('url');
 	</tr>
 <?php foreach($systems as $this_system) { ?>
 	<tr>
-		<td><a href="<?php echo site_url("browser/view_system/" . $this_system['id']) ?>"><?php echo $this_system['name'] ?></a></td>
+		<td class="name"><a href="<?php echo site_url("browser/view_system/" . $this_system['id']) ?>"><?php echo $this_system['name'] ?></a></td>
 		<td><?php echo $this_system['available_updates'] ?></td>
 		<td><?php echo $this_system['accepted_updates'] ?></td>
 		<td><?php echo $this_system['locked_updates'] ?></td>
-		<td><?php echo $this_system['reboot_required'] ?></td>
-		<td><?php echo $this_system['last_checkin'] ?></td>
+		<td <?php echo $this_system['reboot_required_class'] ?>><?php echo $this_system['reboot_required_text'] ?></td>
+		<td <?php echo $this_system['awol_class'] ?>><?php echo $this_system['last_checkin'] ?></td>
 	</tr>
 <?php } ?>
 </table>
