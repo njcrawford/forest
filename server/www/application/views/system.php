@@ -49,7 +49,7 @@ Updates:
 	<?php foreach($updates as $this_update) { ?>
 	<li>
 		<?php if($this_update['is_locked']) { ?>
-			<?php echo $this_update['package_name'] ?> (locked)
+			<?php echo $this_update['package_name'] ?> <?php echo $this_update['version'] ?> (locked)
 		<?php } else { ?>
 		<div id="update_<?php echo $this_update['id'] ?>">
 			<?php
