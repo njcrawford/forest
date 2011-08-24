@@ -370,6 +370,11 @@ $config['db_name'] = 'forest';
 // now read in any changed values from the config file
 include "/etc/forest-server.conf";
 
+// forest version
+$temp = '$URL$';
+$temp = explode("/", $temp);
+$config['forest_version'] = $temp[count($temp)-5];
+
 
 /* End of file config.php */
 /* Location: ./application/config/config.php */
