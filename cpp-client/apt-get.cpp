@@ -35,7 +35,7 @@ void AptGet::getAvailableUpdates(vector<updateInfo> & outList)
 				pos = commandOutput[i].find(']', pos + 1);
 				pos = commandOutput[i].find('(', pos + 1);
 				len = commandOutput[i].find(' ', pos + 1) - pos;
-				temp.name = commandOutput[i].substr(pos, len);
+				temp.version = commandOutput[i].substr(pos, len);
 				outList.push_back(temp);
 			}
 		}
