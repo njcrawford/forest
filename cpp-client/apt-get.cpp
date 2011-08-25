@@ -7,35 +7,34 @@
 #include "apt-get.h"
 #include "forest-client.h"
 
-void AptGet::getAvailableUpdates(vector<string> & outList)
+void AptGet::getAvailableUpdates(vector<updateInfo> & outList)
 {
 	string command;
 	int commandRetval = 0;
+	vector<string> commandOutput;
 
 	command = "/usr/bin/apt-get dist-upgrade -Vs 2>&1";
 
-	mySystem(&command, outList, &commandRetval);
+	mySystem(&command, commandOutput, &commandRetval);
 
 	if(commandRetval == 0)
 	{
-		for(int i = outList.size() - 1; i >= 0; i--)
+		for(int i = 0; i < commandOutput.size(); i++)
 		{
 			// grep ^Inst | cut -d " " -f 2
-			if(outList[i].substr(0, 4) == "Inst")
+			if(commandOutput[i].substr(0, 4) == "Inst")
 			{
-				string::size_type pos = outList[i].find(' ', 0);
-				string::size_type len = outList[i].find(' ', pos + 1) - pos - 1;
-				outList[i] = outList[i].substr(pos, len);
-			}
-			else
-			{
-				outList.erase(outList.begin() + i);
+				string::size_type pos = commandOutput[i].find(' ', 0);
+				string::size_type len = commandOutput[i].find(' ', pos + 1) - pos - 1;
+				updateInfo temp;
+				temp.name = commandOutput[i].substr(pos, len);
+				outList.push_back(temp);
 			}
 		}
 	}
 	else
 	{
-		cerr << "apt-get failed:" << endl << flattenStringList(outList, '\n') << endl;
+		cerr << "apt-get failed:" << endl << flattenStringList(commandOutput, '\n') << endl;
 		exit(10);
 	}
 
