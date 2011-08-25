@@ -31,8 +31,8 @@ void AptGet::getAvailableUpdates(vector<updateInfo> & outList)
 				string::size_type len = commandOutput[i].find(' ', pos + 1) - pos;
 				updateInfo temp;
 				temp.name = commandOutput[i].substr(pos, len);
-				pos = commandOutput[i].find(' ', pos + 1);
-				pos = commandOutput[i].find(' ', pos + 1);
+				pos = commandOutput[i].find('[', 0);
+				pos = commandOutput[i].find(']', pos + 1);
 				pos = commandOutput[i].find('(', pos + 1);
 				len = commandOutput[i].find(' ', pos + 1) - pos;
 				temp.name = commandOutput[i].substr(pos, len);
