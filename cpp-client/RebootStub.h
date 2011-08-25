@@ -7,7 +7,6 @@ class RebootStub : public RebootManager
 {
 public:
     rebootState isRebootNeeded();
-    void applyReboot();
 };
 
 #endif

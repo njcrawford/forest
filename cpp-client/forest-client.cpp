@@ -66,7 +66,7 @@ typedef struct forestConfigStruct
 //int getAvailableUpdates(vector<string> & outList);
 void getAcceptedUpdates(vector<string> & outList, string * serverUrl, string * myHostname);
 //int applyUpdates(vector<string> & list);
-void reportAvailableUpdates(vector<updateInfo> & list, string * serverUrl, string * myHostname, rebootState rebootNeeded, bool canApplyUpdates);
+void reportAvailableUpdates(vector<updateInfo> & list, string * serverUrl, string * myHostname, rebootState rebootNeeded, bool canApplyUpdates, bool canApplyReboot);
 void readConfigFile(forestConfig * config);
 int isRebootNeeded();
 
@@ -130,7 +130,33 @@ int main(int argc, char** args)
 	packageManager->getAvailableUpdates(availableUpdates);
 
 	// report packages that are available to update
-	reportAvailableUpdates(availableUpdates, &config.serverUrl, &hostname, rebootManager->isRebootNeeded(), packageManager->canApplyUpdates());
+	reportAvailableUpdates(availableUpdates, 
+		&config.serverUrl, 
+		&hostname, 
+		rebootManager->isRebootNeeded(), 
+		packageManager->canApplyUpdates(), 
+		rebootManager->canApplyReboot()
+	);
+
+	// if backend can apply updates or reboot
+	if(packageManager->canApplyUpdates() || rebootManager->canApplyReboot())
+	{
+		// get list of accepted updates (and check for accepted reboot)
+		vector<string> acceptedUpdates;
+		bool acceptedReboot = false;
+
+		// apply accepted updates
+		if(packageManager->canApplyUpdates() && acceptedUpdates.size() > 0)
+		{
+			packageManager->applyUpdates(acceptedUpdates);
+		}
+
+		// apply reboot
+		if(rebootManager->canApplyReboot() && acceptedReboot)
+		{
+			rebootManager->applyReboot();
+		}
+	}
 
 	return 0;
 }
@@ -201,7 +227,7 @@ void getAcceptedUpdates(vector<string> & outList, string * serverUrl, string * m
 	}
 }
 
-void reportAvailableUpdates(vector<updateInfo> & list, string * serverUrl, string * myHostname, rebootState rebootNeeded, bool canApplyUpdates)
+void reportAvailableUpdates(vector<updateInfo> & list, string * serverUrl, string * myHostname, rebootState rebootNeeded, bool canApplyUpdates, bool canApplyReboot)
 {
 	string command;
 	vector<string> commandResponse;
@@ -215,6 +241,17 @@ void reportAvailableUpdates(vector<updateInfo> & list, string * serverUrl, strin
 
 	command += " --data \"client_can_apply_updates=";
 	if(canApplyUpdates)
+	{
+		command += "true";
+	}
+	else
+	{
+		command += "false";
+	}
+	command += "\"";
+
+	command += " --data \"client_can_apply_reboot=";
+	if(canApplyReboot)
 	{
 		command += "true";
 	}
