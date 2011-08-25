@@ -8,6 +8,7 @@ class UnixShutdown : public RebootManager
 public:
     virtual rebootState isRebootNeeded() = 0;
     void applyReboot();
+    bool canApplyReboot();
 };
 
 #endif
