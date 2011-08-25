@@ -12,6 +12,7 @@ class AptGet : public PackageManager
 public:
     void getAvailableUpdates(vector<updateInfo> & outlist);
     void applyUpdates(vector<string> & list);
+    bool canApplyUpdates();
 };
 
 #endif

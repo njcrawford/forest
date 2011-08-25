@@ -62,3 +62,8 @@ void AptGet::applyUpdates(vector<string> & list)
 		exit(1);
 	}
 }
+
+bool AptGet::canApplyUpdates()
+{
+	return true;
+}
