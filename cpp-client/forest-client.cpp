@@ -66,7 +66,7 @@ typedef struct forestConfigStruct
 //int getAvailableUpdates(vector<string> & outList);
 void getAcceptedUpdates(vector<string> & outList, string * serverUrl, string * myHostname);
 //int applyUpdates(vector<string> & list);
-void reportAvailableUpdates(vector<updateInfo> & list, string * serverUrl, string * myHostname, rebootState rebootNeeded);
+void reportAvailableUpdates(vector<updateInfo> & list, string * serverUrl, string * myHostname, rebootState rebootNeeded, bool canApplyUpdates);
 void readConfigFile(forestConfig * config);
 int isRebootNeeded();
 
@@ -130,7 +130,7 @@ int main(int argc, char** args)
 	packageManager->getAvailableUpdates(availableUpdates);
 
 	// report packages that are available to update
-	reportAvailableUpdates(availableUpdates, &config.serverUrl, &hostname, rebootManager->isRebootNeeded());
+	reportAvailableUpdates(availableUpdates, &config.serverUrl, &hostname, rebootManager->isRebootNeeded(), packageManager->canApplyUpdates());
 
 	return 0;
 }
@@ -201,7 +201,7 @@ void getAcceptedUpdates(vector<string> & outList, string * serverUrl, string * m
 	}
 }
 
-void reportAvailableUpdates(vector<updateInfo> & list, string * serverUrl, string * myHostname, rebootState rebootNeeded)
+void reportAvailableUpdates(vector<updateInfo> & list, string * serverUrl, string * myHostname, rebootState rebootNeeded, bool canApplyUpdates)
 {
 	string command;
 	vector<string> commandResponse;
@@ -211,6 +211,17 @@ void reportAvailableUpdates(vector<updateInfo> & list, string * serverUrl, strin
 	command += to_string(RPC_VERSION);
 	command += "\" --data \"system_name=";
 	command += *myHostname;
+	command += "\"";
+
+	command += " --data \"client_can_apply_updates=";
+	if(canApplyUpdates)
+	{
+		command += "true";
+	}
+	else
+	{
+		command += "false";
+	}
 	command += "\"";
 
 	if(list.size() == 0)

@@ -11,7 +11,7 @@ class PackageManager
 public:
     virtual void applyUpdates(vector<string> & list) = 0;
     virtual void getAvailableUpdates(vector<updateInfo> & outList) = 0;
-    bool canApplyUpdates();
+    virtual bool canApplyUpdates();
 };
 
 #endif
