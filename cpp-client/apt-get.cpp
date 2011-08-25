@@ -21,12 +21,20 @@ void AptGet::getAvailableUpdates(vector<updateInfo> & outList)
 	{
 		for(int i = 0; i < commandOutput.size(); i++)
 		{
+			// example of one output line
+			// Inst libpam-modules [1.1.1-2ubuntu5] (1.1.1-2ubuntu5.3 Ubuntu:10.04/lucid-updates)
+
 			// grep ^Inst | cut -d " " -f 2
 			if(commandOutput[i].substr(0, 4) == "Inst")
 			{
 				string::size_type pos = commandOutput[i].find(' ', 0);
 				string::size_type len = commandOutput[i].find(' ', pos + 1) - pos;
 				updateInfo temp;
+				temp.name = commandOutput[i].substr(pos, len);
+				pos = commandOutput[i].find(' ', pos + 1);
+				pos = commandOutput[i].find(' ', pos + 1);
+				pos = commandOutput[i].find('(', pos + 1);
+				len = commandOutput[i].find(' ', pos + 1) - pos;
 				temp.name = commandOutput[i].substr(pos, len);
 				outList.push_back(temp);
 			}
