@@ -48,11 +48,11 @@ rebootState KernelDifference::isRebootNeeded()
 		string::size_type start = kernelList[i].find(' ');
 		start = kernelList[i].find('.', start);
 		start = kernelList[i].rfind(' ', start) + 1;
-		string::size_type end = kernelList[i].find(' ', start) - 1;
+		string::size_type end = kernelList[i].find(' ', start);
 		string kernelTest = kernelList[i].substr(start, end - start);
 
 		// compare this to the highest found so far
-		if(newestKernel.compare(kernelTest) > 0)
+		if(newestKernel.compare(kernelTest) < 0)
 		{
 			newestKernel = kernelTest;
 		}

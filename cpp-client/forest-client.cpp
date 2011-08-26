@@ -388,7 +388,7 @@ void reportAvailableUpdates(vector<updateInfo> & list, string * serverUrl, strin
 	mySystem(&command, commandResponse, &commandRetval);
 	cout << flattenStringList(commandResponse, '\n') << endl;
 
-	// do something to check return value
+	// TODO: do something to check return value
 }
 
 void readConfigFile(forestConfig * config)
