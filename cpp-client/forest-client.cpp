@@ -251,7 +251,7 @@ void getAcceptedUpdates(vector<string> & outList, string * serverUrl, string * m
 			acceptedUpdate = curlOutput[0].substr(startPosition, position - startPosition);
 			if(acceptedUpdate.size() > 0)
 			{
-				cerr << "DEBUG: accepted update " << acceptedUpdate << endl;
+				//cerr << "DEBUG: accepted update " << acceptedUpdate << endl;
 				outList.push_back(acceptedUpdate);
 			}
 			startPosition = position + 1;
@@ -261,7 +261,7 @@ void getAcceptedUpdates(vector<string> & outList, string * serverUrl, string * m
 		acceptedUpdate = curlOutput[0].substr(startPosition);
 		if(trim_string(acceptedUpdate).size() > 0)
 		{
-			cerr << "DEBUG: accepted update " << acceptedUpdate << endl;
+			//cerr << "DEBUG: accepted update " << acceptedUpdate << endl;
 			outList.push_back(acceptedUpdate);
 		}
 	}
