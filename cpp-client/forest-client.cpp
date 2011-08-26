@@ -271,8 +271,11 @@ void getAcceptedUpdates(vector<string> & outList, string * serverUrl, string * m
 		for(position = curlOutput[0].find(' ', 0); position != string::npos; position = curlOutput[0].find(' ', position + 1))
 		{
 			acceptedUpdate = curlOutput[0].substr(startPosition, position - startPosition);
-			cerr << "DEBUG: accepted update " << acceptedUpdate;
-			outList.push_back(acceptedUpdate);
+			if(acceptedUpdate.size() > 0)
+			{
+				cerr << "DEBUG: accepted update " << acceptedUpdate << endl;
+				outList.push_back(acceptedUpdate);
+			}
 			startPosition = position + 1;
 			//curlOutput[0] = curlOutput[0].substr(position + 1);
 		}
@@ -280,7 +283,7 @@ void getAcceptedUpdates(vector<string> & outList, string * serverUrl, string * m
 		acceptedUpdate = curlOutput[0].substr(startPosition);
 		if(trim_string(acceptedUpdate).size() > 0)
 		{
-			cerr << "DEBUG: accepted update " << acceptedUpdate;
+			cerr << "DEBUG: accepted update " << acceptedUpdate << endl;
 			outList.push_back(acceptedUpdate);
 		}
 	}
