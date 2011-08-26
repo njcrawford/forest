@@ -239,11 +239,11 @@ void getAcceptedUpdates(vector<string> & outList, string * serverUrl, string * m
 			cerr << "Error getting accepted updates: " << flattenStringList(curlOutput, '\n') << endl;
 			exit(1);
 		}
-		// don't die if reboot state isn't there
+		// don't die if reboot state isn't present
 		*rebootAccepted = false;
 		if(position2 != string::npos)
 		{
-			string rebootState = trim_string(curlOutput[0].substr(position + 1, position2 - position - 2));
+			string rebootState = curlOutput[0].substr(position + 1, position2 - position - 1);
 			if(rebootState == "reboot-true")
 			{
 				*rebootAccepted = true;
@@ -256,12 +256,12 @@ void getAcceptedUpdates(vector<string> & outList, string * serverUrl, string * m
 		}
 		
 		// trim data_ok and reboot state from output
-		curlOutput[0] = trim_string(curlOutput[0].substr(position2 + 1));
+		curlOutput[0] = curlOutput[0].substr(position2 + 1);
 
 		outList.clear();
 
 		// if there are no updates, the string will be empty (because of trim_string)
-		if(curlOutput[0].size() == 0)
+		if(trim_string(curlOutput[0]).size() == 0)
 		{
 			return;
 		}
