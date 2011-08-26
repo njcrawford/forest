@@ -25,7 +25,7 @@ rebootState KernelDifference::isRebootNeeded()
 	string::size_type archPos = runningKernel.find(kernelArch);
 	if(archPos != string::npos)
 	{
-		runningKernel = runningKernel.substr(0, archPos - 1);
+		runningKernel = runningKernel.substr(0, archPos);
 	}
 
 	// find the highest installed kernel
@@ -38,7 +38,7 @@ rebootState KernelDifference::isRebootNeeded()
 	mySystem(&command, kernelList, &junk); 
 	newestKernel = kernelList[kernelList.size() - 1];
 
-	if(runningKernel.compare(newestKernel) == 0)
+	if(runningKernel == newestKernel)
 	{
 		return no;
 	}
