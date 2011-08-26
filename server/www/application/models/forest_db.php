@@ -37,7 +37,7 @@ class Forest_DB extends CI_Model {
 	function get_updates_for_system($system_id)
 	{
 		$this->connect_to_db();
-		$query = "select * from updates where system_id = '" . $system_id . "'";
+		$query = "select * from updates where system_id = '" . $system_id . "' order by package_name";
 		return $this->run_db_query($query);
 	}
 	
