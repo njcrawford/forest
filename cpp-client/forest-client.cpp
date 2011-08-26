@@ -259,19 +259,29 @@ void getAcceptedUpdates(vector<string> & outList, string * serverUrl, string * m
 		curlOutput[0] = trim_string(curlOutput[0].substr(position2 + 1));
 
 		outList.clear();
-		string::size_type startPosition = 0;
-		for(position = curlOutput[0].find(',', 0); position != string::npos; position = curlOutput[0].find(',', position + 1))
+		// if there's only one update, there won't be any commas
+		if(curlOutput[0].find(',') == string::npos)
 		{
-			string acceptedUpdate = curlOutput[0].substr(startPosition, position - startPosition);
+			outList.push_back(curlOutput[0]);
+		}
+		else
+		{
+			string::size_type startPosition = 0;
+			string acceptedUpdate;
+			for(position = curlOutput[0].find(',', 0); position != string::npos; position = curlOutput[0].find(',', position + 1))
+			{
+				acceptedUpdate = curlOutput[0].substr(startPosition, position - startPosition);
+				cerr << "DEBUG: accepted update " << acceptedUpdate;
+				outList.push_back(acceptedUpdate);
+				startPosition = position + 1;
+				//curlOutput[0] = curlOutput[0].substr(position + 1);
+			}
+			//add the last item (whatever is after the last comma)
+			acceptedUpdate = curlOutput[0].substr(startPosition);
 			cerr << "DEBUG: accepted update " << acceptedUpdate;
 			outList.push_back(acceptedUpdate);
-			startPosition = position + 1;
-			//curlOutput[0] = curlOutput[0].substr(position + 1);
 		}
 	}
-
-	//TODO: fill in reboot accepted code
-	*rebootAccepted = false;
 }
 
 void reportAvailableUpdates(vector<updateInfo> & list, string * serverUrl, string * myHostname, rebootState rebootNeeded, bool canApplyUpdates, bool canApplyReboot, bool rebootAttempted)
