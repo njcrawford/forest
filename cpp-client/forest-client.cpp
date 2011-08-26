@@ -63,9 +63,7 @@ typedef struct forestConfigStruct
 	string serverUrl;
 } forestConfig;
 
-//int getAvailableUpdates(vector<string> & outList);
 void getAcceptedUpdates(vector<string> & outList, string * serverUrl, string * myHostname, bool * rebootAccepted);
-//int applyUpdates(vector<string> & list);
 void reportAvailableUpdates(vector<updateInfo> & list, string * serverUrl, string * myHostname, rebootState rebootNeeded, bool canApplyUpdates, bool canApplyReboot, bool rebootAttempted);
 void readConfigFile(forestConfig * config);
 int isRebootNeeded();
@@ -155,26 +153,6 @@ int main(int argc, char** args)
 		rebootManager->canApplyReboot(),
 		rebootAttempted
 	);
-
-/*	// if backend can apply updates or reboot
-	if(packageManager->canApplyUpdates() || rebootManager->canApplyReboot())
-	{
-		// get list of accepted updates (and check for accepted reboot)
-		vector<string> acceptedUpdates;
-		bool acceptedReboot = false;
-
-		// apply accepted updates
-		if(packageManager->canApplyUpdates() && acceptedUpdates.size() > 0)
-		{
-			packageManager->applyUpdates(acceptedUpdates);
-		}
-
-		// apply reboot
-		if(rebootManager->canApplyReboot() && acceptedReboot)
-		{
-			rebootManager->applyReboot();
-		}
-	}*/
 
 	return 0;
 }
