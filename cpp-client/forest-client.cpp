@@ -64,9 +64,9 @@ typedef struct forestConfigStruct
 } forestConfig;
 
 //int getAvailableUpdates(vector<string> & outList);
-void getAcceptedUpdates(vector<string> & outList, string * serverUrl, string * myHostname);
+void getAcceptedUpdates(vector<string> & outList, string * serverUrl, string * myHostname, bool * rebootAccepted);
 //int applyUpdates(vector<string> & list);
-void reportAvailableUpdates(vector<updateInfo> & list, string * serverUrl, string * myHostname, rebootState rebootNeeded, bool canApplyUpdates, bool canApplyReboot);
+void reportAvailableUpdates(vector<updateInfo> & list, string * serverUrl, string * myHostname, rebootState rebootNeeded, bool canApplyUpdates, bool canApplyReboot, bool rebootAttempted);
 void readConfigFile(forestConfig * config);
 int isRebootNeeded();
 
@@ -79,6 +79,8 @@ int main(int argc, char** args)
 	int response = 0;
 	PackageManager * packageManager;
 	RebootManager * rebootManager;
+	bool acceptedReboot = false;
+	bool rebootAttempted = false;
 
 #if defined PACKAGE_MANAGER_APTGET
 	packageManager = new AptGet();
@@ -118,27 +120,43 @@ int main(int argc, char** args)
 	readConfigFile(&config);
 
 	// get list of packages that have been accepted for update
-	getAcceptedUpdates(acceptedUpdates, &config.serverUrl, &hostname);
+	// also check to see if a reboot has been accepted
+	// this should really be split into two rpc calls, but keeping backwards compatible for now
+	if(packageManager->canApplyUpdates() || rebootManager->canApplyReboot())
+	{
+		getAcceptedUpdates(acceptedUpdates, &config.serverUrl, &hostname, &acceptedReboot);
+	}
 
-	// apply accepted updates (and only available updates)
-	if(acceptedUpdates.size() > 0)
+	// apply accepted updates (and only available updates) if backend is able
+	if(acceptedUpdates.size() > 0 && packageManager->canApplyUpdates())
 	{
 		packageManager->applyUpdates(acceptedUpdates);
 	}
 
 	// determine what packages are available to update
+	// note that this is done AFTER applying accepted updates
 	packageManager->getAvailableUpdates(availableUpdates);
 
+	// apply reboot
+	// this is done before reporting updates so that reboot attempted can be reported
+	if(acceptedReboot && rebootManager->canApplyReboot())
+	{
+		rebootManager->applyReboot();
+		rebootAttempted = true;
+	}
+
 	// report packages that are available to update
+	// this should also be split into two rpc calls, but keeping backward compatible for now
 	reportAvailableUpdates(availableUpdates, 
 		&config.serverUrl, 
 		&hostname, 
 		rebootManager->isRebootNeeded(), 
 		packageManager->canApplyUpdates(), 
-		rebootManager->canApplyReboot()
+		rebootManager->canApplyReboot(),
+		rebootAttempted
 	);
 
-	// if backend can apply updates or reboot
+/*	// if backend can apply updates or reboot
 	if(packageManager->canApplyUpdates() || rebootManager->canApplyReboot())
 	{
 		// get list of accepted updates (and check for accepted reboot)
@@ -156,13 +174,13 @@ int main(int argc, char** args)
 		{
 			rebootManager->applyReboot();
 		}
-	}
+	}*/
 
 	return 0;
 }
 
 // fills outList with names of accepted packages
-void getAcceptedUpdates(vector<string> & outList, string * serverUrl, string * myHostname)
+void getAcceptedUpdates(vector<string> & outList, string * serverUrl, string * myHostname, bool * rebootAccepted)
 {
 	string acceptedUrl;
 	string command;
@@ -229,9 +247,12 @@ void getAcceptedUpdates(vector<string> & outList, string * serverUrl, string * m
 			//curlOutput[0] = curlOutput[0].substr(position + 1);
 		}
 	}
+
+	//TODO: fill in reboot accepted code
+	*rebootAccepted = false;
 }
 
-void reportAvailableUpdates(vector<updateInfo> & list, string * serverUrl, string * myHostname, rebootState rebootNeeded, bool canApplyUpdates, bool canApplyReboot)
+void reportAvailableUpdates(vector<updateInfo> & list, string * serverUrl, string * myHostname, rebootState rebootNeeded, bool canApplyUpdates, bool canApplyReboot, bool rebootAttempted)
 {
 	string command;
 	vector<string> commandResponse;
@@ -310,7 +331,16 @@ void reportAvailableUpdates(vector<updateInfo> & list, string * serverUrl, strin
 	}
 	command += "\"";
 
-	//TODO: add reboot attempted
+	command += " --data \"reboot_attempted=";
+	if(rebootAttempted)
+	{
+		command += "true";
+	}
+	else
+	{
+		command += "false";
+	}
+	command += "\"";
 
 	command += " ";
 	command += *serverUrl;
