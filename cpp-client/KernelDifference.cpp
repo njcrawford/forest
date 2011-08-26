@@ -33,30 +33,10 @@ rebootState KernelDifference::isRebootNeeded()
 	vector<string> kernelList;
 	string newestKernel = "";
 	kernelList.clear();
-	string command = "yum -q list installed kernel 2>&1";
+	string command = "rpm --query kernel";
 	int junk;
 	mySystem(&command, kernelList, &junk); 
-	for(int i = kernelList.size() - 1; i >= 0; i--)
-	{
-		// grep -v "Installed Packages"
-		if(kernelList[i].find("Installed Packages") != string::npos)
-		{
-			continue;
-		}
-
-		// cut out version number
-		string::size_type start = kernelList[i].find(' ');
-		start = kernelList[i].find('.', start);
-		start = kernelList[i].rfind(' ', start) + 1;
-		string::size_type end = kernelList[i].find(' ', start);
-		string kernelTest = kernelList[i].substr(start, end - start);
-
-		// compare this to the highest found so far
-		if(newestKernel.compare(kernelTest) < 0)
-		{
-			newestKernel = kernelTest;
-		}
-	}
+	newestKernel = kernelList[kernelList.size() - 1];
 
 	if(runningKernel.compare(newestKernel) == 0)
 	{
