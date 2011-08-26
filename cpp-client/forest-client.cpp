@@ -191,7 +191,7 @@ void getAcceptedUpdates(vector<string> & outList, string * serverUrl, string * m
 	if(curlOutput[0].substr(0, 8) != "data_ok:")
 	{
 		// lack of data_ok: is ok if this system is new to the server
-		if(curlOutput[0].substr(0, 28) == "System not found in database")
+		if(curlOutput[0].find("System not found in database") != string::npos)
 		{
 			outList.clear();
 		}
@@ -219,10 +219,14 @@ void getAcceptedUpdates(vector<string> & outList, string * serverUrl, string * m
 		}
 
 		outList.clear();
+		string::size_type startPosition = 0;
 		for(position = curlOutput[0].find(',', 0); position != string::npos; position = curlOutput[0].find(',', position + 1))
 		{
-			outList.push_back(curlOutput[0].substr(0, position - 1));
-			curlOutput[0] = curlOutput[0].substr(position + 1);
+			string acceptedUpdate = curlOutput[0].substr(startPosition, position - startPosition);
+			cerr << "DEBUG: accepted update " << acceptedUpdate;
+			outList.push_back(acceptedUpdate);
+			startPosition = position + 1;
+			//curlOutput[0] = curlOutput[0].substr(position + 1);
 		}
 	}
 }

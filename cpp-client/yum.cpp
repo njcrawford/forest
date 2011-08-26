@@ -128,3 +128,8 @@ void Yum::applyUpdates(vector<string> & list)
 		exit(1);
 	}
 }
+
+bool Yum::canApplyUpdates()
+{
+	return true;
+}

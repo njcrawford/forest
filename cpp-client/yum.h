@@ -12,6 +12,7 @@ class Yum : public PackageManager
 public:
     void applyUpdates(vector<string> & list);
     void getAvailableUpdates(vector<updateInfo> & outList);
+    bool canApplyUpdates();
 };
 
 #endif
