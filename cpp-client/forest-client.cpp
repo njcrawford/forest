@@ -243,7 +243,7 @@ void getAcceptedUpdates(vector<string> & outList, string * serverUrl, string * m
 		*rebootAccepted = false;
 		if(position2 != string::npos)
 		{
-			string rebootState = curlOutput[0].substr(position + 1, position2 - position - 1);
+			string rebootState = trim_string(curlOutput[0].substr(position + 1, position2 - position - 1));
 			if(rebootState == "reboot-true")
 			{
 				*rebootAccepted = true;
@@ -266,25 +266,20 @@ void getAcceptedUpdates(vector<string> & outList, string * serverUrl, string * m
 			return;
 		}
 
-		// if there's only one update, there won't be any commas
-		if(curlOutput[0].find(',') == string::npos)
+		string::size_type startPosition = 0;
+		string acceptedUpdate;
+		for(position = curlOutput[0].find(' ', 0); position != string::npos; position = curlOutput[0].find(' ', position + 1))
 		{
-			outList.push_back(curlOutput[0]);
+			acceptedUpdate = curlOutput[0].substr(startPosition, position - startPosition);
+			cerr << "DEBUG: accepted update " << acceptedUpdate;
+			outList.push_back(acceptedUpdate);
+			startPosition = position + 1;
+			//curlOutput[0] = curlOutput[0].substr(position + 1);
 		}
-		else
+		//add the last item (whatever is after the last space) if it's not empty
+		acceptedUpdate = curlOutput[0].substr(startPosition);
+		if(trim_string(acceptedUpdate).size() > 0)
 		{
-			string::size_type startPosition = 0;
-			string acceptedUpdate;
-			for(position = curlOutput[0].find(',', 0); position != string::npos; position = curlOutput[0].find(',', position + 1))
-			{
-				acceptedUpdate = curlOutput[0].substr(startPosition, position - startPosition);
-				cerr << "DEBUG: accepted update " << acceptedUpdate;
-				outList.push_back(acceptedUpdate);
-				startPosition = position + 1;
-				//curlOutput[0] = curlOutput[0].substr(position + 1);
-			}
-			//add the last item (whatever is after the last comma)
-			acceptedUpdate = curlOutput[0].substr(startPosition);
 			cerr << "DEBUG: accepted update " << acceptedUpdate;
 			outList.push_back(acceptedUpdate);
 		}
