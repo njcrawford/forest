@@ -221,20 +221,42 @@ void getAcceptedUpdates(vector<string> & outList, string * serverUrl, string * m
 	}
 	else
 	{
-		// remove data_ok:
-		// TODO: this is pretty bad coding practice but I want to get going quickly
-		curlOutput[0] = trim_string(curlOutput[0].substr(9));
-		
-		string::size_type position = curlOutput[0].find(':', 0);
+		string::size_type position;
+		string::size_type position2;
+
+		// check for data_ok:
+		if(curlOutput[0].substr(0,8) != "data_ok:")
+		{
+			cerr << "Error getting accepted updates: " << flattenStringList(curlOutput, '\n') << endl;
+			exit(1);
+		}
+
+		// check for reboot-(true|false)
+		position = curlOutput[0].find(':', 0);
+		position2 = curlOutput[0].find(':', position + 1);
 		if(position == string::npos)
 		{
 			cerr << "Error getting accepted updates: " << flattenStringList(curlOutput, '\n') << endl;
 			exit(1);
 		}
+		// don't die if reboot state isn't there
+		*rebootAccepted = false;
+		if(position2 != string::npos)
+		{
+			string rebootState = trim_string(curlOutput[0].substr(position + 1, position2 - position - 2));
+			if(rebootState == "reboot-true")
+			{
+				*rebootAccepted = true;
+			}
+		}
 		else
 		{
-			curlOutput[0] = trim_string(curlOutput[0].substr(position + 1));
+			// for trimming output, below
+			position2 = position;
 		}
+		
+		// trim data_ok and reboot state from output
+		curlOutput[0] = trim_string(curlOutput[0].substr(position2 + 1));
 
 		outList.clear();
 		string::size_type startPosition = 0;
