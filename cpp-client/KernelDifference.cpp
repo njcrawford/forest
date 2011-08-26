@@ -40,10 +40,10 @@ rebootState KernelDifference::isRebootNeeded()
 
 	if(runningKernel.compare(newestKernel) == 0)
 	{
-		return yes;
+		return no;
 	}
 	else
 	{
-		return no;
+		return yes;
 	}
 }
