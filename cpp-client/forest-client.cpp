@@ -259,6 +259,13 @@ void getAcceptedUpdates(vector<string> & outList, string * serverUrl, string * m
 		curlOutput[0] = trim_string(curlOutput[0].substr(position2 + 1));
 
 		outList.clear();
+
+		// if there are no updates, the string will be empty (because of trim_string)
+		if(curlOutput[0].size() == 0)
+		{
+			return;
+		}
+
 		// if there's only one update, there won't be any commas
 		if(curlOutput[0].find(',') == string::npos)
 		{
