@@ -33,7 +33,7 @@ rebootState KernelDifference::isRebootNeeded()
 	vector<string> kernelList;
 	string newestKernel = "";
 	kernelList.clear();
-	string command = "rpm --query kernel";
+	string command = "rpm --query kernel --queryformat \"%{VERSION}-%{RELEASE}\\n\"";
 	int junk;
 	mySystem(&command, kernelList, &junk); 
 	newestKernel = kernelList[kernelList.size() - 1];
