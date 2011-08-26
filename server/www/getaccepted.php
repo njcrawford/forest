@@ -53,7 +53,7 @@ $updates_result = mysql_query("select updates.package_name from updates
         updates.package_name = update_locks.package_name
     ) 
     where 
-        updates.system_id = '" . mysql_real_escape_string($system_row['id']) . "' and 
+        updates.system_id = '" . $system_row['id'] . "' and 
         update_locks.package_name is null and 
         updates.accepted = '1'"
 );
