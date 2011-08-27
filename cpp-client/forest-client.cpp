@@ -72,6 +72,9 @@ void readConfigFile(forestConfig * config);
 //for curl
 size_t write_data(void *buffer, size_t size, size_t nmemb, void *userp);
 
+// icky global goes here because I'm lazy
+bool cronMode = false;
+
 int main(int argc, char** args)
 {
 	vector<updateInfo> availableUpdates;
@@ -83,6 +86,11 @@ int main(int argc, char** args)
 	RebootManager * rebootManager;
 	bool acceptedReboot = false;
 	bool rebootAttempted = false;
+
+	if(argc == 1 && strcmp(args[0], "--cron") == 0)
+	{
+		cronMode = true;
+	}
 
 #if defined PACKAGE_MANAGER_APTGET
 	packageManager = new AptGet();
@@ -404,9 +412,10 @@ void reportAvailableUpdates(vector<updateInfo> & list, string * serverUrl, strin
 		exit(1);
 	}
 
-	cout << curlOutput << endl;
-
-	// TODO: do something to check return value
+	if(!cronMode || (cronMode && curlOutput.substr(0, 8) != "data_ok:"))
+	{
+		cout << curlOutput << endl;
+	}
 }
 
 void readConfigFile(forestConfig * config)
