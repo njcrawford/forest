@@ -39,6 +39,9 @@
 // cerr, cout
 #include <iostream>
 
+// curl
+#include <curl/curl.h>
+
 using namespace std;
 
 #include "config.h"
@@ -66,7 +69,8 @@ typedef struct forestConfigStruct
 void getAcceptedUpdates(vector<string> & outList, string * serverUrl, string * myHostname, bool * rebootAccepted);
 void reportAvailableUpdates(vector<updateInfo> & list, string * serverUrl, string * myHostname, rebootState rebootNeeded, bool canApplyUpdates, bool canApplyReboot, bool rebootAttempted);
 void readConfigFile(forestConfig * config);
-int isRebootNeeded();
+//for curl
+size_t write_data(void *buffer, size_t size, size_t nmemb, void *userp);
 
 int main(int argc, char** args)
 {
@@ -162,8 +166,7 @@ void getAcceptedUpdates(vector<string> & outList, string * serverUrl, string * m
 {
 	string acceptedUrl;
 	string command;
-	int response = 0;
-	vector<string> curlOutput;
+	//int response = 0;
 
 	// build accepted URL
 	acceptedUrl = *serverUrl;
@@ -174,26 +177,41 @@ void getAcceptedUpdates(vector<string> & outList, string * serverUrl, string * m
 
 	// build command to run
 	//snprintf(command, BUFFER_SIZE, "curl --silent --show-error \"%s\"", acceptedUrl);
-	command = "curl --silent --show-error \"" + acceptedUrl + "\"";
-	mySystem(&command, curlOutput, &response);
-	
-	// exit silently if curl fails
-	if(response != 0)
+	//command = "curl --silent --show-error \"" + acceptedUrl + "\"";
+	//mySystem(&command, curlOutput, &response);
+	CURL * curlHandle;
+	CURLcode res;
+	string curlOutput;
+	curlHandle = curl_easy_init();
+	if(curlHandle)
 	{
-		exit(0);
+		curl_easy_setopt(curlHandle, CURLOPT_URL, acceptedUrl.c_str());
+		curl_easy_setopt(curlHandle, CURLOPT_WRITEFUNCTION, write_data); 
+		curl_easy_setopt(curlHandle, CURLOPT_WRITEDATA, &curlOutput); 
+		res = curl_easy_perform(curlHandle);
+
+		//cleanup
+		curl_easy_cleanup(curlHandle);
+	}
+	
+	// exit if curl fails
+	if(res != CURLE_OK)
+	{
+		cerr << "cURL failed: " << curlOutput << endl;
+		exit(1);
 	}
 
 	// make sure the response was something we expected
-	if(curlOutput[0].substr(0, 8) != "data_ok:")
+	if(curlOutput.substr(0, 8) != "data_ok:")
 	{
 		// lack of data_ok: is ok if this system is new to the server
-		if(curlOutput[0].find("System not found in database") != string::npos)
+		if(curlOutput.find("System not found in database") != string::npos)
 		{
 			outList.clear();
 		}
 		else
 		{
-			cerr << "Error getting accepted updates: " << flattenStringList(curlOutput, '\n') << endl;
+			cerr << "Error getting accepted updates: " << curlOutput << endl;
 			exit(1);
 		}
 	}
@@ -203,25 +221,25 @@ void getAcceptedUpdates(vector<string> & outList, string * serverUrl, string * m
 		string::size_type position2;
 
 		// check for data_ok:
-		if(curlOutput[0].substr(0,8) != "data_ok:")
+		if(curlOutput.substr(0,8) != "data_ok:")
 		{
-			cerr << "Error getting accepted updates: " << flattenStringList(curlOutput, '\n') << endl;
+			cerr << "Error getting accepted updates: " << curlOutput << endl;
 			exit(1);
 		}
 
 		// check for reboot-(true|false)
-		position = curlOutput[0].find(':', 0);
-		position2 = curlOutput[0].find(':', position + 1);
+		position = curlOutput.find(':', 0);
+		position2 = curlOutput.find(':', position + 1);
 		if(position == string::npos)
 		{
-			cerr << "Error getting accepted updates: " << flattenStringList(curlOutput, '\n') << endl;
+			cerr << "Error getting accepted updates: " << curlOutput << endl;
 			exit(1);
 		}
 		// don't die if reboot state isn't present
 		*rebootAccepted = false;
 		if(position2 != string::npos)
 		{
-			string rebootState = trim_string(curlOutput[0].substr(position + 1, position2 - position - 1));
+			string rebootState = trim_string(curlOutput.substr(position + 1, position2 - position - 1));
 			if(rebootState == "reboot-true")
 			{
 				*rebootAccepted = true;
@@ -234,21 +252,21 @@ void getAcceptedUpdates(vector<string> & outList, string * serverUrl, string * m
 		}
 		
 		// trim data_ok and reboot state from output
-		curlOutput[0] = curlOutput[0].substr(position2 + 1);
+		curlOutput = curlOutput.substr(position2 + 1);
 
 		outList.clear();
 
 		// if there are no updates, the string will be empty (because of trim_string)
-		if(trim_string(curlOutput[0]).size() == 0)
+		if(trim_string(curlOutput).size() == 0)
 		{
 			return;
 		}
 
 		string::size_type startPosition = 0;
 		string acceptedUpdate;
-		for(position = curlOutput[0].find(' ', 0); position != string::npos; position = curlOutput[0].find(' ', position + 1))
+		for(position = curlOutput.find(' ', 0); position != string::npos; position = curlOutput.find(' ', position + 1))
 		{
-			acceptedUpdate = curlOutput[0].substr(startPosition, position - startPosition);
+			acceptedUpdate = curlOutput.substr(startPosition, position - startPosition);
 			if(acceptedUpdate.size() > 0)
 			{
 				//cerr << "DEBUG: accepted update " << acceptedUpdate << endl;
@@ -258,7 +276,7 @@ void getAcceptedUpdates(vector<string> & outList, string * serverUrl, string * m
 			//curlOutput[0] = curlOutput[0].substr(position + 1);
 		}
 		//add the last item (whatever is after the last space) if it's not empty
-		acceptedUpdate = curlOutput[0].substr(startPosition);
+		acceptedUpdate = curlOutput.substr(startPosition);
 		if(trim_string(acceptedUpdate).size() > 0)
 		{
 			//cerr << "DEBUG: accepted update " << acceptedUpdate << endl;
@@ -270,16 +288,17 @@ void getAcceptedUpdates(vector<string> & outList, string * serverUrl, string * m
 void reportAvailableUpdates(vector<updateInfo> & list, string * serverUrl, string * myHostname, rebootState rebootNeeded, bool canApplyUpdates, bool canApplyReboot, bool rebootAttempted)
 {
 	string command;
-	vector<string> commandResponse;
-	int commandRetval;
+	//vector<string> commandResponse;
+	//int commandRetval;
 
-	command = "curl --silent --show-error --data \"rpc_version=";
+	//command = "curl --silent --show-error --data \"rpc_version=";
+	command = "rpc_version=";
 	command += to_string(RPC_VERSION);
-	command += "\" --data \"system_name=";
+	command += "&system_name=";
 	command += *myHostname;
-	command += "\"";
+	//command += "\"";
 
-	command += " --data \"client_can_apply_updates=";
+	command += "&client_can_apply_updates=";
 	if(canApplyUpdates)
 	{
 		command += "true";
@@ -288,9 +307,9 @@ void reportAvailableUpdates(vector<updateInfo> & list, string * serverUrl, strin
 	{
 		command += "false";
 	}
-	command += "\"";
+	//command += "\"";
 
-	command += " --data \"client_can_apply_reboot=";
+	command += "&client_can_apply_reboot=";
 	if(canApplyReboot)
 	{
 		command += "true";
@@ -299,17 +318,17 @@ void reportAvailableUpdates(vector<updateInfo> & list, string * serverUrl, strin
 	{
 		command += "false";
 	}
-	command += "\"";
+	//command += "\"";
 
 	if(list.size() == 0)
 	{
-		command += " --data \"no_updates_available=true\"";
+		command += "&no_updates_available=true";
 	}
 	else
 	{
 		// this output also needs to be escaped for HTML
-		command += " --data \"available_updates=";
-		for(int i = 0; i < list.size(); i++)
+		command += "&available_updates=";
+		for(size_t i = 0; i < list.size(); i++)
 		{
 			if(i != 0)
 			{
@@ -317,10 +336,10 @@ void reportAvailableUpdates(vector<updateInfo> & list, string * serverUrl, strin
 			}
 			command += list[i].name;
 		}
-		command += "\"";
+		//command += "\"";
 		// also add version info
-		command += " --data \"versions=";
-		for(int i = 0; i < list.size(); i++)
+		command += "&versions=";
+		for(size_t i = 0; i < list.size(); i++)
 		{
 			if(i != 0)
 			{
@@ -328,10 +347,10 @@ void reportAvailableUpdates(vector<updateInfo> & list, string * serverUrl, strin
 			}
 			command += list[i].version;
 		}
-		command += "\"";
+		//command += "\"";
 	}
 
-	command += " --data \"reboot_required=";
+	command += "&reboot_required=";
 	if(rebootNeeded == 1)
 	{
 		command += "true";
@@ -344,9 +363,9 @@ void reportAvailableUpdates(vector<updateInfo> & list, string * serverUrl, strin
 	{
 		command += "unknown";
 	}
-	command += "\"";
+	//command += "\"";
 
-	command += " --data \"reboot_attempted=";
+	command += "&reboot_attempted=";
 	if(rebootAttempted)
 	{
 		command += "true";
@@ -355,14 +374,37 @@ void reportAvailableUpdates(vector<updateInfo> & list, string * serverUrl, strin
 	{
 		command += "false";
 	}
-	command += "\"";
+	//command += "\"";
 
-	command += " ";
-	command += *serverUrl;
-	command += "collect.php";
+	string collectUrl = *serverUrl;
+	collectUrl += "collect.php";
 
-	mySystem(&command, commandResponse, &commandRetval);
-	cout << flattenStringList(commandResponse, '\n') << endl;
+	//mySystem(&command, commandResponse, &commandRetval);
+	//cout << flattenStringList(commandResponse, '\n') << endl;
+	CURL * curlHandle;
+	CURLcode res;
+	string curlOutput;
+	curlHandle = curl_easy_init();
+	if(curlHandle)
+	{
+		curl_easy_setopt(curlHandle, CURLOPT_POSTFIELDS, command.c_str());
+		curl_easy_setopt(curlHandle, CURLOPT_URL, collectUrl.c_str());
+		curl_easy_setopt(curlHandle, CURLOPT_WRITEFUNCTION, write_data); 
+		curl_easy_setopt(curlHandle, CURLOPT_WRITEDATA, &curlOutput); 
+		res = curl_easy_perform(curlHandle);
+
+		//cleanup
+		curl_easy_cleanup(curlHandle);
+	}
+	
+	// exit if curl fails
+	if(res != CURLE_OK)
+	{
+		cerr << "cURL failed: " << curlOutput << endl;
+		exit(1);
+	}
+
+	cout << curlOutput << endl;
 
 	// TODO: do something to check return value
 }
@@ -484,5 +526,13 @@ string flattenStringList(vector<string> & list, char delimiter)
 		retval += list[i];
 	}
 	return retval;
+}
+
+size_t write_data(void *buffer, size_t size, size_t nmemb, void *userp)
+{
+	char * charBuf = (char *)buffer;
+	string * data = (string *)userp;
+	data->append(charBuf, nmemb);
+	return nmemb;
 }
 

@@ -61,7 +61,7 @@ void Yum::getAvailableUpdates(vector<updateInfo> & outList)
 			// on rpm based systems, multiple architectures of the same package may be installed
 			// removing the architecture will create duplicates, this will filter them out
 			bool alreadyInList = false;
-			for(int x = 0; x < outList.size(); x++)
+			for(size_t x = 0; x < outList.size(); x++)
 			{
 				if(temp.name == outList[x].name)
 				{
