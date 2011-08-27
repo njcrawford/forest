@@ -87,7 +87,7 @@ int main(int argc, char** args)
 	bool acceptedReboot = false;
 	bool rebootAttempted = false;
 
-	if(argc == 1 && strcmp(args[0], "--cron") == 0)
+	if(argc == 2 && strcmp(args[1], "--cron") == 0)
 	{
 		cronMode = true;
 	}
