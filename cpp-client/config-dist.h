@@ -10,8 +10,9 @@
 //#define PACKAGE_MANAGER_APTGET
 //#define PACKAGE_MANAGER_YUM
 //#define PACKAGE_MANAGER_WUAAPI
+//#define PACKAGE_MANAGER_MACSU
 
-// If no reboot manager is defined, the stub will be used
+// If no reboot manager is defined, REBOOTSTUB will be used
 //#define REBOOT_MANAGER_FILEPRESENCE
 //#define REBOOT_MANAGER_KERNELDIFFERENCE
 //#define REBOOT_MANAGER_REBOOTSTUB
