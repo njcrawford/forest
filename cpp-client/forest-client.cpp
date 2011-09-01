@@ -58,6 +58,7 @@ using namespace std;
 #include "RebootStub.h"
 #include "FilePresence.h"
 #include "KernelDifference.h"
+#include "WinRegKey.h"
 
 #define RPC_VERSION 2
 #define BUFFER_SIZE 1024
@@ -109,6 +110,8 @@ int main(int argc, char** args)
 	rebootManager = new FilePresence();
 #elif defined REBOOT_MANAGER_KERNELDIFFERENCE
 	rebootManager = new KernelDifference();
+#elif defined REBOOT_MANAGER_WINREGKEY
+	rebootManager = new WinRegKey();
 #else
 	#warning "No reboot manager defined, using stub"
 	rebootManager = new RebootStub();

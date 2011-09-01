@@ -1,9 +1,9 @@
-#ifndef _FILEPRESENCE_H
-#define _FILEPRESENCE_H
+#ifndef _WINREGKEY_H
+#define _WINREGKEY_H
 
-#include "UnixShutdown.h"
+#include "RebootManager.h"
 
-class FilePresence : public UnixShutdown 
+class WinRegKey : public RebootManager
 {
 public:
     rebootState isRebootNeeded();
