@@ -52,6 +52,7 @@ using namespace std;
 #include "apt-get.h"
 #include "yum.h"
 #include "wuaapi.h"
+#include "MacSU.h"
 
 //reboot managers
 #include "RebootStub.h"
@@ -98,6 +99,8 @@ int main(int argc, char** args)
 	packageManager = new Yum();
 #elif defined PACKAGE_MANAGER_WUAAPI
 	packageManager = new WuaApi();
+#elif defined PACKAGE_MANAGER_MACSU
+	packageManager = new MacSU();
 #else
 	#error "No package manager defined!"
 #endif
@@ -109,6 +112,13 @@ int main(int argc, char** args)
 #else
 	#warning "No reboot manager defined, using stub"
 	rebootManager = new RebootStub();
+#endif
+
+// osx has a different name for MAX_HOST_NAME
+#if !defined HOST_NAME_MAX
+#if defined _POSIX_HOST_NAME_MAX
+#define HOST_NAME_MAX _POSIX_HOST_NAME_MAX
+#endif
 #endif
 
 	char temp[HOST_NAME_MAX + 1];

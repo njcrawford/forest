@@ -4,16 +4,16 @@
 // cerr
 #include <iostream>
 
-#include "apt-get.h"
+#include "MacSU.h"
 #include "forest-client.h"
 
-void AptGet::getAvailableUpdates(vector<updateInfo> & outList)
+void MacSU::getAvailableUpdates(vector<updateInfo> & outList)
 {
 	string command;
 	int commandRetval = 0;
 	vector<string> commandOutput;
 
-	command = "/usr/bin/apt-get dist-upgrade -Vs 2>&1";
+	command = "/usr/sbin/softwareupdate --list 2>&1";
 
 	mySystem(&command, commandOutput, &commandRetval);
 
@@ -21,40 +21,38 @@ void AptGet::getAvailableUpdates(vector<updateInfo> & outList)
 	{
 		for(size_t i = 0; i < commandOutput.size(); i++)
 		{
-			// example of one output line
-			// Inst libpam-modules [1.1.1-2ubuntu5] (1.1.1-2ubuntu5.3 Ubuntu:10.04/lucid-updates)
+			// example of one update output
+			//    * iTunesX-10.4.1
+			//	iTunes (10.4.1), 90665K [recommended]
 
-			// grep ^Inst | cut -d " " -f 2
-			if(commandOutput[i].substr(0, 4) == "Inst")
+			// use lines with update name and version mixed together
+			if(commandOutput[i].find('*') != string::npos)
 			{
-				string::size_type pos = commandOutput[i].find(' ', 0);
-				string::size_type len = commandOutput[i].find(' ', pos + 1) - pos;
+				string::size_type pos = commandOutput[i].find('*') + 2;
+				//string::size_type len = commandOutput[i].find('-', pos + 1) - pos;
 				updateInfo temp;
-				temp.name = commandOutput[i].substr(pos, len);
-				pos = commandOutput[i].find('[', 0);
-				pos = commandOutput[i].find(']', pos + 1);
-				pos = commandOutput[i].find('(', pos + 1);
-				len = commandOutput[i].find(' ', pos + 1) - pos;
-				temp.version = commandOutput[i].substr(pos + 1, len - 1);
+				temp.name = commandOutput[i].substr(pos);
+				pos = commandOutput[i].find('-');
+				temp.version = commandOutput[i].substr(pos + 1);
 				outList.push_back(temp);
 			}
 		}
 	}
 	else
 	{
-		cerr << "apt-get failed:" << endl << flattenStringList(commandOutput, '\n') << endl;
+		cerr << "softwareupdate failed:" << endl << flattenStringList(commandOutput, '\n') << endl;
 		exit(10);
 	}
 
 }
 
-void AptGet::applyUpdates(vector<string> & list)
+void MacSU::applyUpdates(vector<string> & list)
 {
 	string command;
 	int commandResponse;
 	vector<string> commandOutput;	
 
-	command = "apt-get -y -o DPkg::Options::\\=--force-confold install ";
+	command = "/usr/sbin/softwareupdate --install ";
 	cerr << command << endl;
 	command += flattenStringList(list, ' ');
 	cerr << command << endl;
@@ -71,7 +69,7 @@ void AptGet::applyUpdates(vector<string> & list)
 	}
 }
 
-bool AptGet::canApplyUpdates()
+bool MacSU::canApplyUpdates()
 {
 	return true;
 }
