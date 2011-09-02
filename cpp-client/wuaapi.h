@@ -10,7 +10,7 @@ using namespace std;
 class WuaApi : public PackageManager
 {
 public:
-    void getAvailableUpdates(vector<string> & outlist);
+    void getAvailableUpdates(vector<updateInfo> & outlist);
     void applyUpdates(vector<string> & list);
 };
 

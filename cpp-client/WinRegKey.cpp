@@ -3,6 +3,9 @@
 
 #include "WinRegKey.h"
 #include <windows.h>
+#include <string>
+#include <tchar.h>
+using namespace std;
 
 rebootState WinRegKey::isRebootNeeded()
 {
@@ -14,7 +17,7 @@ rebootState WinRegKey::isRebootNeeded()
 	char buf[255] = {0};
 	DWORD dwType = 0;
 	DWORD dwBufSize = sizeof(buf);
-	const char* subkey = "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\WindowsUpdate\\Auto Update\\RebootRequired";
+	LPCWSTR subkey = _T("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\WindowsUpdate\\Auto Update\\RebootRequired");
 	 
 	if( RegOpenKey(HKEY_LOCAL_MACHINE,subkey,&hKey) == ERROR_SUCCESS)
 	{

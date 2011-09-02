@@ -27,7 +27,14 @@
 #include <stdio.h>
 
 /* Get gethostname() declaration.  */
+#if defined _WIN32
+// windows
+#include <winsock2.h>
+#include <WS2tcpip.h>
+#else
+// unix-like systems 
 #include <unistd.h>
+#endif
 
 /* Get HOST_NAME_MAX definition.  */
 #include <limits.h>
@@ -103,7 +110,8 @@ int main(int argc, char** args)
 #elif defined PACKAGE_MANAGER_MACSU
 	packageManager = new MacSU();
 #else
-	#error "No package manager defined!"
+	//#error "No package manager defined!"
+	#pragma message ( "Error: No package manager defined, using stub" )
 #endif
 
 #if defined REBOOT_MANAGER_FILEPRESENCE
@@ -113,27 +121,59 @@ int main(int argc, char** args)
 #elif defined REBOOT_MANAGER_WINREGKEY
 	rebootManager = new WinRegKey();
 #else
-	#warning "No reboot manager defined, using stub"
+	//#warning "No reboot manager defined, using stub"
+#pragma message ( "Warning: No reboot manager defined, using stub" )
 	rebootManager = new RebootStub();
 #endif
 
-// osx has a different name for MAX_HOST_NAME
+// osx has a different name for HOST_NAME_MAX
 #if !defined HOST_NAME_MAX
 #if defined _POSIX_HOST_NAME_MAX
 #define HOST_NAME_MAX _POSIX_HOST_NAME_MAX
+#endif
+#endif
+// windows has a different name for HOST_NAME_MAX
+#if !defined HOST_NAME_MAX
+#if defined NI_MAXHOST
+#define HOST_NAME_MAX NI_MAXHOST
 #endif
 #endif
 
 	char temp[HOST_NAME_MAX + 1];
 	temp[HOST_NAME_MAX] = '\0';
 	// get the current host name
+#ifdef _WIN32
+	WSADATA WSAData;
+	if(WSAStartup(MAKEWORD(1,0), &WSAData) != 0)
+	{
+		response = WSAGetLastError();
+		//FormatMessage() to get the error text
+		cerr << "Could not get hostname: WSAStartup error " << response << endl;
+		cerr << "Exiting..." << endl;
+		exit(1);
+	}
+#endif
 	response = gethostname(temp, HOST_NAME_MAX);
+#ifdef _WIN32
+	if(response == SOCKET_ERROR)
+	{
+		//fprintf(stderr, "Could not get hostname, exiting.");
+		//perror("Error in main(): ");
+		response = WSAGetLastError();
+		//FormatMessage() to get the error text
+		cerr << "Could not get hostname: Socket error " << response << endl;
+		cerr << "Exiting..." << endl;
+		exit(1);
+	}
+	WSACleanup();
+#else
 	if(response == -1)
 	{
 		//fprintf(stderr, "Could not get hostname, exiting.");
 		perror("Error in main(): ");
 		exit(1);
 	}
+#endif
 	hostname = temp;
 
 	// set a default for server url
@@ -178,6 +218,9 @@ int main(int argc, char** args)
 		rebootManager->canApplyReboot(),
 		rebootAttempted
 	);
+
+	// for debuggin output
+	//cin.get();
 
 	return 0;
 }
@@ -441,7 +484,14 @@ void readConfigFile(forestConfig * config)
 	string confValue;
 	char * cleanupPtr = NULL;
 
+	line[0] = '\0';
+
 	configFile = fopen(CONFIG_FILE_PATH, "r");
+	if(configFile == NULL)
+	{
+		cerr << "Failed to open " << CONFIG_FILE_PATH << endl;
+		cerr << "Exiting..." << endl;
+	}
 	while(response)
 	{
 		response = fgets(line, BUFFER_SIZE, configFile);
@@ -498,6 +548,7 @@ void readConfigFile(forestConfig * config)
 
 // Works like system(), but returns lines of stdout output in outList and the 
 // command's return value in returnVal.
+#ifndef _WIN32
 void mySystem(string * command, vector<string> & outList, int * returnVal)
 {
 	FILE * pipe;
@@ -530,6 +581,7 @@ void mySystem(string * command, vector<string> & outList, int * returnVal)
 	int pcloseVal = pclose(pipe);
 	*returnVal = WEXITSTATUS(pcloseVal);
 }
+#endif
 
 string flattenStringList(vector<string> & list, char delimiter)
 {

@@ -5,7 +5,7 @@
 #include "wuaapi.h"
 #include "forest-client.h"
 
-void WuaApi::getAvailableUpdates(vector<string> & outList)
+void WuaApi::getAvailableUpdates(vector<updateInfo> & outList)
 {
 	// I don't think there is a command that will do this directly under 
 	// windows. 
