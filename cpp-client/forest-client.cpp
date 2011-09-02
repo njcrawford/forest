@@ -157,8 +157,6 @@ int main(int argc, char** args)
 #ifdef _WIN32
 	if(response == SOCKET_ERROR)
 	{
-		//fprintf(stderr, "Could not get hostname, exiting.");
-		//perror("Error in main(): ");
 		response = WSAGetLastError();
 		//FormatMessage() to get the error text
 		cerr << "Could not get hostname: Socket error " << response << endl;
@@ -219,7 +217,7 @@ int main(int argc, char** args)
 		rebootAttempted
 	);
 
-	// for debuggin output
+	// for debugging output
 	//cin.get();
 
 	return 0;
@@ -230,7 +228,6 @@ void getAcceptedUpdates(vector<string> & outList, string * serverUrl, string * m
 {
 	string acceptedUrl;
 	string command;
-	//int response = 0;
 
 	// build accepted URL
 	acceptedUrl = *serverUrl;
@@ -239,10 +236,7 @@ void getAcceptedUpdates(vector<string> & outList, string * serverUrl, string * m
 	acceptedUrl += "&system=";
 	acceptedUrl += *myHostname;
 
-	// build command to run
-	//snprintf(command, BUFFER_SIZE, "curl --silent --show-error \"%s\"", acceptedUrl);
-	//command = "curl --silent --show-error \"" + acceptedUrl + "\"";
-	//mySystem(&command, curlOutput, &response);
+	// run curl command
 	CURL * curlHandle;
 	CURLcode res;
 	string curlOutput;
@@ -352,15 +346,11 @@ void getAcceptedUpdates(vector<string> & outList, string * serverUrl, string * m
 void reportAvailableUpdates(vector<updateInfo> & list, string * serverUrl, string * myHostname, rebootState rebootNeeded, bool canApplyUpdates, bool canApplyReboot, bool rebootAttempted)
 {
 	string command;
-	//vector<string> commandResponse;
-	//int commandRetval;
 
-	//command = "curl --silent --show-error --data \"rpc_version=";
 	command = "rpc_version=";
 	command += to_string(RPC_VERSION);
 	command += "&system_name=";
 	command += *myHostname;
-	//command += "\"";
 
 	command += "&client_can_apply_updates=";
 	if(canApplyUpdates)
@@ -371,7 +361,6 @@ void reportAvailableUpdates(vector<updateInfo> & list, string * serverUrl, strin
 	{
 		command += "false";
 	}
-	//command += "\"";
 
 	command += "&client_can_apply_reboot=";
 	if(canApplyReboot)
@@ -382,7 +371,6 @@ void reportAvailableUpdates(vector<updateInfo> & list, string * serverUrl, strin
 	{
 		command += "false";
 	}
-	//command += "\"";
 
 	if(list.size() == 0)
 	{
@@ -400,7 +388,6 @@ void reportAvailableUpdates(vector<updateInfo> & list, string * serverUrl, strin
 			}
 			command += list[i].name;
 		}
-		//command += "\"";
 		// also add version info
 		command += "&versions=";
 		for(size_t i = 0; i < list.size(); i++)
@@ -411,7 +398,6 @@ void reportAvailableUpdates(vector<updateInfo> & list, string * serverUrl, strin
 			}
 			command += list[i].version;
 		}
-		//command += "\"";
 	}
 
 	command += "&reboot_required=";
@@ -427,7 +413,6 @@ void reportAvailableUpdates(vector<updateInfo> & list, string * serverUrl, strin
 	{
 		command += "unknown";
 	}
-	//command += "\"";
 
 	command += "&reboot_attempted=";
 	if(rebootAttempted)
@@ -438,13 +423,10 @@ void reportAvailableUpdates(vector<updateInfo> & list, string * serverUrl, strin
 	{
 		command += "false";
 	}
-	//command += "\"";
 
 	string collectUrl = *serverUrl;
 	collectUrl += "collect.php";
 
-	//mySystem(&command, commandResponse, &commandRetval);
-	//cout << flattenStringList(commandResponse, '\n') << endl;
 	CURL * curlHandle;
 	CURLcode res;
 	string curlOutput;
@@ -489,8 +471,9 @@ void readConfigFile(forestConfig * config)
 	configFile = fopen(CONFIG_FILE_PATH, "r");
 	if(configFile == NULL)
 	{
-		cerr << "Failed to open " << CONFIG_FILE_PATH << endl;
+		cerr << "Failed to open config file " << CONFIG_FILE_PATH << endl;
 		cerr << "Exiting..." << endl;
+		exit(1);
 	}
 	while(response)
 	{
@@ -537,7 +520,7 @@ void readConfigFile(forestConfig * config)
 				}
 				else
 				{
-					cerr << "Unrecognized config item name: " << confName << "\n";
+					cerr << "Unrecognized config item name: " << confName << endl;
 				}
 			}
 		}
