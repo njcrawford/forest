@@ -1,0 +1,22 @@
+#!/bin/bash
+set -u
+
+config="config.h"
+
+echo '#ifndef _FOREST_CONFIG_H' >> ${config}
+echo '#define _FOREST_CONFIG_H' >> ${config}
+echo '#define CONFIG_FILE_PATH "/etc/forest-client.conf"' >> ${config}
+echo '#define DEFAULT_SERVER_URL "http://forest/forest"' >> ${config}
+
+# detect which distro we're on and set config options accordingly
+if [ -f /etc/lsb-release ] ; then
+	# Ubuntu uses apt-get
+	echo "#define PACKAGE_MANAGER_APTGET" >> ${config}
+	echo "#define REBOOT_MANAGER_FILEPRESENCE" >> ${config}
+elif [ -f /etc/redhat-release ] ; then
+	# RHEL, CentOS, Fedora, etc. use yum
+	echo "#define PACKAGE_MANAGER_YUM" >> ${config}
+	echo "#define REBOOT_MANAGER_KERNELDIFFERENCE" >> ${config}
+fi
+
+echo "#endif" >> ${config}
