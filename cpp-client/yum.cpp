@@ -11,7 +11,8 @@ void Yum::getAvailableUpdates(vector<updateInfo> & outList)
 	int commandRetval = 0;
 	vector<string> commandOutput;
 
-	command = "/usr/bin/yum check-update -q -C 2>&1";
+	// add -C to run from cache
+	command = "/usr/bin/yum check-update -q 2>&1";
 
 	mySystem(&command, commandOutput, &commandRetval);
 
