@@ -1,3 +1,5 @@
+#ifdef _WIN32
+
 #include <stdlib.h>
 #include <string>
 #include <iostream>
@@ -77,6 +79,7 @@ void WuaApi::getAvailableUpdates(vector<updateInfo> & outList)
 
 void WuaApi::applyUpdates(vector<string> & list)
 {
-	// I don't think there is a command that will do this directly under 
-	// windows.
+	//should be able to modify the code used to check for updates, it looks like it should be just a different query
 }
+
+#endif // _WIN32
