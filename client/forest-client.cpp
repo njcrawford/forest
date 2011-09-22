@@ -70,6 +70,13 @@ using namespace std;
 #define RPC_VERSION 2
 #define BUFFER_SIZE 1024
 
+#define EXIT_CODE_OK           0
+#define EXIT_CODE_CURL         1
+#define EXIT_CODE_WSASTARTUP   2
+#define EXIT_CODE_SOCKETERROR  3
+#define EXIT_CODE_RESPONSEDATA 4
+#define EXIT_CODE_CONFIGFILE   5
+
 typedef struct forestConfigStruct
 {
 	string serverUrl;
@@ -126,18 +133,19 @@ int main(int argc, char** args)
 	rebootManager = new RebootStub();
 #endif
 
-// osx has a different name for HOST_NAME_MAX
 #if !defined HOST_NAME_MAX
+
+// osx has a different name for HOST_NAME_MAX
 #if defined _POSIX_HOST_NAME_MAX
 #define HOST_NAME_MAX _POSIX_HOST_NAME_MAX
 #endif
-#endif
+
 // windows has a different name for HOST_NAME_MAX
-#if !defined HOST_NAME_MAX
 #if defined NI_MAXHOST
 #define HOST_NAME_MAX NI_MAXHOST
 #endif
-#endif
+
+#endif // !defined HOST_NAME_MAX
 
 	char temp[HOST_NAME_MAX + 1];
 	temp[HOST_NAME_MAX] = '\0';
@@ -150,7 +158,7 @@ int main(int argc, char** args)
 		//FormatMessage() to get the error text
 		cerr << "Could not get hostname: WSAStartup error " << response << endl;
 		cerr << "Exiting..." << endl;
-		exit(1);
+		exit(EXIT_CODE_WSASTARTUP);
 	}
 #endif
 	response = gethostname(temp, HOST_NAME_MAX);
@@ -161,7 +169,7 @@ int main(int argc, char** args)
 		//FormatMessage() to get the error text
 		cerr << "Could not get hostname: Socket error " << response << endl;
 		cerr << "Exiting..." << endl;
-		exit(1);
+		exit(EXIT_CODE_SOCKETERROR);
 	}
 	WSACleanup();
 #else
@@ -169,7 +177,7 @@ int main(int argc, char** args)
 	{
 		//fprintf(stderr, "Could not get hostname, exiting.");
 		perror("Error in main(): ");
-		exit(1);
+		exit(EXIT_CODE_HOSTNAME);
 	}
 #endif
 	hostname = temp;
@@ -220,7 +228,7 @@ int main(int argc, char** args)
 	// for debugging output
 	//cin.get();
 
-	return 0;
+	return EXIT_CODE_OK;
 }
 
 // fills outList with names of accepted packages
@@ -256,7 +264,7 @@ void getAcceptedUpdates(vector<string> & outList, string * serverUrl, string * m
 	if(res != CURLE_OK)
 	{
 		cerr << "cURL failed: " << curlOutput << endl;
-		exit(1);
+		exit(EXIT_CODE_CURL);
 	}
 
 	// make sure the response was something we expected
@@ -270,7 +278,7 @@ void getAcceptedUpdates(vector<string> & outList, string * serverUrl, string * m
 		else
 		{
 			cerr << "Error getting accepted updates: " << curlOutput << endl;
-			exit(1);
+			exit(EXIT_CODE_RESPONSEDATA);
 		}
 	}
 	else
@@ -282,7 +290,7 @@ void getAcceptedUpdates(vector<string> & outList, string * serverUrl, string * m
 		if(curlOutput.substr(0,8) != "data_ok:")
 		{
 			cerr << "Error getting accepted updates: " << curlOutput << endl;
-			exit(1);
+			exit(EXIT_CODE_RESPONSEDATA);
 		}
 
 		// check for reboot-(true|false)
@@ -291,7 +299,7 @@ void getAcceptedUpdates(vector<string> & outList, string * serverUrl, string * m
 		if(position == string::npos)
 		{
 			cerr << "Error getting accepted updates: " << curlOutput << endl;
-			exit(1);
+			exit(EXIT_CODE_RESPONSEDATA);
 		}
 		// don't die if reboot state isn't present
 		*rebootAccepted = false;
@@ -447,7 +455,7 @@ void reportAvailableUpdates(vector<updateInfo> & list, string * serverUrl, strin
 	if(res != CURLE_OK)
 	{
 		cerr << "cURL failed: " << curlOutput << endl;
-		exit(1);
+		exit(EXIT_CODE_CURL);
 	}
 
 	if(!cronMode || (cronMode && curlOutput.substr(0, 8) != "data_ok:"))
@@ -473,7 +481,7 @@ void readConfigFile(forestConfig * config)
 	{
 		cerr << "Failed to open config file " << CONFIG_FILE_PATH << endl;
 		cerr << "Exiting..." << endl;
-		exit(1);
+		exit(EXIT_CODE_CONFIGFILE);
 	}
 	while(response)
 	{
@@ -585,6 +593,7 @@ string flattenStringList(vector<string> & list, char delimiter)
 	return retval;
 }
 
+// CURL callback
 size_t write_data(void *buffer, size_t size, size_t nmemb, void *userp)
 {
 	char * charBuf = (char *)buffer;
