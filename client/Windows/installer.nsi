@@ -44,9 +44,9 @@ Section "Forest Client for Windows (required)"
   
   ; Put file there
   File "forest-client\bin\Release\forest-client.exe"
-  File "forest-client\bin\Release\Interop.WUApiLib.dll"
-  File "forest-client\bin\Release\IniFile.dll"
-  File "ConfigurationGUI\bin\Release\ConfigurationGUI.exe"
+  ;File "forest-client\bin\Release\Interop.WUApiLib.dll"
+  ;File "forest-client\bin\Release\IniFile.dll"
+  ;File "ConfigurationGUI\bin\Release\ConfigurationGUI.exe"
   
   ; Write the installation path into the registry
   WriteRegStr HKLM "SOFTWARE\Forest Client" "Install_Dir" "$INSTDIR"
@@ -65,7 +65,7 @@ Section "Start Menu Shortcuts"
 
   CreateDirectory "$SMPROGRAMS\Forest Client"
   CreateShortCut "$SMPROGRAMS\Forest Client\Uninstall.lnk" "$INSTDIR\uninstall.exe" "" "$INSTDIR\uninstall.exe" 0
-  CreateShortCut "$SMPROGRAMS\Forest Client\Configuration.lnk" "$INSTDIR\ConfigurationGUI.exe" "" "$INSTDIR\ConfigurationGUI.exe" 0
+  CreateShortCut "$SMPROGRAMS\Forest Client\Configuration.lnk" "$INSTDIR\forest-client.conf" "" "$INSTDIR\forest-client.conf" 0
   
 SectionEnd
 
@@ -77,13 +77,13 @@ Section "Uninstall"
   
   ; Remove registry keys
   DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Forest Client"
-  DeleteRegKey HKLM "SOFTWARE\3ds Viewer"
+  DeleteRegKey HKLM "SOFTWARE\Forest Client"
 
   ; Remove files and uninstaller
   Delete "$INSTDIR\forest-client.exe"
-  Delete "$INSTDIR\Interop.WUApiLib.dll"
-  Delete "$INSTDIR\IniFile.dll"
-  Delete "$INSTDIR\ConfigurationGUI.exe"
+  ;Delete "$INSTDIR\Interop.WUApiLib.dll"
+  ;Delete "$INSTDIR\IniFile.dll"
+  ;Delete "$INSTDIR\ConfigurationGUI.exe"
   Delete "$INSTDIR\uninstall.exe"
 
   ; Remove shortcuts, if any
