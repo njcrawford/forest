@@ -76,6 +76,7 @@ using namespace std;
 #define EXIT_CODE_SOCKETERROR  3
 #define EXIT_CODE_RESPONSEDATA 4
 #define EXIT_CODE_CONFIGFILE   5
+#define EXIT_CODE_HOSTNAME     6
 
 typedef struct forestConfigStruct
 {
@@ -228,7 +229,7 @@ int main(int argc, char** args)
 	}
 
 	// HTML encode package names and versions
-	for(int i = 0; i < availableUpdates.size(); i++)
+	for(size_t i = 0; i < availableUpdates.size(); i++)
 	{
 		encodeForHtml(availableUpdates[i].name);
 		encodeForHtml(availableUpdates[i].version);
@@ -627,8 +628,20 @@ void encodeForHtml(string s)
 	int numcodes = sizeof(codes) / sizeof(codes[0]);
 	for(int i = 0; i < numcodes; i++)
 	{
-		s.replace(codes[i].match, codes[i].replace);
+		size_t pos = s.find(codes[i].match);
+		while(pos != string::npos)
+		{
+			//replace ( size_t pos1, size_t n1, const string& str, size_t pos2, size_t n2 );
+			s.replace(pos, codes[i].match.size(), codes[i].replace, 0, codes[i].replace.size());
+			if(pos + codes[i].replace.size() < s.size())
+			{
+				pos = s.find(codes[i].match, pos + codes[i].replace.size());
+			}
+			else
+			{
+				pos = string::npos;
+			}
+		}
 	}
-	return retval;
 }
 
