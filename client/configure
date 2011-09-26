@@ -11,14 +11,17 @@ echo '#define DEFAULT_SERVER_URL "http://forest/forest"' >> ${config}
 # detect which distro we're on and set config options accordingly
 if [ -f /etc/lsb-release ] ; then
 	# Ubuntu uses apt-get
+	echo "Detected Ubuntu-based OS"
 	echo "#define PACKAGE_MANAGER_APTGET" >> ${config}
 	echo "#define REBOOT_MANAGER_FILEPRESENCE" >> ${config}
 elif [ -f /etc/redhat-release ] ; then
 	# RHEL, CentOS, Fedora, etc. use yum
+	echo "Detected Redhat-based OS"
 	echo "#define PACKAGE_MANAGER_YUM" >> ${config}
 	echo "#define REBOOT_MANAGER_KERNELDIFFERENCE" >> ${config}
 elif [ `uname -s` = "Darwin" ] ; then
 	# MacOS
+	echo "Detected MacOS"
 	echo "#define PACKAGE_MANAGER_MACSU" >> ${config}
 	# no reboot manager yet
 fi
