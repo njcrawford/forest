@@ -76,6 +76,7 @@ using namespace std;
 #define EXIT_CODE_SOCKETERROR  3
 #define EXIT_CODE_RESPONSEDATA 4
 #define EXIT_CODE_CONFIGFILE   5
+#define EXIT_CODE_HOSTNAME     6
 
 typedef struct forestConfigStruct
 {
@@ -85,7 +86,7 @@ typedef struct forestConfigStruct
 void getAcceptedUpdates(vector<string> & outList, string * serverUrl, string * myHostname, bool * rebootAccepted);
 void reportAvailableUpdates(vector<updateInfo> & list, string * serverUrl, string * myHostname, rebootState rebootNeeded, bool canApplyUpdates, bool canApplyReboot, bool rebootAttempted);
 void readConfigFile(forestConfig * config);
-//for curl
+// callback function for curl
 size_t write_data(void *buffer, size_t size, size_t nmemb, void *userp);
 
 // icky global goes here because I'm lazy
@@ -213,6 +214,19 @@ int main(int argc, char** args)
 		rebootManager->applyReboot();
 		rebootAttempted = true;
 	}
+
+	CURL *handle = curl_easy_init();
+	// URL encode package names and versions
+	for(size_t i = 0; i < availableUpdates.size(); i++)
+	{
+		char *encodedURL = curl_easy_escape(handle, availableUpdates[i].name.c_str(), 0);
+		availableUpdates[i].name = encodedURL;
+		curl_free(encodedURL);
+		encodedURL = curl_easy_escape(handle, availableUpdates[i].version.c_str(), 0);
+		availableUpdates[i].version = encodedURL;
+		curl_free(encodedURL);
+	}
+	curl_easy_cleanup(handle);
 
 	// report packages that are available to update
 	// this should also be split into two rpc calls, but keeping backward compatible for now
