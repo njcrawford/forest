@@ -82,11 +82,24 @@ typedef struct forestConfigStruct
 	string serverUrl;
 } forestConfig;
 
+// borrowed this idea from a daniweb post
+struct HTMLReplace 
+{
+	string match;
+	string replace;
+} codes[] = {
+	{"&", "&amp;"},
+	{"<", "&lt;"},
+	{">", "&gt;"},
+	{"+", "%2b"}
+};
+
 void getAcceptedUpdates(vector<string> & outList, string * serverUrl, string * myHostname, bool * rebootAccepted);
 void reportAvailableUpdates(vector<updateInfo> & list, string * serverUrl, string * myHostname, rebootState rebootNeeded, bool canApplyUpdates, bool canApplyReboot, bool rebootAttempted);
 void readConfigFile(forestConfig * config);
-//for curl
+// callback function for curl
 size_t write_data(void *buffer, size_t size, size_t nmemb, void *userp);
+void encodeForHtml(string s);
 
 // icky global goes here because I'm lazy
 bool cronMode = false;
@@ -212,6 +225,13 @@ int main(int argc, char** args)
 	{
 		rebootManager->applyReboot();
 		rebootAttempted = true;
+	}
+
+	// HTML encode package names and versions
+	for(int i = 0; i < availableUpdates.size(); i++)
+	{
+		encodeForHtml(availableUpdates[i].name);
+		encodeForHtml(availableUpdates[i].version);
 	}
 
 	// report packages that are available to update
@@ -600,5 +620,15 @@ size_t write_data(void *buffer, size_t size, size_t nmemb, void *userp)
 	string * data = (string *)userp;
 	data->append(charBuf, nmemb);
 	return nmemb;
+}
+
+void encodeForHtml(string s)
+{
+	int numcodes = sizeof(codes) / sizeof(codes[0]);
+	for(int i = 0; i < numcodes; i++)
+	{
+		s.replace(codes[i].match, codes[i].replace);
+	}
+	return retval;
 }
 
