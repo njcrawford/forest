@@ -220,10 +220,10 @@ int main(int argc, char** args)
 	for(size_t i = 0; i < availableUpdates.size(); i++)
 	{
 		char *encodedURL = curl_easy_escape(handle, availableUpdates[i].name.c_str(), 0);
-		availableUpdates[i].name = *encodedURL;
+		availableUpdates[i].name = encodedURL;
 		curl_free(encodedURL);
 		encodedURL = curl_easy_escape(handle, availableUpdates[i].version.c_str(), 0);
-		availableUpdates[i].version = *encodedURL;
+		availableUpdates[i].version = encodedURL;
 		curl_free(encodedURL);
 	}
 	curl_easy_cleanup(handle);
