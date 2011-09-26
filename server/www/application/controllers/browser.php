@@ -152,7 +152,11 @@ class Browser extends CI_Controller {
 			return;
 		}
 		$this->load->model('forest_db');
-		
+
+		// Urldecode the package name
+		// GET and REQUEST are automatically urldecoded, but POST is not. 
+		$package_name = urldecode($package_name);
+
 		$data['system_info'] = $this->forest_db->get_system_info($system_id);
 		
 		$data['update_info'] = $this->forest_db->get_one_update($system_id, $package_name);

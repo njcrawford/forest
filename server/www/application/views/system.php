@@ -7,7 +7,7 @@ $this->load->helper('url');
 //<!--
 function AcceptButton(system_id, package_name, accepted_state, update_div) {
         $.post("<?php echo site_url('browser/mark_accepted_updates') ?>", {system_id: system_id, package_name: package_name, accepted_state: accepted_state}, function() {
-            $('#' + update_div).load("<?php echo site_url('browser/view_one_update') ?>" +'/' + system_id + '/' + package_name);
+            $('#' + update_div).load("<?php echo site_url('browser/view_one_update') ?>" +'/' + system_id + '/' + encodeURIComponent(package_name));
         });
         return false;
 }
