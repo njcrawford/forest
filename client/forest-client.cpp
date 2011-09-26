@@ -219,10 +219,10 @@ int main(int argc, char** args)
 	// URL encode package names and versions
 	for(size_t i = 0; i < availableUpdates.size(); i++)
 	{
-		char *encodedURL = curl_easy_escape(handle, availableUpdates[i].name.c_str(), availableUpdates[i].name.size());
+		char *encodedURL = curl_easy_escape(handle, availableUpdates[i].name.c_str(), 0);
 		availableUpdates[i].name = *encodedURL;
 		curl_free(encodedURL);
-		encodedURL = curl_easy_escape(handle, availableUpdates[i].version.c_str(), availableUpdates[i].version.size());
+		encodedURL = curl_easy_escape(handle, availableUpdates[i].version.c_str(), 0);
 		availableUpdates[i].version = *encodedURL;
 		curl_free(encodedURL);
 	}
