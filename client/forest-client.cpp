@@ -83,24 +83,11 @@ typedef struct forestConfigStruct
 	string serverUrl;
 } forestConfig;
 
-// borrowed this idea from a daniweb post
-struct HTMLReplace 
-{
-	string match;
-	string replace;
-} codes[] = {
-	{"&", "&amp;"},
-	{"<", "&lt;"},
-	{">", "&gt;"},
-	{"+", "%2b"}
-};
-
 void getAcceptedUpdates(vector<string> & outList, string * serverUrl, string * myHostname, bool * rebootAccepted);
 void reportAvailableUpdates(vector<updateInfo> & list, string * serverUrl, string * myHostname, rebootState rebootNeeded, bool canApplyUpdates, bool canApplyReboot, bool rebootAttempted);
 void readConfigFile(forestConfig * config);
 // callback function for curl
 size_t write_data(void *buffer, size_t size, size_t nmemb, void *userp);
-void encodeForHtml(string s);
 
 // icky global goes here because I'm lazy
 bool cronMode = false;
@@ -228,12 +215,18 @@ int main(int argc, char** args)
 		rebootAttempted = true;
 	}
 
-	// HTML encode package names and versions
+	CURL *handle = curl_easy_init();
+	// URL encode package names and versions
 	for(size_t i = 0; i < availableUpdates.size(); i++)
 	{
-		encodeForHtml(availableUpdates[i].name);
-		encodeForHtml(availableUpdates[i].version);
+		char *encodedURL = curl_easy_escape(handle, availableUpdates[i].name.c_str(), availableUpdates[i].name.size());
+		availableUpdates[i].name = *encodedURL;
+		curl_free(encodedURL);
+		encodedURL = curl_easy_escape(handle, availableUpdates[i].version.c_str(), availableUpdates[i].version.size());
+		availableUpdates[i].version = *encodedURL;
+		curl_free(encodedURL);
 	}
+	curl_easy_cleanup(handle);
 
 	// report packages that are available to update
 	// this should also be split into two rpc calls, but keeping backward compatible for now
@@ -621,27 +614,5 @@ size_t write_data(void *buffer, size_t size, size_t nmemb, void *userp)
 	string * data = (string *)userp;
 	data->append(charBuf, nmemb);
 	return nmemb;
-}
-
-void encodeForHtml(string s)
-{
-	int numcodes = sizeof(codes) / sizeof(codes[0]);
-	for(int i = 0; i < numcodes; i++)
-	{
-		size_t pos = s.find(codes[i].match);
-		while(pos != string::npos)
-		{
-			//replace ( size_t pos1, size_t n1, const string& str, size_t pos2, size_t n2 );
-			s.replace(pos, codes[i].match.size(), codes[i].replace, 0, codes[i].replace.size());
-			if(pos + codes[i].replace.size() < s.size())
-			{
-				pos = s.find(codes[i].match, pos + codes[i].replace.size());
-			}
-			else
-			{
-				pos = string::npos;
-			}
-		}
-	}
 }
 
