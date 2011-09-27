@@ -125,31 +125,13 @@ int main(int argc, char** args)
 		}
 	}
 
-#if defined PACKAGE_MANAGER_APTGET
-	packageManager = new AptGet();
-#elif defined PACKAGE_MANAGER_YUM
-	packageManager = new Yum();
-#elif defined PACKAGE_MANAGER_WUAAPI
-	packageManager = new WuaApi();
-#elif defined PACKAGE_MANAGER_MACSU
-	packageManager = new MacSU();
-#else
-	//#error "No package manager defined!"
-	#pragma message ( "Error: No package manager defined, using stub" )
-#endif
+	// If compilation breaks here, make sure PACKAGE_MANAGER and REBOOT_MANAGER
+	// are defined in config.h.
+	// ./configure should set a reasonable value for you.
+	packageManager = new PACKAGE_MANAGER();
+	rebootManager = new REBOOT_MANAGER();
 
-#if defined REBOOT_MANAGER_FILEPRESENCE
-	rebootManager = new FilePresence();
-#elif defined REBOOT_MANAGER_KERNELDIFFERENCE
-	rebootManager = new KernelDifference();
-#elif defined REBOOT_MANAGER_WINREGKEY
-	rebootManager = new WinRegKey();
-#else
-	//#warning "No reboot manager defined, using stub"
-#pragma message ( "Warning: No reboot manager defined, using stub" )
-	rebootManager = new RebootStub();
-#endif
-
+// some OSes have different names for HOST_NAME_MAX
 #if !defined HOST_NAME_MAX
 
 // osx has a different name for HOST_NAME_MAX
@@ -166,7 +148,6 @@ int main(int argc, char** args)
 
 	char temp[HOST_NAME_MAX + 1];
 	temp[HOST_NAME_MAX] = '\0';
-	// get the current host name
 #ifdef _WIN32
 	WSADATA WSAData;
 	if(WSAStartup(MAKEWORD(1,0), &WSAData) != 0)
@@ -178,6 +159,7 @@ int main(int argc, char** args)
 		exit(EXIT_CODE_WSASTARTUP);
 	}
 #endif
+	// get the current host name
 	response = gethostname(temp, HOST_NAME_MAX);
 #ifdef _WIN32
 	if(response == SOCKET_ERROR)
