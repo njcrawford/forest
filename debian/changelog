@@ -1,0 +1,78 @@
+forest (0.8.9-0ppa1) lucid; urgency=low
+
+  * New release
+
+ -- Nathan Crawford <njcrawford@gmail.com>  Wed, 22 Jun 2011 01:09:00 -0400
+
+forest (0.8.4-0ppa1) lucid; urgency=low
+
+  * New release
+
+ -- Nathan Crawford <njcrawford@gmail.com>  Wed, 11 May 2011 20:31:00 -0400
+
+forest (0.8.2-0ppa1) lucid; urgency=low
+
+  * New release
+
+ -- Nathan Crawford <njcrawford@gmail.com>  Thu, 17 Mar 2011 17:47:00 -0400
+
+forest (0.8.1-0ppa1) lucid; urgency=low
+
+  * New release
+
+ -- Nathan Crawford <njcrawford@gmail.com>  Thu, 16 Mar 2011 17:23:00 -0400
+
+
+forest (0.8-0ppa1) lucid; urgency=low
+
+  * New release
+
+ -- Nathan Crawford <njcrawford@gmail.com>  Thu, 01 Mar 2011 10:25:00 -0500
+
+forest (0.7.2-0ppa1) lucid; urgency=low
+
+  * New release
+
+ -- Nathan Crawford <njcrawford@gmail.com>  Thu, 12 Jan 2011 11:45:00 -0500
+
+forest (0.7.1-0ppa1) lucid; urgency=low
+
+  * New release
+
+ -- Nathan Crawford <njcrawford@gmail.com>  Thu, 06 Jan 2011 13:45:00 -0500
+
+forest (0.7-0ppa1) lucid; urgency=low
+
+  * New release
+
+ -- Nathan Crawford <njcrawford@gmail.com>  Thu, 30 Dec 2010 18:02:00 -0500
+
+forest (0.6.5-0ppa1) lucid; urgency=low
+
+  * New release
+
+ -- Nathan Crawford <njcrawford@gmail.com>  Wed, 01 Dec 2010 20:48:00 -0400
+
+forest (0.5.1-0ppa1) lucid; urgency=low
+
+  * New release
+
+ -- Nathan Crawford <njcrawford@gmail.com>  Mon, 15 Nov 2010 12:11:00 -0400
+
+forest (0.5-0ppa1) lucid; urgency=low
+
+  * New release
+
+ -- Nathan Crawford <njcrawford@gmail.com>  Tue, 09 Nov 2010 21:31:00 -0400
+
+forest (0.4.1-0ppa1) lucid; urgency=low
+
+  * New release, plus new packaging to avoid empty packages
+
+ -- Nathan Crawford <njcrawford@gmail.com>  Wed, 27 Oct 2010 11:52:00 -0400
+
+forest (0.4-0ppa1) lucid; urgency=low
+
+  * New release, now including partial server package
+
+ -- Nathan Crawford <njcrawford@gmail.com>  Tue, 26 Oct 2010 19:53:33 -0400
