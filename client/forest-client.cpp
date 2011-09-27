@@ -55,6 +55,8 @@ using namespace std;
 
 #include "forest-client.h"
 
+#include "version.h"
+
 // package managers
 #include "apt-get.h"
 #include "yum.h"
@@ -70,13 +72,14 @@ using namespace std;
 #define RPC_VERSION 2
 #define BUFFER_SIZE 1024
 
-#define EXIT_CODE_OK           0
-#define EXIT_CODE_CURL         1
-#define EXIT_CODE_WSASTARTUP   2
-#define EXIT_CODE_SOCKETERROR  3
-#define EXIT_CODE_RESPONSEDATA 4
-#define EXIT_CODE_CONFIGFILE   5
-#define EXIT_CODE_HOSTNAME     6
+#define EXIT_CODE_OK             0
+#define EXIT_CODE_CURL           1
+#define EXIT_CODE_WSASTARTUP     2
+#define EXIT_CODE_SOCKETERROR    3
+#define EXIT_CODE_RESPONSEDATA   4
+#define EXIT_CODE_CONFIGFILE     5
+#define EXIT_CODE_HOSTNAME       6
+#define EXIT_CODE_INVALIDSWITCH  7
 
 typedef struct forestConfigStruct
 {
@@ -104,36 +107,31 @@ int main(int argc, char** args)
 	bool acceptedReboot = false;
 	bool rebootAttempted = false;
 
-	if(argc == 2 && strcmp(args[1], "--cron") == 0)
+	if(argc >= 2)
 	{
-		cronMode = true;
+		if(strcmp(args[1], "--cron") == 0)
+		{
+			cronMode = true;
+		}
+		else if(strcmp(args[1], "--version") == 0)
+		{
+			cout << "Forest client version " << getForestVersion() << endl;
+			exit(EXIT_CODE_OK);
+		}
+		else
+		{
+			cout << "Unrecognized switch: " << args[1] << endl;
+			exit(EXIT_CODE_INVALIDSWITCH);
+		}
 	}
 
-#if defined PACKAGE_MANAGER_APTGET
-	packageManager = new AptGet();
-#elif defined PACKAGE_MANAGER_YUM
-	packageManager = new Yum();
-#elif defined PACKAGE_MANAGER_WUAAPI
-	packageManager = new WuaApi();
-#elif defined PACKAGE_MANAGER_MACSU
-	packageManager = new MacSU();
-#else
-	//#error "No package manager defined!"
-	#pragma message ( "Error: No package manager defined, using stub" )
-#endif
+	// If compilation breaks here, make sure PACKAGE_MANAGER and REBOOT_MANAGER
+	// are defined in config.h.
+	// ./configure should set a reasonable value for you.
+	packageManager = new PACKAGE_MANAGER();
+	rebootManager = new REBOOT_MANAGER();
 
-#if defined REBOOT_MANAGER_FILEPRESENCE
-	rebootManager = new FilePresence();
-#elif defined REBOOT_MANAGER_KERNELDIFFERENCE
-	rebootManager = new KernelDifference();
-#elif defined REBOOT_MANAGER_WINREGKEY
-	rebootManager = new WinRegKey();
-#else
-	//#warning "No reboot manager defined, using stub"
-#pragma message ( "Warning: No reboot manager defined, using stub" )
-	rebootManager = new RebootStub();
-#endif
-
+// some OSes have different names for HOST_NAME_MAX
 #if !defined HOST_NAME_MAX
 
 // osx has a different name for HOST_NAME_MAX
@@ -150,7 +148,6 @@ int main(int argc, char** args)
 
 	char temp[HOST_NAME_MAX + 1];
 	temp[HOST_NAME_MAX] = '\0';
-	// get the current host name
 #ifdef _WIN32
 	WSADATA WSAData;
 	if(WSAStartup(MAKEWORD(1,0), &WSAData) != 0)
@@ -162,6 +159,7 @@ int main(int argc, char** args)
 		exit(EXIT_CODE_WSASTARTUP);
 	}
 #endif
+	// get the current host name
 	response = gethostname(temp, HOST_NAME_MAX);
 #ifdef _WIN32
 	if(response == SOCKET_ERROR)

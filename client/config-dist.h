@@ -8,18 +8,17 @@
 #endif
 #define DEFAULT_SERVER_URL "http://forest/forest"
 
-// for now, define what PM to use at compile time (from list above)
-// valid options are _APTGET (apt-get), _YUM (yum) and _WUAAPI (Windows 
-// update agent API)
-//#define PACKAGE_MANAGER_APTGET
-//#define PACKAGE_MANAGER_YUM
-//#define PACKAGE_MANAGER_WUAAPI
-//#define PACKAGE_MANAGER_MACSU
+// for now, define what PM to use at compile time 
+// this should be the name of the class to use
+//#define PACKAGE_MANAGER AptGet
+//#define PACKAGE_MANAGER Yum
+//#define PACKAGE_MANAGER WuaApi
+//#define PACKAGE_MANAGER MacSU
 
-// If no reboot manager is defined, REBOOTSTUB will be used
-//#define REBOOT_MANAGER_FILEPRESENCE
-//#define REBOOT_MANAGER_KERNELDIFFERENCE
-//#define REBOOT_MANAGER_WINREGKEY
-//#define REBOOT_MANAGER_REBOOTSTUB
+// RebootStub can be used if there isn't a working manager for this OS
+//#define REBOOT_MANAGER FilePresence
+//#define REBOOT_MANAGER KernelDifference
+//#define REBOOT_MANAGER WinRegKey
+#define REBOOT_MANAGER RebootStub
 
 #endif
