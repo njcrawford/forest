@@ -1,5 +1,5 @@
 Name: forest
-Version: 1.0.3
+Version: 1.0.4
 Release: 0%{?dist}
 Summary: A whole network update manager
 Group: Applications/System
@@ -118,7 +118,7 @@ rm -rf %{buildroot}
 
 %changelog
 * Wed Sep 27 2011 Nathan Crawford <njcrawford@gmail.com>
-- 1.0.3 release
+- 1.0.4 release
 
 * Wed Sep 21 2011 Nathan Crawford <njcrawford@gmail.com>
 - 1.0.2 release
