@@ -227,7 +227,7 @@ A whole network update manager (server)
 %package client
 Summary: A whole network update manager (client)
 Group: Applications/System
-BuildRequires: curl-devel
+BuildRequires: curl-devel gcc-c++
 Requires: curl
 %description client
 A whole network update manager (client)
