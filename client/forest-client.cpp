@@ -55,6 +55,8 @@ using namespace std;
 
 #include "forest-client.h"
 
+#include "version.h"
+
 // package managers
 #include "apt-get.h"
 #include "yum.h"
@@ -70,13 +72,14 @@ using namespace std;
 #define RPC_VERSION 2
 #define BUFFER_SIZE 1024
 
-#define EXIT_CODE_OK           0
-#define EXIT_CODE_CURL         1
-#define EXIT_CODE_WSASTARTUP   2
-#define EXIT_CODE_SOCKETERROR  3
-#define EXIT_CODE_RESPONSEDATA 4
-#define EXIT_CODE_CONFIGFILE   5
-#define EXIT_CODE_HOSTNAME     6
+#define EXIT_CODE_OK             0
+#define EXIT_CODE_CURL           1
+#define EXIT_CODE_WSASTARTUP     2
+#define EXIT_CODE_SOCKETERROR    3
+#define EXIT_CODE_RESPONSEDATA   4
+#define EXIT_CODE_CONFIGFILE     5
+#define EXIT_CODE_HOSTNAME       6
+#define EXIT_CODE_INVALID_SWITCH 7
 
 typedef struct forestConfigStruct
 {
@@ -104,9 +107,22 @@ int main(int argc, char** args)
 	bool acceptedReboot = false;
 	bool rebootAttempted = false;
 
-	if(argc == 2 && strcmp(args[1], "--cron") == 0)
+	if(argc >= 2)
 	{
-		cronMode = true;
+		if(strcmp(args[1], "--cron") == 0)
+		{
+			cronMode = true;
+		}
+		else if(strcmp(args[1], "--version") == 0)
+		{
+			cout << "Forest client version " << getForestVersion() << endl;
+			exit(EXIT_CODE_OK);
+		}
+		else
+		{
+			cout << "Unrecognized switch: " << args[1] << endl;
+			exit(EXIT_CODE_INVALIDSWITCH);
+		}
 	}
 
 #if defined PACKAGE_MANAGER_APTGET
