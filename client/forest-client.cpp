@@ -79,7 +79,7 @@ using namespace std;
 #define EXIT_CODE_RESPONSEDATA   4
 #define EXIT_CODE_CONFIGFILE     5
 #define EXIT_CODE_HOSTNAME       6
-#define EXIT_CODE_INVALID_SWITCH 7
+#define EXIT_CODE_INVALIDSWITCH  7
 
 typedef struct forestConfigStruct
 {
