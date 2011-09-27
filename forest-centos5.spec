@@ -1,5 +1,5 @@
 Name: forest
-Version: 1.0.2
+Version: 1.0.3
 Release: 0%{?dist}
 Summary: A whole network update manager
 Group: Applications/System
@@ -117,6 +117,9 @@ install -m 0644 client/forest-client.conf %{buildroot}%{_sysconfdir}/forest-clie
 rm -rf %{buildroot}
 
 %changelog
+* Wed Sep 27 2011 Nathan Crawford <njcrawford@gmail.com>
+- 1.0.3 release
+
 * Wed Sep 21 2011 Nathan Crawford <njcrawford@gmail.com>
 - 1.0.2 release
 
