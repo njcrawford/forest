@@ -43,10 +43,17 @@ Section "Forest Client for Windows (required)"
   SetOutPath $INSTDIR
   
   ; Put file there
-  File "forest-client\bin\Release\forest-client.exe"
-  ;File "forest-client\bin\Release\Interop.WUApiLib.dll"
-  ;File "forest-client\bin\Release\IniFile.dll"
-  ;File "ConfigurationGUI\bin\Release\ConfigurationGUI.exe"
+  File "Win32\Release\forest-client.exe"
+  File "cURL\curllib.dll"
+  File "cURL\libeay32.dll"
+  File "cURL\openldap.dll"
+  File "cURL\ssleay32.dll"
+  File "ConfigurationGUI\bin\Release\ConfigurationGUI.exe"
+  File "ConfigurationGUI\IniFile.dll"
+  ; Don't overwrite the config file if it's already there
+  SetOverwrite off
+  File "..\forest-client.conf"
+  SetOverwrite on
   
   ; Write the installation path into the registry
   WriteRegStr HKLM "SOFTWARE\Forest Client" "Install_Dir" "$INSTDIR"
@@ -65,7 +72,7 @@ Section "Start Menu Shortcuts"
 
   CreateDirectory "$SMPROGRAMS\Forest Client"
   CreateShortCut "$SMPROGRAMS\Forest Client\Uninstall.lnk" "$INSTDIR\uninstall.exe" "" "$INSTDIR\uninstall.exe" 0
-  CreateShortCut "$SMPROGRAMS\Forest Client\Configuration.lnk" "$INSTDIR\forest-client.conf" "" "$INSTDIR\forest-client.conf" 0
+  CreateShortCut "$SMPROGRAMS\Forest Client\Configuration.lnk" "$INSTDIR\ConfigurationGUI.exe" "" "$INSTDIR\ConfigurationGUI.exe" 0
   
 SectionEnd
 
@@ -81,9 +88,12 @@ Section "Uninstall"
 
   ; Remove files and uninstaller
   Delete "$INSTDIR\forest-client.exe"
-  ;Delete "$INSTDIR\Interop.WUApiLib.dll"
-  ;Delete "$INSTDIR\IniFile.dll"
-  ;Delete "$INSTDIR\ConfigurationGUI.exe"
+  Delete "$INSTDIR\curllib.dll"
+  Delete "$INSTDIR\libeay32.dll"
+  Delete "$INSTDIR\openldap.dll"
+  Delete "$INSTDIR\ssleay32.dll"
+  Delete "$INSTDIR\ConfigurationGUI.exe"
+  Delete "$INSTDIR\IniFile.dll"
   Delete "$INSTDIR\uninstall.exe"
 
   ; Remove shortcuts, if any

@@ -5,6 +5,7 @@ using System.Data;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
+using System.Security.Principal;
 
 namespace ConfigurationGUI
 {
@@ -23,7 +24,7 @@ namespace ConfigurationGUI
             // set a default for server url if there is nothing set
             if (settings.getValue("server_url") == null)
             {
-                txtServerURL.Text = "http://url-not-set/forest/";
+                txtServerURL.Text = "http://url-not-set/forest";
             }
             else
             {
@@ -33,14 +34,20 @@ namespace ConfigurationGUI
 
         private void btnOK_Click(object sender, EventArgs e)
         {
-            if (txtServerURL.Text.StartsWith("http") && txtServerURL.Text.EndsWith("/"))
+            string testURL = txtServerURL.Text.Trim();
+            if (testURL.StartsWith("http"))
             {
-                settings.setValue("server_url", txtServerURL.Text);
+                if (testURL.EndsWith("/"))
+                {
+                    testURL = testURL.Remove(testURL.Length - 1);
+                }
+                settings.setValue("server_url", testURL);
                 settings.save();
+                Application.Exit();
             }
             else
             {
-                MessageBox.Show("Server URL must start with 'http' and end with '/'");
+                MessageBox.Show("Server URL must start with 'http'.");
             }
         }
 

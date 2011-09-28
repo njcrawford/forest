@@ -41,23 +41,23 @@ namespace ConfigurationGUI
             this.btnOK.Name = "btnOK";
             this.btnOK.Size = new System.Drawing.Size(75, 23);
             this.btnOK.TabIndex = 0;
-            this.btnOK.Text = "Save";
+            this.btnOK.Text = "OK";
             this.btnOK.UseVisualStyleBackColor = true;
             this.btnOK.Click += new System.EventHandler(this.btnOK_Click);
             // 
             // btnClose
             // 
-            this.btnClose.Location = new System.Drawing.Point(183, 97);
+            this.btnClose.Location = new System.Drawing.Point(188, 97);
             this.btnClose.Name = "btnClose";
             this.btnClose.Size = new System.Drawing.Size(75, 23);
             this.btnClose.TabIndex = 1;
-            this.btnClose.Text = "Close";
+            this.btnClose.Text = "Cancel";
             this.btnClose.UseVisualStyleBackColor = true;
             this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
             // 
             // txtServerURL
             // 
-            this.txtServerURL.Location = new System.Drawing.Point(84, 35);
+            this.txtServerURL.Location = new System.Drawing.Point(84, 17);
             this.txtServerURL.Name = "txtServerURL";
             this.txtServerURL.Size = new System.Drawing.Size(179, 20);
             this.txtServerURL.TabIndex = 2;
@@ -65,7 +65,7 @@ namespace ConfigurationGUI
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(12, 38);
+            this.label1.Location = new System.Drawing.Point(12, 20);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(66, 13);
             this.label1.TabIndex = 3;
@@ -73,12 +73,11 @@ namespace ConfigurationGUI
             // 
             // label2
             // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(12, 66);
+            this.label2.Location = new System.Drawing.Point(15, 51);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(234, 13);
+            this.label2.Size = new System.Drawing.Size(248, 28);
             this.label2.TabIndex = 4;
-            this.label2.Text = "Server URL must start with \'http\' and end with \'/\'";
+            this.label2.Text = "Server URL must start with \'http\' and should not have a trailing slash.";
             // 
             // frmMain
             // 

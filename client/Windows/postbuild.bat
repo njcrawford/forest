@@ -1,1 +1,1 @@
-copy cURL\*.dll Debug\
+copy cURL\*.dll Win32\Debug\
