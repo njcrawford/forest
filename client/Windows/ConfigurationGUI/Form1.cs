@@ -28,7 +28,8 @@ namespace ConfigurationGUI
             }
             else
             {
-                txtServerURL.Text = settings.getValue("server_url");
+                string removeQuotes = settings.getValue("server_url");
+                txtServerURL.Text = removeQuotes.Replace("\"", "");
             }
         }
 
@@ -37,11 +38,7 @@ namespace ConfigurationGUI
             string testURL = txtServerURL.Text.Trim();
             if (testURL.StartsWith("http"))
             {
-                if (testURL.EndsWith("/"))
-                {
-                    testURL = testURL.Remove(testURL.Length - 1);
-                }
-                settings.setValue("server_url", testURL);
+                settings.setValue("server_url", "\"" + testURL + "\"");
                 settings.save();
                 Application.Exit();
             }
