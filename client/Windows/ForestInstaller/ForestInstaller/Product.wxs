@@ -50,5 +50,18 @@
 			<!-- Note: The following ComponentGroupRef is required to pull in generated authoring from project references. -->
 			<ComponentGroupRef Id="Product.Generated" />
 		</Feature>
+
+    <!-- seems like these will come in handy some day
+    <WixVariable Id="WixUIBannerBmp" Value="path\banner.bmp" />
+    <WixVariable Id="WixUIDialogBmp" Value="path\dialog.bmp" />
+    <WixVariable Id="WixUIExclamationIco" Value="path\exclamation.ico" />
+    <WixVariable Id="WixUIInfoIco" Value="path\information.ico" />
+    <WixVariable Id="WixUINewIco" Value="path\new.ico" />
+    <WixVariable Id="WixUIUpIco" Value="path\up.ico" />
+    -->
+    <WixVariable Id="WixUILicenseRtf" Value="License.rtf" />
+    <Property Id="WIXUI_INSTALLDIR" Value="INSTALLLOCATION" />
+    <UIRef Id="WixUI_InstallDir" />
+    
 	</Product>
 </Wix>
