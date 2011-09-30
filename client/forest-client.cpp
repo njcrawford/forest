@@ -134,15 +134,15 @@ int main(int argc, char** args)
 // some OSes have different names for HOST_NAME_MAX
 #if !defined HOST_NAME_MAX
 
-// osx has a different name for HOST_NAME_MAX
-#if defined _POSIX_HOST_NAME_MAX
-#define HOST_NAME_MAX _POSIX_HOST_NAME_MAX
-#endif
+	// osx has a different name for HOST_NAME_MAX
+	#if defined _POSIX_HOST_NAME_MAX
+		#define HOST_NAME_MAX _POSIX_HOST_NAME_MAX
+	#endif
 
-// windows has a different name for HOST_NAME_MAX
-#if defined NI_MAXHOST
-#define HOST_NAME_MAX NI_MAXHOST
-#endif
+	// windows has a different name for HOST_NAME_MAX
+	#if defined NI_MAXHOST
+		#define HOST_NAME_MAX NI_MAXHOST
+	#endif
 
 #endif // !defined HOST_NAME_MAX
 
@@ -251,6 +251,10 @@ void getAcceptedUpdates(vector<string> & outList, string * serverUrl, string * m
 
 	// build accepted URL
 	acceptedUrl = *serverUrl;
+	if(acceptedUrl.back() != '/')
+	{
+		acceptedUrl += "/";
+	}
 	acceptedUrl += "getaccepted.php?rpc_version=";
 	acceptedUrl += to_string(RPC_VERSION);
 	acceptedUrl += "&system=";
@@ -445,6 +449,10 @@ void reportAvailableUpdates(vector<updateInfo> & list, string * serverUrl, strin
 	}
 
 	string collectUrl = *serverUrl;
+	if(collectUrl.back() != '/')
+	{
+		collectUrl += "/";
+	}
 	collectUrl += "collect.php";
 
 	CURL * curlHandle;
@@ -522,18 +530,18 @@ void readConfigFile(forestConfig * config)
 				if(cleanupPtr != NULL)
 				{
 					*cleanupPtr = '\0';
-					// advance the split pointer to where the first double quote was
-					splitPtr = cleanupPtr;
+					// advance the split pointer to just past where the first double quote was
+					splitPtr = cleanupPtr + 1;
 				}
 				
-				cleanupPtr = strchr(splitPtr + 1, '"');
+				cleanupPtr = strchr(splitPtr, '"');
 				if(cleanupPtr != NULL)
 				{
 					*cleanupPtr = '\0';
 				}
 				
 				confName = line;
-				confValue = (splitPtr + 1);
+				confValue = (splitPtr);
 				if(confName.substr(0, 10) == "server_url")
 				{
 					config->serverUrl = confValue;
