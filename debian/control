@@ -7,8 +7,9 @@ Standards-Version: 3.8.3
 Homepage: http://www.njcrawford.com/forest/
 
 Package: forest-client
-Architecture: all
-Depends: ${shlibs:Depends}, ${misc:Depends}, curl
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, libcurl3 | libcurl3-gnutls
+Build-Depends: libcurl4-openssl-dev
 Description: Web-based update manager for whole networks
  This is the client package. It should be installed on each PC or server to be
  managed.
