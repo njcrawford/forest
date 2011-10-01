@@ -1,0 +1,5 @@
+#!/bin/sh
+
+# only run if the package is completely installed
+test -x /usr/share/forest/summary-email.php || exit 0
+/usr/share/forest/summary-email.php

@@ -1,0 +1,22 @@
+Source: forest
+Section: admin
+Priority: optional
+Maintainer: Nathan Crawford <njcrawford@gmail.com>
+Build-Depends: debhelper (>= 7)
+Standards-Version: 3.8.3
+Homepage: http://www.njcrawford.com/forest/
+
+Package: forest-client
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, libcurl3 | libcurl3-gnutls
+Build-Depends: libcurl4-openssl-dev
+Description: Web-based update manager for whole networks
+ This is the client package. It should be installed on each PC or server to be
+ managed.
+
+Package: forest-server
+Architecture: all
+Depends: ${shlibs:Depends}, ${misc:Depends}, php5-mysql, php5-cli, apache2
+Description: Web-based update manager for whole networks
+ This is the server package. It should be installed only on one server for
+ clients to communicate with.

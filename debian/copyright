@@ -1,0 +1,35 @@
+This work was packaged for Debian by:
+
+    Nathan Crawford <njcrawford@gmail.com> on Tue, 26 Oct 2010 19:53:33 -0400
+
+It was downloaded from:
+
+    http://www.njcrawford.com/forest/
+
+Upstream Author(s):
+
+    Nathan Crawford
+
+Copyright:
+
+    Copyright (C) 2011 Nathan Crawford
+
+License:
+
+    License is GPL2
+
+The Debian packaging is:
+
+    Copyright (C) 2011 Nathan Crawford <njcrawford@gmail.com>
+
+# Please chose a license for your packaging work. If the program you package
+# uses a mainstream license, using the same license is the safest choice.
+# Please avoid to pick license terms that are more restrictive than the
+# packaged work, as it may make Debian's contributions unacceptable upstream.
+# If you just want it to be GPL version 3, leave the following lines in.
+
+and is licensed under the GPL version 2,
+see "/usr/share/common-licenses/GPL-2".
+
+# Please also look if there are files or directories which have a
+# different copyright/license attached and list them here.
