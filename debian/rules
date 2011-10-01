@@ -18,6 +18,8 @@ export DH_OPTIONS
 
 binary-indep: forest-server
 
+binary-arch: forest-client
+
 forest-client:
 	dh_testdir
 	dh_testroot
@@ -53,7 +55,7 @@ build:
 	./configure
 	make
 
-binary: binary-indep forest-client
+binary: binary-indep binary-arch
 	
 
 .PHONY: forest-client forest-server
