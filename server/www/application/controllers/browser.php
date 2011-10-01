@@ -307,11 +307,18 @@ class Browser extends CI_Controller {
 	
 	private function _is_logged_in()
 	{
-		if(session_id() == "")
+		if($this->config->item('login_required'))
 		{
-			session_start();
+			if(session_id() == "")
+			{
+				session_start();
+			}
+			return !empty($_SESSION['login_name']);
 		}
-		return !empty($_SESSION['login_name']);
+		else
+		{
+			return true;
+		}
 	}
 	
 	private function _get_user_logged_in()
