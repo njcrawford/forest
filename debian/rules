@@ -50,7 +50,6 @@ clean:
 	dh_clean
 
 build:
-	cd client
 	./configure
 	make
 
