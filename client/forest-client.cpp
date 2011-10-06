@@ -251,7 +251,7 @@ void getAcceptedUpdates(vector<string> & outList, string * serverUrl, string * m
 
 	// build accepted URL
 	acceptedUrl = *serverUrl;
-	if(acceptedUrl.back() != '/')
+	if(acceptedUrl[acceptedUrl.size() - 1] != '/')
 	{
 		acceptedUrl += "/";
 	}
@@ -449,7 +449,7 @@ void reportAvailableUpdates(vector<updateInfo> & list, string * serverUrl, strin
 	}
 
 	string collectUrl = *serverUrl;
-	if(collectUrl.back() != '/')
+	if(collectUrl[collectUrl.size() - 1] != '/')
 	{
 		collectUrl += "/";
 	}

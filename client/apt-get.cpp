@@ -55,11 +55,11 @@ void AptGet::applyUpdates(vector<string> & list)
 	vector<string> commandOutput;	
 
 	command = "apt-get -y -o DPkg::Options::\\=--force-confold install ";
-	cerr << command << endl;
+	//cerr << command << endl;
 	command += flattenStringList(list, ' ');
-	cerr << command << endl;
+	//cerr << command << endl;
 	command += " 2>&1";
-	cerr << command << endl;
+	//cerr << command << endl;
 
 	mySystem(&command, commandOutput, &commandResponse);
 	
