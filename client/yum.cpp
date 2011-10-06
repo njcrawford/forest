@@ -58,23 +58,6 @@ void Yum::getAvailableUpdates(vector<updateInfo> & outList)
 				temp.name = temp.name.substr(0, pos);
 			}
 
-			// don't duplicate items in the list
-			// on rpm based systems, multiple architectures of the same package may be installed
-			// removing the architecture will create duplicates, this will filter them out
-			bool alreadyInList = false;
-			for(size_t x = 0; x < outList.size(); x++)
-			{
-				if(temp.name == outList[x].name)
-				{
-					alreadyInList = true;
-					break;
-				}
-			}
-			if(alreadyInList)
-			{
-				continue;
-			}
-
 			// get the version number
 			// there is a variable amount of space between the name and version
 			pos = commandOutput[line].find(' ', 0);
@@ -89,7 +72,31 @@ void Yum::getAvailableUpdates(vector<updateInfo> & outList)
 			{
 				temp.version = temp.version.substr(0, pos);
 			}
+
+			// Don't duplicate items in the list.
+			// On rpm based systems, multiple architectures of the same package may be installed
+			// removing the architecture will create duplicates, this will filter them out.
+			bool alreadyInList = false;
+			for(size_t x = 0; x < outList.size(); x++)
+			{
+				if(temp == outList[x])
+				{
+					alreadyInList = true;
+					break;
+				}
+			}
+			if(alreadyInList)
+			{
+				continue;
+			}
 			
+			// Some systems are reporting a package with an empty name, filter it out here until
+			// the true cause can be determined.
+			if(trim_string(temp.name).size() == 0)
+			{
+				continue;
+			}
+
 			outList.push_back(temp);
 		}
 		for(int line = commandOutput.size() - 1; line >= 0; line--)
