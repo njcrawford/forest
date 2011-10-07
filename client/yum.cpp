@@ -79,7 +79,7 @@ void Yum::getAvailableUpdates(vector<updateInfo> & outList)
 			bool alreadyInList = false;
 			for(size_t x = 0; x < outList.size(); x++)
 			{
-				if(temp == outList[x])
+				if(temp.name == outList[x].name && temp.version == outList[x].version)
 				{
 					alreadyInList = true;
 					break;

@@ -9,7 +9,7 @@ OBJFILES := $(patsubst %.cpp,%.o,$(wildcard *.cpp))
 all: forest-client
 
 forest-client: $(OBJFILES)
-	$(LINK) -lcurl -o forest-client $(OBJFILES)
+	$(LINK) $(OBJFILES) -lcurl -o forest-client
 
 %.o: %.cpp
 	$(COMPILE) -o $@ $<
