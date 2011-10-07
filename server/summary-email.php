@@ -36,8 +36,8 @@ $server_url = empty($forest_config['server_url']) ? "http://forest/forest/" : $f
 
 $output_message .= $server_url . "\n";
 
-require "www/inc/version.php";
-$output_message .= "Forest version " . FOREST_VERSION . "\n\n";
+#require "www/inc/version.php";
+#$output_message .= "Forest version " . FOREST_VERSION . "\n\n";
 
 // get systems with updates
 // print name and number of updates
