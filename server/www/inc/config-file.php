@@ -33,6 +33,6 @@ $config['db_password'] = "forest_pass";
 $config['db_name'] = "forest";
 
 // now read in any changed values from the config file
-include "/etc/forest-server.conf";
+include "/etc/forest-server/forest-server.conf";
 
 ?>

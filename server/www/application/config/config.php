@@ -1,6 +1,52 @@
 <?php  if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 /*
+Things you should change after installing forest:
+- Database settings
+- Base URL (optional, Codeigniter is pretty good about guessing with the defaults)
+- forest_email_to (the address that will receive summary email)
+- login_required (if enabling login_required, see also login_source and other login options)
+Most fo the remaining settings are for Codeigniter and should be left alone unless you know what you're doing.
+*/
+
+/*
+Database settings
+*/
+$config['db_hostname'] = 'localhost'; // used to be named db_server
+$config['db_username'] = 'forest_user'; // used to be named db_user
+$config['db_password'] = 'forest_pass';
+$config['db_name'] = 'forest';
+
+// Summary email recipient
+$config['forest_email_to'] = "root@localhost";
+
+// Enable/disable login requirement
+$config['login_required'] = false;
+
+// Where to get info about who can login
+// Options:
+// config_file - this file, see allowed_users below
+// ldap        - an LDAP server
+// db          - users table in Forest's DB (not yet implemented)
+$config['login_source'] = "config_file";
+
+// Users allowed to log in
+$config['allowed_users'] = array(
+	array("username" => "user1", "password" => "password1"),
+	array("username" => "user2", "password" => "password2")
+);
+
+// LDAP options
+// Hostname of the LDAP server to connect to
+$config['ldap_server'] = "ldap-server-name";
+// Attribute that will be used for authentication
+$config['ldap_auth_var'] = "uid";
+// Where the users are stored in the LDAP server
+$config['ldap_base'] = "ou=people, dc=example, dc=com";
+// Only allow some LDAP users to login to Forest
+//$config['ldap_allowed_users'] = array("username1", "username2");
+
+/*
 |--------------------------------------------------------------------------
 | Base Site URL
 |--------------------------------------------------------------------------
@@ -14,7 +60,6 @@
 | path to your installation.
 |
 */
-// for forest, this gets overridden in /etc/forest-server.conf
 $config['base_url']	= '';
 
 /*
@@ -358,23 +403,10 @@ $config['rewrite_short_tags'] = FALSE;
 */
 $config['proxy_ips'] = '';
 
-/*
-Database config items
-*/
-// set defaults
-$config['db_hostname'] = 'localhost';
-$config['db_username'] = 'forest_user';
-$config['db_password'] = 'forest_pass';
-$config['db_name'] = 'forest';
-
-// now read in any changed values from the config file
-include "/etc/forest-server.conf";
-
-// forest version
-$temp = '$URL$';
-$temp = explode("/", $temp);
-$config['forest_version'] = $temp[count($temp)-6];
-
+// forest version - don't edit this
+$svnUrl = '$URL$';
+$svnUrl = explode("/", $svnUrl);
+$config['forest_version'] = $svnUrl[count($svnUrl) - 6];
 
 /* End of file config.php */
 /* Location: ./application/config/config.php */
