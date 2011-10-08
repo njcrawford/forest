@@ -11,8 +11,9 @@ void Yum::getAvailableUpdates(vector<updateInfo> & outList)
 	int commandRetval = 0;
 	vector<string> commandOutput;
 
+	// run yum with quiet (-q) and only critical error reporting (-e0)
 	// add -C to run from cache
-	command = "/usr/bin/yum check-update -q 2>&1";
+	command = "/usr/bin/yum check-update -q -e0 2>&1";
 
 	mySystem(&command, commandOutput, &commandRetval);
 
@@ -29,11 +30,12 @@ void Yum::getAvailableUpdates(vector<updateInfo> & outList)
 
 			//filter out HTTP errors when a mirror is down
 			//updates=`echo "${updates}" | grep -v "HTTP Error\|^Trying other mirror.$"`
-			if(trim_string(commandOutput[line]).size() == 0 || 
-				commandOutput[line].substr(0, 11) == "Another app" ||
-				commandOutput[line].substr(0, 13) == "Existing lock" ||
-				commandOutput[line].find("HTTP Error", 0) != string::npos ||
-				commandOutput[line] == "Trying other mirror.")
+			if(trim_string(commandOutput[line]).size() == 0 || // empty string, no use to us
+				commandOutput[line].substr(0, 11) == "Another app" || // warning that another app alreayd has the yum lock
+				commandOutput[line].substr(0, 13) == "Existing lock" || // usually follows previous line
+				commandOutput[line].find("HTTP Error", 0) != string::npos || // ignore any kind of http error
+				commandOutput[line] == "Trying other mirror." // usually follows previous line
+			)
 			{
 				// remove this line and don't process it any further
 				commandOutput.erase(commandOutput.begin() + line);
@@ -89,13 +91,6 @@ void Yum::getAvailableUpdates(vector<updateInfo> & outList)
 			{
 				continue;
 			}
-			
-			// Some systems are reporting a package with an empty name, filter it out here until
-			// the true cause can be determined.
-			if(trim_string(temp.name).size() == 0)
-			{
-				continue;
-			}
 
 			outList.push_back(temp);
 		}
@@ -121,7 +116,6 @@ void Yum::applyUpdates(vector<string> & list)
 	int commandResponse;
 	vector<string> commandOutput;	
 
-	//TODO: yum output will need further cleanup
 	command = "yum -y update ";
 	command += flattenStringList(list, ' ');
 	command += " 2>&1";
