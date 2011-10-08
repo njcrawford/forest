@@ -1,6 +1,7 @@
 CC = g++
 DEBUG = -g
-CFLAGS = -Wall $(DEBUG)
+#CFLAGS = -Wall $(DEBUG)
+CFLAGS = -Wall
 COMPILE = $(CC) $(CFLAGS) -c
 LINK = $(CC) $(CFLAGS)
 
