@@ -371,7 +371,7 @@ $config['db_name'] = 'forest';
 include "/etc/forest-server.conf";
 
 // forest version
-include "version.php"
+include "version.php";
 
 
 /* End of file config.php */
