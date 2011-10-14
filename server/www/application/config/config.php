@@ -371,9 +371,7 @@ $config['db_name'] = 'forest';
 include "/etc/forest-server.conf";
 
 // forest version
-$temp = '$URL$';
-$temp = explode("/", $temp);
-$config['forest_version'] = $temp[count($temp)-6];
+include "version.php"
 
 
 /* End of file config.php */
