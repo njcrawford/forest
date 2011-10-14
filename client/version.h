@@ -3,7 +3,7 @@
 
 string getForestVersion()
 {
-	string svnUrl = "$URL$";
+#include "version-only.h"
 	size_t endPos;
 	size_t startPos;
 	endPos = svnUrl.rfind("/");
