@@ -55,8 +55,6 @@ using namespace std;
 
 #include "forest-client.h"
 
-#include "version.h"
-
 // package managers
 #include "apt-get.h"
 #include "yum.h"
@@ -72,127 +70,41 @@ using namespace std;
 #define RPC_VERSION 2
 #define BUFFER_SIZE 1024
 
-#define EXIT_CODE_OK             0
-#define EXIT_CODE_CURL           1
-#define EXIT_CODE_WSASTARTUP     2
-#define EXIT_CODE_SOCKETERROR    3
-#define EXIT_CODE_RESPONSEDATA   4
-#define EXIT_CODE_CONFIGFILE     5
-#define EXIT_CODE_HOSTNAME       6
-#define EXIT_CODE_INVALIDSWITCH  7
+#include "exitcodes.h"
 
-typedef struct forestConfigStruct
-{
-	string serverUrl;
-} forestConfig;
-
-void getAcceptedUpdates(vector<string> & outList, string * serverUrl, string * myHostname, bool * rebootAccepted);
-void reportAvailableUpdates(vector<updateInfo> & list, string * serverUrl, string * myHostname, rebootState rebootNeeded, bool canApplyUpdates, bool canApplyReboot, bool rebootAttempted);
-void readConfigFile(forestConfig * config);
 // callback function for curl
 size_t write_data(void *buffer, size_t size, size_t nmemb, void *userp);
 
-// icky global goes here because I'm lazy
-bool cronMode = false;
-
-int main(int argc, char** args)
+ForestClient::ForestClient()
 {
-	vector<updateInfo> availableUpdates;
-	vector<string> acceptedUpdates;
-	forestConfig config;
-	string hostname;
-	int response = 0;
-	PackageManager * packageManager;
-	RebootManager * rebootManager;
-	bool acceptedReboot = false;
-	bool rebootAttempted = false;
-
-	if(argc >= 2)
-	{
-		if(strcmp(args[1], "--cron") == 0)
-		{
-			cronMode = true;
-		}
-		else if(strcmp(args[1], "--version") == 0)
-		{
-			cout << "Forest client version " << getForestVersion() << endl;
-			exit(EXIT_CODE_OK);
-		}
-		else
-		{
-			cout << "Unrecognized switch: " << args[1] << endl;
-			exit(EXIT_CODE_INVALIDSWITCH);
-		}
-	}
-
 	// If compilation breaks here, make sure PACKAGE_MANAGER and REBOOT_MANAGER
 	// are defined in config.h.
 	// ./configure should set a reasonable value for you.
 	packageManager = new PACKAGE_MANAGER();
 	rebootManager = new REBOOT_MANAGER();
+}
 
-// some OSes have different names for HOST_NAME_MAX
-#if !defined HOST_NAME_MAX
+int ForestClient::run()
+{
+	vector<updateInfo> availableUpdates;
+	vector<string> acceptedUpdates;
+	bool acceptedReboot = false;
+	bool rebootAttempted = false;
 
-	// osx has a different name for HOST_NAME_MAX
-	#if defined _POSIX_HOST_NAME_MAX
-		#define HOST_NAME_MAX _POSIX_HOST_NAME_MAX
-	#endif
-
-	// windows has a different name for HOST_NAME_MAX
-	#if defined NI_MAXHOST
-		#define HOST_NAME_MAX NI_MAXHOST
-	#endif
-
-#endif // !defined HOST_NAME_MAX
-
-	char temp[HOST_NAME_MAX + 1];
-	temp[HOST_NAME_MAX] = '\0';
-#ifdef _WIN32
-	WSADATA WSAData;
-	if(WSAStartup(MAKEWORD(1,0), &WSAData) != 0)
-	{
-		response = WSAGetLastError();
-		//FormatMessage() to get the error text
-		cerr << "Could not get hostname: WSAStartup error " << response << endl;
-		cerr << "Exiting..." << endl;
-		exit(EXIT_CODE_WSASTARTUP);
-	}
-#endif
-	// get the current host name
-	response = gethostname(temp, HOST_NAME_MAX);
-#ifdef _WIN32
-	if(response == SOCKET_ERROR)
-	{
-		response = WSAGetLastError();
-		//FormatMessage() to get the error text
-		cerr << "Could not get hostname: Socket error " << response << endl;
-		cerr << "Exiting..." << endl;
-		exit(EXIT_CODE_SOCKETERROR);
-	}
-	WSACleanup();
-#else
-	if(response == -1)
-	{
-		//fprintf(stderr, "Could not get hostname, exiting.");
-		perror("Error in main(): ");
-		exit(EXIT_CODE_HOSTNAME);
-	}
-#endif
-	hostname = temp;
+	getHostname();
 
 	// set a default for server url
-	config.serverUrl = DEFAULT_SERVER_URL;
+	serverUrl = DEFAULT_SERVER_URL;
 
 	// read config file
-	readConfigFile(&config);
+	readConfigFile();
 
 	// get list of packages that have been accepted for update
 	// also check to see if a reboot has been accepted
 	// this should really be split into two rpc calls, but keeping backwards compatible for now
 	if(packageManager->canApplyUpdates() || rebootManager->canApplyReboot())
 	{
-		getAcceptedUpdates(acceptedUpdates, &config.serverUrl, &hostname, &acceptedReboot);
+		getAcceptedUpdates(acceptedUpdates, &acceptedReboot);
 	}
 
 	// apply accepted updates (and only available updates) if backend is able
@@ -228,14 +140,7 @@ int main(int argc, char** args)
 
 	// report packages that are available to update
 	// this should also be split into two rpc calls, but keeping backward compatible for now
-	reportAvailableUpdates(availableUpdates, 
-		&config.serverUrl, 
-		&hostname, 
-		rebootManager->isRebootNeeded(), 
-		packageManager->canApplyUpdates(), 
-		rebootManager->canApplyReboot(),
-		rebootAttempted
-	);
+	reportAvailableUpdates(availableUpdates, rebootAttempted);
 
 	// for debugging output
 	//cin.get();
@@ -244,13 +149,13 @@ int main(int argc, char** args)
 }
 
 // fills outList with names of accepted packages
-void getAcceptedUpdates(vector<string> & outList, string * serverUrl, string * myHostname, bool * rebootAccepted)
+void ForestClient::getAcceptedUpdates(vector<string> & outList, bool * rebootAccepted)
 {
 	string acceptedUrl;
 	string command;
 
 	// build accepted URL
-	acceptedUrl = *serverUrl;
+	acceptedUrl = serverUrl;
 	if(acceptedUrl[acceptedUrl.size() - 1] != '/')
 	{
 		acceptedUrl += "/";
@@ -258,7 +163,7 @@ void getAcceptedUpdates(vector<string> & outList, string * serverUrl, string * m
 	acceptedUrl += "getaccepted.php?rpc_version=";
 	acceptedUrl += to_string(RPC_VERSION);
 	acceptedUrl += "&system=";
-	acceptedUrl += *myHostname;
+	acceptedUrl += myHostname;
 
 	// run curl command
 	CURL * curlHandle;
@@ -367,17 +272,17 @@ void getAcceptedUpdates(vector<string> & outList, string * serverUrl, string * m
 	}
 }
 
-void reportAvailableUpdates(vector<updateInfo> & list, string * serverUrl, string * myHostname, rebootState rebootNeeded, bool canApplyUpdates, bool canApplyReboot, bool rebootAttempted)
+void ForestClient::reportAvailableUpdates(vector<updateInfo> & list, bool rebootAttempted)
 {
 	string command;
 
 	command = "rpc_version=";
 	command += to_string(RPC_VERSION);
 	command += "&system_name=";
-	command += *myHostname;
+	command += myHostname;
 
 	command += "&client_can_apply_updates=";
-	if(canApplyUpdates)
+	if(packageManager->canApplyUpdates())
 	{
 		command += "true";
 	}
@@ -387,7 +292,7 @@ void reportAvailableUpdates(vector<updateInfo> & list, string * serverUrl, strin
 	}
 
 	command += "&client_can_apply_reboot=";
-	if(canApplyReboot)
+	if(rebootManager->canApplyReboot())
 	{
 		command += "true";
 	}
@@ -425,6 +330,7 @@ void reportAvailableUpdates(vector<updateInfo> & list, string * serverUrl, strin
 	}
 
 	command += "&reboot_required=";
+	int rebootNeeded = rebootManager->isRebootNeeded();
 	if(rebootNeeded == 1)
 	{
 		command += "true";
@@ -448,7 +354,7 @@ void reportAvailableUpdates(vector<updateInfo> & list, string * serverUrl, strin
 		command += "false";
 	}
 
-	string collectUrl = *serverUrl;
+	string collectUrl = serverUrl;
 	if(collectUrl[collectUrl.size() - 1] != '/')
 	{
 		collectUrl += "/";
@@ -478,13 +384,13 @@ void reportAvailableUpdates(vector<updateInfo> & list, string * serverUrl, strin
 		exit(EXIT_CODE_CURL);
 	}
 
-	if(!cronMode || (cronMode && curlOutput.substr(0, 8) != "data_ok:"))
+	if(!quietMode || (quietMode && curlOutput.substr(0, 8) != "data_ok:"))
 	{
 		cout << curlOutput << endl;
 	}
 }
 
-void readConfigFile(forestConfig * config)
+void ForestClient::readConfigFile()
 {
 	FILE * configFile;
 	char line[BUFFER_SIZE];
@@ -544,7 +450,7 @@ void readConfigFile(forestConfig * config)
 				confValue = (splitPtr);
 				if(confName.substr(0, 10) == "server_url")
 				{
-					config->serverUrl = confValue;
+					serverUrl = confValue;
 				}
 				else
 				{
@@ -555,7 +461,69 @@ void readConfigFile(forestConfig * config)
 	}
 }
 
+void ForestClient::setQuietMode(bool enabled)
+{
+	quietMode = enabled;
+}
 
+void ForestClient::getHostname()
+{
+	int response = 0;
+
+// some OSes have different names for HOST_NAME_MAX
+#if !defined HOST_NAME_MAX
+
+	// osx has a different name for HOST_NAME_MAX
+	#if defined _POSIX_HOST_NAME_MAX
+		#define HOST_NAME_MAX _POSIX_HOST_NAME_MAX
+	#endif
+
+	// windows has a different name for HOST_NAME_MAX
+	#if defined NI_MAXHOST
+		#define HOST_NAME_MAX NI_MAXHOST
+	#endif
+
+#endif // !defined HOST_NAME_MAX
+
+	char temp[HOST_NAME_MAX + 1];
+	temp[HOST_NAME_MAX] = '\0';
+
+#ifdef _WIN32
+	WSADATA WSAData;
+	if(WSAStartup(MAKEWORD(1,0), &WSAData) != 0)
+	{
+		response = WSAGetLastError();
+		//FormatMessage() to get the error text
+		cerr << "Could not get hostname: WSAStartup error " << response << endl;
+		cerr << "Exiting..." << endl;
+		exit(EXIT_CODE_WSASTARTUP);
+	}
+#endif
+
+	// get the current host name
+	response = gethostname(temp, HOST_NAME_MAX);
+
+#ifdef _WIN32
+	if(response == SOCKET_ERROR)
+	{
+		response = WSAGetLastError();
+		//FormatMessage() to get the error text
+		cerr << "Could not get hostname: Socket error " << response << endl;
+		cerr << "Exiting..." << endl;
+		exit(EXIT_CODE_SOCKETERROR);
+	}
+	WSACleanup();
+#else
+	if(response == -1)
+	{
+		//fprintf(stderr, "Could not get hostname, exiting.");
+		perror("Error in main(): ");
+		exit(EXIT_CODE_HOSTNAME);
+	}
+#endif
+
+	myHostname = temp;
+}
 
 // Works like system(), but returns lines of stdout output in outList and the 
 // command's return value in returnVal.

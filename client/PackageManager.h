@@ -3,7 +3,7 @@
 
 #include <vector>
 #include <string>
-#include "forest-client.h"
+#include "foresttypes.h"
 using namespace std;
 
 class PackageManager

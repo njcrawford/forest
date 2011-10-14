@@ -7,6 +7,29 @@
 #include <sstream>
 using namespace std;
 
+#include "PackageManager.h"
+#include "RebootManager.h"
+#include "foresttypes.h"
+
+class ForestClient
+{
+private:
+	bool quietMode;
+	string serverUrl;
+	string myHostname;
+	PackageManager * packageManager;
+	RebootManager * rebootManager;
+
+	void getAcceptedUpdates(vector<string> & outList, bool * rebootAccepted);
+	void reportAvailableUpdates(vector<updateInfo> & list, bool rebootAttempted);
+	void readConfigFile();
+	void getHostname();
+public:
+	ForestClient();
+	void setQuietMode(bool enabled);
+	int run();
+};
+
 // Works like system(), but returns lines of stdout output in outList and the 
 // command's return value in returnVal.
 void mySystem(string * command, vector<string> & outList, int * returnVal);
@@ -30,10 +53,5 @@ inline string trim_string(const string& s)
 	return retval;
 }
 
-typedef struct updateInfoStruct
-{
-	string name;
-	string version;
-} updateInfo;
 
 #endif
