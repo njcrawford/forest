@@ -29,15 +29,12 @@ require "www/inc/db.php";
 $output_message = "";
 
 // Read config file
-require "www/inc/config-file.php";
-// Use default settings if the config file didn't have anything set
-$email_to = empty($forest_config['email_to']) ? "root" : $forest_config['email_to'];
-$server_url = empty($forest_config['server_url']) ? "http://forest/forest/" : $forest_config['server_url'];
+define('BASEPATH', true);
+require "www/application/config/config.php";
 
-$output_message .= $server_url . "\n";
+$output_message .= $config['base_url'] . "\n";
 
-#require "www/inc/version.php";
-#$output_message .= "Forest version " . FOREST_VERSION . "\n\n";
+$output_message .= "Forest version " . $config['forest_version'] . "\n\n";
 
 // get systems with updates
 // print name and number of updates
