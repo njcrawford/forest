@@ -14,7 +14,7 @@
 | path to your installation.
 |
 */
-// for forest, this gets overridden in /etc/forest-server.conf
+// for forest, this gets overridden in forest-server.conf
 $config['base_url']	= '';
 
 /*
