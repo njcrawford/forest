@@ -102,6 +102,6 @@ if (mysql_num_rows($awal_result) > 0)
 }
 
 // send email
-mail($email_to, "Forest system report", $output_message, "From:forest@localhost");
+mail($config['email_to'], "Forest system report", $output_message, "From:forest@localhost");
 
 ?>
