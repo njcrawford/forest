@@ -32,7 +32,7 @@ if(!isset($page_title))
 <html>
 <head>
 <title><?php echo $page_title ?> - Forest</title>
-<link rel="stylesheet" type="text/css" href="<?php echo site_url("css/forest.css") ?>" />
+<link rel="stylesheet" type="text/css" href="<?php echo $this->config->item('base_url') . "css/forest.css" ?>" />
 </head>
 <body>
-<script language="javascript" src="<?php echo site_url("jquery/jquery-1.6.1.min.js") ?>"></script>
+<script language="javascript" src="<?php echo $this->config->item('base_url') . "jquery/jquery-1.6.1.min.js" ?>"></script>
