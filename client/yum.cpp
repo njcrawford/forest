@@ -30,8 +30,8 @@ void Yum::getAvailableUpdates(vector<updateInfo> & outList)
 
 			//filter out HTTP errors when a mirror is down
 			//updates=`echo "${updates}" | grep -v "HTTP Error\|^Trying other mirror.$"`
-			if(trim_string(commandOutput[line]).size() == 0 || // empty string, no use to us
-				commandOutput[line].substr(0, 11) == "Another app" || // warning that another app alreayd has the yum lock
+			if(trim_string(commandOutput[line]).size() == 0 || // empty string, of no use to us
+				commandOutput[line].substr(0, 11) == "Another app" || // warning that another app already has the yum lock
 				commandOutput[line].substr(0, 13) == "Existing lock" || // usually follows previous line
 				commandOutput[line].find("HTTP Error", 0) != string::npos || // ignore any kind of http error
 				commandOutput[line] == "Trying other mirror." // usually follows previous line
@@ -40,6 +40,12 @@ void Yum::getAvailableUpdates(vector<updateInfo> & outList)
 				// remove this line and don't process it any further
 				commandOutput.erase(commandOutput.begin() + line);
 				continue;
+			}
+
+			if(commandOutput[line].substr(0, 19) == "Obsoleting Packages")
+			{
+				// We have to use for the obsolete package list right now
+				break;
 			}
 			
 			updateInfo temp;
