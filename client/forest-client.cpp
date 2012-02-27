@@ -184,7 +184,7 @@ void ForestClient::getAcceptedUpdates(vector<string> & outList, bool * rebootAcc
 	// exit if curl fails
 	if(res != CURLE_OK)
 	{
-		cerr << "cURL failed: " << curlOutput << endl;
+		cerr << "cURL failed: " << curl_easy_strerror(res) << endl << curlOutput << endl;
 		exit(EXIT_CODE_CURL);
 	}
 
@@ -362,7 +362,7 @@ void ForestClient::reportAvailableUpdates(vector<updateInfo> & list, bool reboot
 	collectUrl += "collect.php";
 
 	CURL * curlHandle;
-	CURLcode res;
+	CURLcode res = -1;
 	string curlOutput;
 	curlHandle = curl_easy_init();
 	if(curlHandle)
@@ -380,7 +380,7 @@ void ForestClient::reportAvailableUpdates(vector<updateInfo> & list, bool reboot
 	// exit if curl fails
 	if(res != CURLE_OK)
 	{
-		cerr << "cURL failed: " << curlOutput << endl;
+		cerr << "cURL failed: " << curl_easy_strerror(res) << endl << curlOutput << endl;
 		exit(EXIT_CODE_CURL);
 	}
 
