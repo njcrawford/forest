@@ -4,16 +4,16 @@
 // cerr
 #include <iostream>
 
-#include "apt-get.h"
+#include "aptitude.h"
 #include "forest-client.h"
 
-void AptGet::getAvailableUpdates(vector<updateInfo> & outList)
+void Aptitude::getAvailableUpdates(vector<updateInfo> & outList)
 {
 	string command;
 	int commandRetval = 0;
 	vector<string> commandOutput;
 
-	command = "/usr/bin/apt-get dist-upgrade -Vs 2>&1";
+	command = "/usr/bin/aptitude full-upgrade -s -y";
 
 	mySystem(&command, commandOutput, &commandRetval);
 
@@ -48,7 +48,7 @@ void AptGet::getAvailableUpdates(vector<updateInfo> & outList)
 
 }
 
-void AptGet::applyUpdates(vector<string> & list)
+void Aptitude::applyUpdates(vector<string> & list)
 {
 	string command;
 	int commandResponse;
@@ -71,7 +71,7 @@ void AptGet::applyUpdates(vector<string> & list)
 	}
 }
 
-bool AptGet::canApplyUpdates()
+bool Aptitude::canApplyUpdates()
 {
 	return true;
 }
