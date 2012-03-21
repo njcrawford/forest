@@ -4,10 +4,10 @@
 // cerr
 #include <iostream>
 
-#include "apt-get.h"
+#include "aptcli.h"
 #include "forest-client.h"
 
-void AptGet::getAvailableUpdates(vector<updateInfo> & outList)
+void AptCli::getAvailableUpdates(vector<updateInfo> & outList)
 {
 	string command;
 	int commandRetval = 0;
@@ -48,13 +48,13 @@ void AptGet::getAvailableUpdates(vector<updateInfo> & outList)
 
 }
 
-void AptGet::applyUpdates(vector<string> & list)
+void AptCli::applyUpdates(vector<string> & list)
 {
 	string command;
 	int commandResponse;
 	vector<string> commandOutput;	
 
-	command = "apt-get -y -o DPkg::Options::\\=--force-confold install ";
+	command = "aptitude -y -o DPkg::Options::\\=--force-confold safe-upgrade ";
 	//cerr << command << endl;
 	command += flattenStringList(list, ' ');
 	//cerr << command << endl;
