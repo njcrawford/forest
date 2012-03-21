@@ -71,7 +71,7 @@ void AptCli::applyUpdates(vector<string> & list)
 	}
 }
 
-bool AptGet::canApplyUpdates()
+bool AptCli::canApplyUpdates()
 {
 	return true;
 }
