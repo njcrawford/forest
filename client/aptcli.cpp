@@ -4,16 +4,16 @@
 // cerr
 #include <iostream>
 
-#include "aptitude.h"
+#include "aptcli.h"
 #include "forest-client.h"
 
-void Aptitude::getAvailableUpdates(vector<updateInfo> & outList)
+void AptCli::getAvailableUpdates(vector<updateInfo> & outList)
 {
 	string command;
 	int commandRetval = 0;
 	vector<string> commandOutput;
 
-	command = "/usr/bin/aptitude full-upgrade -s -y";
+	command = "/usr/bin/apt-get dist-upgrade -Vs 2>&1";
 
 	mySystem(&command, commandOutput, &commandRetval);
 
@@ -48,13 +48,13 @@ void Aptitude::getAvailableUpdates(vector<updateInfo> & outList)
 
 }
 
-void Aptitude::applyUpdates(vector<string> & list)
+void AptCli::applyUpdates(vector<string> & list)
 {
 	string command;
 	int commandResponse;
 	vector<string> commandOutput;	
 
-	command = "apt-get -y -o DPkg::Options::\\=--force-confold install ";
+	command = "aptitude -y -o DPkg::Options::\\=--force-confold safe-upgrade ";
 	//cerr << command << endl;
 	command += flattenStringList(list, ' ');
 	//cerr << command << endl;
@@ -71,7 +71,7 @@ void Aptitude::applyUpdates(vector<string> & list)
 	}
 }
 
-bool Aptitude::canApplyUpdates()
+bool AptCli::canApplyUpdates()
 {
 	return true;
 }

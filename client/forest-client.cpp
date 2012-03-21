@@ -56,7 +56,7 @@ using namespace std;
 #include "forest-client.h"
 
 // package managers
-#include "apt-get.h"
+#include "aptcli.h"
 #include "yum.h"
 #include "wuaapi.h"
 #include "MacSU.h"
@@ -362,7 +362,7 @@ void ForestClient::reportAvailableUpdates(vector<updateInfo> & list, bool reboot
 	collectUrl += "collect.php";
 
 	CURL * curlHandle;
-	CURLcode res = -1;
+	CURLcode res = CURLE_OK;
 	string curlOutput;
 	curlHandle = curl_easy_init();
 	if(curlHandle)

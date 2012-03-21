@@ -12,7 +12,7 @@ echo '#define DEFAULT_SERVER_URL "http://forest/forest"' >> ${config}
 # need to find something better for Ubuntu, LSB is present on many OSes
 if [ -f /etc/lsb-release ] ; then
 	# Ubuntu uses apt-get
-	echo "#define PACKAGE_MANAGER AptGet" >> ${config}
+	echo "#define PACKAGE_MANAGER AptCli" >> ${config}
 	echo "#define REBOOT_MANAGER FilePresence" >> ${config}
 elif [ -f /etc/redhat-release ] ; then
 	# RHEL, CentOS, Fedora, etc. use yum
