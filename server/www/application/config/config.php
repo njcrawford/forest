@@ -14,7 +14,7 @@
 | path to your installation.
 |
 */
-// for forest, this gets overridden in /etc/forest-server.conf
+// for forest, this gets overridden in forest-server.conf
 $config['base_url']	= '';
 
 /*
@@ -367,13 +367,13 @@ $config['db_username'] = 'forest_user';
 $config['db_password'] = 'forest_pass';
 $config['db_name'] = 'forest';
 
+$config['email_to'] = 'root';
+
 // now read in any changed values from the config file
 include "/etc/forest-server/forest-server.conf";
 
 // forest version
-$temp = '$URL$';
-$temp = explode("/", $temp);
-$config['forest_version'] = $temp[count($temp)-6];
+include "version.php";
 
 
 /* End of file config.php */
