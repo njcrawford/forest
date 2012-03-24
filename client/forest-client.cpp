@@ -456,7 +456,7 @@ void reportAvailableUpdates(vector<updateInfo> & list, string * serverUrl, strin
 	collectUrl += "collect.php";
 
 	CURL * curlHandle;
-	CURLcode res;
+	CURLcode res = CURLE_OK;
 	string curlOutput;
 	curlHandle = curl_easy_init();
 	if(curlHandle)
