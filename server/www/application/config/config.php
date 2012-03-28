@@ -370,7 +370,10 @@ $config['db_name'] = 'forest';
 $config['email_to'] = 'root';
 
 // now read in any changed values from the config file
-include "/etc/forest-server/forest-server.conf";
+if(file_exists("/etc/forest-server/forest-server.conf"))
+{
+	include "/etc/forest-server/forest-server.conf";
+}
 
 // forest version
 include "version.php";
