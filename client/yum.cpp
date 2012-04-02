@@ -44,7 +44,7 @@ void Yum::getAvailableUpdates(vector<updateInfo> & outList)
 
 			if(commandOutput[line].substr(0, 19) == "Obsoleting Packages")
 			{
-				// We have to use for the obsolete package list right now
+				// We have no use for the obsolete package list right now
 				break;
 			}
 			
