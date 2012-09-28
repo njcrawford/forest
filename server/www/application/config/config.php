@@ -14,7 +14,6 @@
 | path to your installation.
 |
 */
-// for forest, this gets overridden in forest-server.conf
 $config['base_url']	= '';
 
 /*
@@ -357,26 +356,6 @@ $config['rewrite_short_tags'] = FALSE;
 |
 */
 $config['proxy_ips'] = '';
-
-/*
-Database config items
-*/
-// set defaults
-$config['db_hostname'] = 'localhost';
-$config['db_username'] = 'forest_user';
-$config['db_password'] = 'forest_pass';
-$config['db_name'] = 'forest';
-
-$config['email_to'] = 'root';
-
-// now read in any changed values from the config file
-if(file_exists("/etc/forest-server/forest-server.conf"))
-{
-	include "/etc/forest-server/forest-server.conf";
-}
-
-// forest version
-include "version.php";
 
 
 /* End of file config.php */
