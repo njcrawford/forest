@@ -38,20 +38,32 @@ int main(int argc, char** args)
 {
 	ForestClient * client = new ForestClient();
 	
-	if(argc >= 2)
+	for(int argNum = 2; argNum < argc; argNum++)
 	{
-		if(strcmp(args[1], "--cron") == 0)
+		if(strcmp(args[argNum], "--cron") == 0)
 		{
 			client->setQuietMode(true);
 		}
-		else if(strcmp(args[1], "--version") == 0)
+		else if(strcmp(args[argNum], "--help") == 0)
+		{
+			cout << "Command line switches:" << endl;
+			cout << "--cron    Suppress all output unless an error occurs" << endl;
+			cout << "--help    Show this list" << endl;
+			cout << "--verbose Output extra detail about what forest is doing (not yet implemented)" << endl;
+			cout << "--version Show forest client version and exit" << endl;
+		}
+		else if(strcmp(args[argNum], "--verbose") == 0)
+		{
+			cout << "Verbose mode is not yet implemented" << endl;
+		}
+		else if(strcmp(args[argNum], "--version") == 0)
 		{
 			cout << "Forest client version " << getForestVersion() << endl;
 			return EXIT_CODE_OK;
 		}
 		else
 		{
-			cout << "Unrecognized switch: " << args[1] << endl;
+			cout << "Unrecognized switch: " << args[argNum] << endl;
 			return EXIT_CODE_INVALIDSWITCH;
 		}
 	}
