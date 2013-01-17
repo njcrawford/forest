@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
-	<Product Id="eb7dfaf2-773f-48cc-8808-da2e6f912fa6" Name="Forest Client" Language="1033" Version="1.0.5" Manufacturer="Nathan Crawford" UpgradeCode="a55bfa54-79c0-419f-b7e4-06646004364a">
+	<Product Id="{EDF8D3FF-B126-406D-9C21-A105E85FB181}" Name="Forest Client" Language="1033" Version="1.1.2" Manufacturer="Nathan Crawford" UpgradeCode="a55bfa54-79c0-419f-b7e4-06646004364a">
 		<Package InstallerVersion="200" Compressed="yes" />
 
 		<Media Id="1" Cabinet="media1.cab" EmbedCab="yes" />
@@ -62,6 +62,8 @@
     <WixVariable Id="WixUILicenseRtf" Value="License.rtf" />
     <Property Id="WIXUI_INSTALLDIR" Value="INSTALLLOCATION" />
     <UIRef Id="WixUI_InstallDir" />
+
+    <MajorUpgrade Schedule="afterInstallValidate" DowngradeErrorMessage="A later version of [ProductName] is already installed. Setup will now exit." />
     
 	</Product>
 </Wix>

@@ -33,11 +33,12 @@ namespace ConfigurationGUI
             this.txtServerURL = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
+            this.lblVersion = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // btnOK
             // 
-            this.btnOK.Location = new System.Drawing.Point(15, 97);
+            this.btnOK.Location = new System.Drawing.Point(107, 97);
             this.btnOK.Name = "btnOK";
             this.btnOK.Size = new System.Drawing.Size(75, 23);
             this.btnOK.TabIndex = 0;
@@ -79,11 +80,22 @@ namespace ConfigurationGUI
             this.label2.TabIndex = 4;
             this.label2.Text = "Server URL must start with \'http\' and should not have a trailing slash.";
             // 
+            // lblVersion
+            // 
+            this.lblVersion.AutoSize = true;
+            this.lblVersion.ForeColor = System.Drawing.SystemColors.GrayText;
+            this.lblVersion.Location = new System.Drawing.Point(12, 102);
+            this.lblVersion.Name = "lblVersion";
+            this.lblVersion.Size = new System.Drawing.Size(69, 13);
+            this.lblVersion.TabIndex = 5;
+            this.lblVersion.Text = "Version 1.1.2";
+            // 
             // frmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(275, 138);
+            this.Controls.Add(this.lblVersion);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.txtServerURL);
@@ -104,6 +116,7 @@ namespace ConfigurationGUI
         private System.Windows.Forms.TextBox txtServerURL;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Label lblVersion;
     }
 }
 
