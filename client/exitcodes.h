@@ -9,5 +9,6 @@
 #define EXIT_CODE_CONFIGFILE     5
 #define EXIT_CODE_HOSTNAME       6
 #define EXIT_CODE_INVALIDSWITCH  7
+#define EXIT_CODE_WUAAPI         8
 
 #endif

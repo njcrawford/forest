@@ -88,7 +88,7 @@ namespace ConfigurationGUI
             this.lblVersion.Name = "lblVersion";
             this.lblVersion.Size = new System.Drawing.Size(69, 13);
             this.lblVersion.TabIndex = 5;
-            this.lblVersion.Text = "Version 1.1.2";
+            this.lblVersion.Text = "Version 1.1.3";
             // 
             // frmMain
             // 

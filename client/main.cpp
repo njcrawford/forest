@@ -51,6 +51,7 @@ int main(int argc, char** args)
 			cout << "--help    Show this list" << endl;
 			cout << "--verbose Output extra detail about what forest is doing (not yet implemented)" << endl;
 			cout << "--version Show forest client version and exit" << endl;
+			exit(EXIT_CODE_OK);
 		}
 		else if(strcmp(args[argNum], "--verbose") == 0)
 		{
@@ -59,12 +60,12 @@ int main(int argc, char** args)
 		else if(strcmp(args[argNum], "--version") == 0)
 		{
 			cout << "Forest client version " << getForestVersion() << endl;
-			return EXIT_CODE_OK;
+			exit(EXIT_CODE_OK);
 		}
 		else
 		{
 			cout << "Unrecognized switch: " << args[argNum] << endl;
-			return EXIT_CODE_INVALIDSWITCH;
+			exit(EXIT_CODE_INVALIDSWITCH);
 		}
 	}
 

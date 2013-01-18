@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
-	<Product Id="{EDF8D3FF-B126-406D-9C21-A105E85FB181}" Name="Forest Client" Language="1033" Version="1.1.2" Manufacturer="Nathan Crawford" UpgradeCode="a55bfa54-79c0-419f-b7e4-06646004364a">
+  
+  <?define ProductVersion = "1.1.3"?>
+  
+	<Product Id="{8876FCE7-D57B-43E9-9C92-318A839BE93E}" Name="Forest Client" Language="1033" Version="$(var.ProductVersion)" Manufacturer="Nathan Crawford" UpgradeCode="a55bfa54-79c0-419f-b7e4-06646004364a">
 		<Package InstallerVersion="200" Compressed="yes" />
 
 		<Media Id="1" Cabinet="media1.cab" EmbedCab="yes" />
@@ -31,10 +34,10 @@
       <Component Id="ProductComponent" Guid="aed19453-771e-4985-9a9f-fbf7fb4ffb8a">
         <!-- Forest client and support files -->
         <File Id="ForestClientExe" Name="forest-client.exe" DiskId="1" Source="../../Win32/Release/forest-client.exe" Vital="yes"></File>
-        <File Id="CurlLibDll" Name="curllib.dll" DiskId="1" Source="../../cURL/curllib.dll" Vital="yes"></File>
-        <File Id="LibEay32Dll" Name="libeay32.dll" DiskId="1" Source="../../cURL/libeay32.dll" Vital="yes"></File>
+        <File Id="LibCurlDll" Name="libcurl.dll" DiskId="1" Source="../../curl-source/builds/libcurl-vc-x86-release-dll-ipv6-sspi-spnego-winssl/bin/libcurl.dll" Vital="yes"></File>
+        <!-- <File Id="LibEay32Dll" Name="libeay32.dll" DiskId="1" Source="../../cURL/libeay32.dll" Vital="yes"></File>
         <File Id="OpenLdapDll" Name="openldap.dll" DiskId="1" Source="../../cURL/openldap.dll" Vital="yes"></File>
-        <File Id="SslEay32Dll" Name="ssleay32.dll" DiskId="1" Source="../../cURL/ssleay32.dll" Vital="yes"></File>
+        <File Id="SslEay32Dll" Name="ssleay32.dll" DiskId="1" Source="../../cURL/ssleay32.dll" Vital="yes"></File> -->
 
         <!-- Configuration GUI and support files -->
         <File Id="ConfigurationGuiExe" Name="ConfigurationGUI.exe" DiskId="1" Source="../../ConfigurationGUI/bin/Release/ConfigurationGUI.exe" Vital="yes"></File>
