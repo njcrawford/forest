@@ -22,23 +22,26 @@
 // You can contact me at http://www.njcrawford.com/contact
 //#############################################################################
 
+// exit, needed on linux only?
+#include <cstdlib>
+
 // cerr, cout
 #include <iostream>
 
 // string functions
 #include <string.h>
 
-using namespace std;
-
 #include "forest-client.h"
 #include "version.h"
 #include "exitcodes.h"
+
+using namespace std;
 
 int main(int argc, char** args)
 {
 	ForestClient * client = new ForestClient();
 	
-	for(int argNum = 2; argNum < argc; argNum++)
+	for(int argNum = 1; argNum < argc; argNum++)
 	{
 		if(strcmp(args[argNum], "--cron") == 0)
 		{
@@ -51,6 +54,7 @@ int main(int argc, char** args)
 			cout << "--help    Show this list" << endl;
 			cout << "--verbose Output extra detail about what forest is doing (not yet implemented)" << endl;
 			cout << "--version Show forest client version and exit" << endl;
+			exit(EXIT_CODE_OK);
 		}
 		else if(strcmp(args[argNum], "--verbose") == 0)
 		{
@@ -59,12 +63,12 @@ int main(int argc, char** args)
 		else if(strcmp(args[argNum], "--version") == 0)
 		{
 			cout << "Forest client version " << getForestVersion() << endl;
-			return EXIT_CODE_OK;
+			exit(EXIT_CODE_OK);
 		}
 		else
 		{
 			cout << "Unrecognized switch: " << args[argNum] << endl;
-			return EXIT_CODE_INVALIDSWITCH;
+			exit(EXIT_CODE_INVALIDSWITCH);
 		}
 	}
 
