@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
   
-  <?define ProductVersion = "1.1.3"?>
+  <?include $(sys.CURRENTDIR)Version.wxi ?>
   
 	<Product Id="{8876FCE7-D57B-43E9-9C92-318A839BE93E}" Name="Forest Client" Language="1033" Version="$(var.ProductVersion)" Manufacturer="Nathan Crawford" UpgradeCode="a55bfa54-79c0-419f-b7e4-06646004364a">
 		<Package InstallerVersion="200" Compressed="yes" />
