@@ -22,7 +22,7 @@ message_2="Any updates will be overwritten."
 echo "${c_comment} ${message_1}" > ${c_filename}
 echo "${c_comment} ${message_2}" >> ${c_filename}
 echo "#ifndef FOREST_VERSION" >> ${c_filename}
-echo "#define FOREST_VERSION ${version}" >> ${c_filename}
+echo "#define FOREST_VERSION \"${version}\"" >> ${c_filename}
 echo "#endif" >> ${c_filename}
 
 # PHP version
@@ -34,6 +34,7 @@ echo "\$config['forest_version'] = \"${version}\";" >> ${php_filename}
 # C# version
 echo "${cs_comment} ${message_1}" > ${cs_filename}
 echo "${cs_comment} ${message_2}" >> ${cs_filename}
+echo "using System.Reflection;" >> ${cs_filename}
 echo "[assembly: AssemblyVersion(\"${version}.0\")]" >> ${cs_filename}
 echo "[assembly: AssemblyFileVersion(\"${version}.0\")]" >> ${cs_filename}
 

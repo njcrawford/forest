@@ -62,7 +62,7 @@ int main(int argc, char** args)
 		}
 		else if(strcmp(args[argNum], "--version") == 0)
 		{
-			cout << "Forest client version " << getForestVersion() << endl;
+			cout << "Forest client version " << FOREST_VERSION << endl;
 			exit(EXIT_CODE_OK);
 		}
 		else
