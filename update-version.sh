@@ -21,10 +21,11 @@ echo "// ${message_2}" >> ${c_filename}
 echo "#define FOREST_VERSION \"${version}\"" >> ${c_filename}
 
 # C Resource version 1
+special_version=`sed 's/\./,/' ${version}`
 echo "// ${message_1}" > ${rc1_filename}
 echo "// ${message_2}" >> ${rc1_filename}
-echo "FILEVERSION ${version},0" >> ${rc1_filename}
-echo "PRODUCTVERSION ${version},0" >> ${rc1_filename}
+echo "FILEVERSION ${special_version},0" >> ${rc1_filename}
+echo "PRODUCTVERSION ${special_version},0" >> ${rc1_filename}
 
 # C Resource version 2
 echo "// ${message_1}" > ${rc2_filename}

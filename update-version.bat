@@ -16,10 +16,11 @@ echo // %Message2% >> %c_filename%
 echo #define FOREST_VERSION "%Version%" >> %c_filename%
 
 REM C Resource version 1
+set special_version=%Version:.=,%
 echo // %Message1% > %rc1_filename%
 echo // %Message2% >> %rc1_filename%
-echo FILEVERSION %Version%,0 >> %rc1_filename%
-echo PRODUCTVERSION %Version%,0 >> %rc1_filename%
+echo FILEVERSION %special_version%,0 >> %rc1_filename%
+echo PRODUCTVERSION %special_version%,0 >> %rc1_filename%
 
 REM C Resource version 2
 echo // %Message1% > %rc2_filename%
