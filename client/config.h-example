@@ -1,3 +1,6 @@
+// This is an example config.h. Running configure (or configure.bat on Windows)
+// will generate a good default configuration for your current platform.
+
 #ifndef _FOREST_CONFIG_H
 #define _FOREST_CONFIG_H
 
@@ -19,6 +22,6 @@
 //#define REBOOT_MANAGER FilePresence
 //#define REBOOT_MANAGER KernelDifference
 //#define REBOOT_MANAGER WinRegKey
-#define REBOOT_MANAGER RebootStub
+//#define REBOOT_MANAGER RebootStub
 
 #endif
