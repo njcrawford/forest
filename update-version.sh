@@ -1,7 +1,9 @@
 #!/bin/bash
-
 set -e
 set -u
+
+# Run this script after changing version.txt to propigate the version
+# to all the proper places.
 
 version=`cat version.txt`
 
