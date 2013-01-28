@@ -1,5 +1,5 @@
 <?php
-class RPC extends Controller {
+class RPCv2 extends Controller {
 
 	function index()
 	{
@@ -9,208 +9,170 @@ class RPC extends Controller {
 	
 	function collect()
 	{
-		require "inc/db.php";
-require "inc/rpc-common.php";
+		$this->load->model('forest_db');
 
-if(empty($_POST['system_name']))
-{
-	echo RPC_ERROR_TAG . "No system specified";
-}
+		$system_name = $this->input->post('system_name');
+		$available_updates = $this->input->post('available_updates');
+		$versions = $this->input->post('versions');
+		$no_updates_available = $this->input->post('no_updates_available');
+		$reboot_required = $this->input->post('reboot_required');
+		$reboot_attempted = $this->input->post('reboot_attempted');
+		$client_can_apply_updates = $this->input->post('client_can_apply_updates');
+		$client_can_apply_reboot = $this->input->post('client_can_apply_reboot');
 
-$system_id_ok = false;
-$update_data_ok = false;
-$system_name = mysql_real_escape_string($_POST['system_name']);
-$result = mysql_query("select * from systems where name = '" . $system_name . "'");
-if($result)
-{
-	$row = mysql_fetch_assoc($result);
-	$system_id = $row['id'];
-	if(!empty($system_id))
-	{
-		$system_id_ok = true;
-	}
-}
-
-if(!$system_id_ok)
-{
-	$result = mysql_query("insert into systems (name) values('" . $system_name . "')");
-	if($result)
-	{
-		$result = mysql_query("select LAST_INSERT_ID() as id");
-		$row = mysql_fetch_assoc($result);
-		$system_id = $row['id'];
-	}
-	else
-	{
-		die(RPC_ERROR_TAG . "Mysql error: " . mysql_error());
-	}
-}
-
-if(!empty($_POST['available_updates']))
-{
-	$data_ok = true;
-	$use_versions = false;
-	// Forget about old updates before adding new ones
-	mysql_query("update systems set last_checkin = NOW() where id = '" . $system_id . "'");
-	mysql_query("delete from updates where system_id = '" . $system_id . "'");
-	$packages = explode(",", $_POST['available_updates']);
-	if(!empty($_POST['versions']))
-	{
-		$versions = explode("|", $_POST['versions']);
-		if(count($versions) == count($packages))
+		if(empty($system_name))
 		{
-			$use_versions = true;
+			echo RPC_ERROR_TAG . "No system specified";
+			return;
 		}
-	}
-	// build an SQL query to save info for all packages that need updated
-	for($i = 0; $i < count($packages); $i++)
-	{
-		$nice_version = $use_versions ? "'" . mysql_real_escape_string($versions[$i]) . "'" : "null";
-		$result = mysql_query("insert into updates (system_id, package_name, version) values
-			(
-				'" . $system_id . "',
-				'" . mysql_real_escape_string($packages[$i]) . "',
-				" . $nice_version . "
-			)"
-		);
-		if(!$result)
+
+		$system_id_ok = false;
+		$update_data_ok = false;
+
+		$system_id = $this->forest_db->get_system_id($system_name);
+
+		if(empty($system_id))
 		{
-			$data_ok = false;
-			break;
+			$system_id = $this->forest_db->add_system($system_name);
+			if($system_id == 0)
+			{
+				die(RPC_ERROR_TAG . "Mysql error: could not add system to database");
+			}
 		}
+
+		if(!empty($available_updates))
+		{
+			$data_ok = true;
+			$use_versions = false;
+			// Forget about old updates before adding new ones
+			$this->forest_db->system_checkin($system_id);
+			$this->forest_db->clear_updates($system_id);
+
+			$packages = explode(",", $available_updates);
+			if(!empty($versions))
+			{
+				$versions = explode("|", $versions);
+				if(count($versions) == count($packages))
+				{
+					$use_versions = true;
+				}
+			}
+			// build an SQL query to save info for all packages that need updated
+			for($i = 0; $i < count($packages); $i++)
+			{
+				if($use_versions)
+				{
+					$packages[$i]['version'] = $versions[$i];
+				}
+			}
+			$data_ok = $this->forest_db->save_updates($system_id, $packages);
+
+			//send back a message indicating data received (or not)
+			if($data_ok)
+			{
+				echo RPC_SUCCESS_TAG;
+				$update_data_ok = true;
+			}
+			else
+			{
+				echo RPC_ERROR_TAG . "data error";
+			}
+		}
+		elseif(!empty($no_updates_available))
+		{
+			// Forget about old updates and save checkin time
+			$this->forest_db->system_checkin($system_id);
+			$this->forest_db->clear_updates($system_id);
+			echo RPC_SUCCESS_TAG;
+		}
+		else
+		{
+			die(RPC_ERROR_TAG . "missing both available_updates and no_updates_available");
+		}
+
+		// the reboot_required section is optional for rpc v1
+		if(!empty($reboot_required))
+		{
+			switch($reboot_required)
+			{
+				case "true":
+					$reboot_required = TRUE;
+					break;
+				case "false":
+					$reboot_required = FALSE;
+					break;
+			}
+		}
+		// force reboot_required to false if a reboot was attempted
+		if($reboot_required == TRUE && !empty($reboot_attempted) && $reboot_attempted == "true")
+		{
+			$reboot_required = FALSE;
+		}
+		$this->forest_db->save_reboot_required($system_id, $reboot_required);
+
+		// reset the accepted flag if the system no longer needs a reboot, or a reboot was attempted
+		if($reboot_required != TRUE || (!empty($reboot_attempted) && $reboot_attempted == "true"))
+		{
+			$this->forest_db->save_reboot_accepted($system_id, $reboot_accepted);
+		}
+		// Collect reported client capabilities, if present
+		if(!empty($client_can_apply_updates) && $client_can_apply_updates == "true")
+		{
+			$client_can_apply_updates = TRUE;
+		}
+		else
+		{
+			$client_can_apply_updates = FALSE;
+		}
+		if(!empty($client_can_apply_reboot) && $client_can_apply_reboot == "true")
+		{
+			$client_can_apply_reboot = TRUE;
+		}
+		else
+		{
+			$client_can_apply_reboot = FALSE;
+		}
+		$this->forest_db->save_client_capabilities($system_id, $client_can_apply_updates, $client_can_apply_reboot);
 	}
 
-	//send back a message indicating data received (or not)
-	if($data_ok)
-	{
-		echo RPC_SUCCESS_TAG;
-		$update_data_ok = true;
-	}
-	else
-	{
-		echo RPC_ERROR_TAG . "data error";
-	}
-}
-elseif(!empty($_POST['no_updates_available']))
-{
-	// Forget about old updates and save checkin time
-	mysql_query("update systems set last_checkin = NOW() where id = '" . $system_id . "'");
-	mysql_query("delete from updates where system_id = '" . $system_id . "'");
-	echo RPC_SUCCESS_TAG;
-}
-else
-{
-	die(RPC_ERROR_TAG . "missing both available_updates and no_updates_available");
-}
-
-// the reboot_required section is optional for rpc v1
-$reboot_required = "null";
-if(!empty($_POST['reboot_required']))
-{
-	switch($_POST['reboot_required'])
-	{
-		case "true":
-			$reboot_required = "'1'";
-			break;
-		case "false":
-			$reboot_required = "'0'";
-			break;
-	}
-}
-// force reboot_required to 0 if a reboot was attempted
-if($reboot_required == "'1'" && !empty($_POST['reboot_attempted']) && $_POST['reboot_attempted'] == "true")
-{
-	$reboot_required = "'0'";
-}
-// We want to update the reboot_required flag, even if it is null
-// Note: reboot_required is already escaped
-$query = "update systems set reboot_required = " . $reboot_required;
-// reset the accepted flag if the system no longer needs a reboot, or a reboot was attempted
-if($reboot_required != "'1'" || (!empty($_POST['reboot_attempted']) && $_POST['reboot_attempted'] == "true"))
-{
-	$query .= ", reboot_accepted = '0'";
-}
-// Collect reported client capabilities, if present
-$query .= ", can_apply_updates = ";
-if(!empty($_POST['client_can_apply_updates']) && $_POST['client_can_apply_updates'] == "true")
-{
-	$query .= "'1'";
-}
-else
-{
-	$query .= "'0'";
-}
-$query .= ", can_apply_reboot = ";
-if(!empty($_POST['client_can_apply_reboot']) && $_POST['client_can_apply_reboot'] == "true")
-{
-	$query .= "'1'";
-}
-else
-{
-	$query .= "'0'";
-}
-$query .= " where id = '" . $system_id . "'";
-
-mysql_query($query);
-	}
-	
 	function get_accepted()
 	{
-	require "inc/db.php";
-require "inc/rpc-common.php";
 
-if(empty($_GET['system']))
-{
-	die(RPC_ERROR_TAG . "No system specified");
-}
+		$system = $this->input->post('system');
 
+		if(empty($system))
+		{
+			die(RPC_ERROR_TAG . "No system specified");
+		}
 
-$system_result = mysql_query("select * from systems where name = '" . mysql_real_escape_string($_GET['system']) . "'");
-if(!$system_result)
-{
-	die(RPC_ERROR_TAG . "Mysql error: " . mysql_error());
-}
-if(mysql_num_rows($system_result) != 1)
-{
-	// This error will be thrown if the system is not found, or if more than
-	// one system in the database has the same name.
-	die(RPC_ERROR_TAG . "System not found in database");
-}
-$system_row = mysql_fetch_assoc($system_result);
+		$system_result = mysql_query("select * from systems where name = '" . mysql_real_escape_string($_GET['system']) . "'");
+		$system_id = $this->forest_db->get_system_id($system);
+		if($system_id == 0)
+		{
+			die(RPC_ERROR_TAG . "System not found in database");
+		}
+		$system_row = $this->forest_db->get_system_info($system_id);
 
-$updates_result = mysql_query("select updates.package_name from updates 
-    left outer join (update_locks) 
-    on 
-    (
-        updates.system_id = update_locks.system_id and 
-        updates.package_name = update_locks.package_name
-    ) 
-    where 
-        updates.system_id = '" . mysql_real_escape_string($system_row['id']) . "' and 
-        update_locks.package_name is null and 
-        updates.accepted = '1'"
-);
-if(!$updates_result)
-{
-	die(RPC_ERROR_TAG . "Mysql error: " . mysql_error());
-}
+		$updates_result = $this->forest_db->get_accepted_updates_for_system($system_id);
+		if(!$updates_result)
+		{
+			die(RPC_ERROR_TAG . "Mysql error: couldn't get accepted updates");
+		}
 
-echo RPC_SUCCESS_TAG;
+		echo RPC_SUCCESS_TAG;
 
-if($system_row['reboot_accepted'] == 1)
-{
-	echo "reboot-true: ";
-}
-else
-{
-	echo "reboot-false: ";
-}
-$updates_row = mysql_fetch_assoc($updates_result);
-while($updates_row)
-{
-	echo $updates_row['package_name'] . " ";
-	$updates_row = mysql_fetch_assoc($updates_result);
-}
+		if($system_row['reboot_accepted'] == 1)
+		{
+			echo "reboot-true: ";
+		}
+		else
+		{
+			echo "reboot-false: ";
+		}
+		foreach($updates_result as $updates_row)
+		{
+			echo $updates_row['package_name'] . " ";
+		}
 	}
 	
 }
