@@ -2,8 +2,6 @@
 
 class Forest_DB extends CI_Model {
 
-	private $is_connected = FALSE;
-
 	function __construct()
 	{
 		// Call the Model constructor
@@ -122,13 +120,6 @@ class Forest_DB extends CI_Model {
 		}
 		return $this->db->query($query);
 	}
-
-/*	function save_system_info($system_id, $package_name)
-	{
-		$query = "";
-		return $this->db->query($query);
-	}
-*/
 
 	function add_system($system_name)
 	{
