@@ -48,18 +48,21 @@ class RPCv2 extends Controller {
 			$this->forest_db->system_checkin($system_id);
 			$this->forest_db->clear_updates($system_id);
 
-			$packages = explode(",", $available_updates);
+			$temp_packages = explode(",", $available_updates);
 			if(!empty($versions))
 			{
 				$versions = explode("|", $versions);
-				if(count($versions) == count($packages))
+				if(count($versions) == count($temp_packages))
 				{
 					$use_versions = true;
 				}
 			}
-			// build an SQL query to save info for all packages that need updated
-			for($i = 0; $i < count($packages); $i++)
+
+			// build an array to save info for all packages that need updated
+			$packages = array();
+			for($i = 0; $i < count($temp_packages); $i++)
 			{
+				$packages[$i]['package_name'] = $temp_packages[$i];
 				if($use_versions)
 				{
 					$packages[$i]['version'] = $versions[$i];
@@ -145,7 +148,6 @@ class RPCv2 extends Controller {
 			die(RPC_ERROR_TAG . "No system specified");
 		}
 
-		$system_result = mysql_query("select * from systems where name = '" . mysql_real_escape_string($_GET['system']) . "'");
 		$system_id = $this->forest_db->get_system_id($system);
 		if($system_id == 0)
 		{
