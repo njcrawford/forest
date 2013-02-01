@@ -3,8 +3,7 @@ class RPCv2 extends Controller {
 
 	function index()
 	{
-		//default function for this controller
-		//should display some kind of message pointing the user to the browser site
+		redirect("browser");
 	}
 	
 	function collect()
@@ -62,10 +61,10 @@ class RPCv2 extends Controller {
 			$packages = array();
 			for($i = 0; $i < count($temp_packages); $i++)
 			{
-				$packages[$i]['package_name'] = $temp_packages[$i];
+				$packages[$i]->package_name = $temp_packages[$i];
 				if($use_versions)
 				{
-					$packages[$i]['version'] = $versions[$i];
+					$packages[$i]->version = $versions[$i];
 				}
 			}
 			$data_ok = $this->forest_db->save_updates($system_id, $packages);
@@ -163,7 +162,7 @@ class RPCv2 extends Controller {
 
 		echo RPC_SUCCESS_TAG;
 
-		if($system_row['reboot_accepted'] == 1)
+		if($system_row->reboot_accepted == 1)
 		{
 			echo "reboot-true: ";
 		}
@@ -173,7 +172,7 @@ class RPCv2 extends Controller {
 		}
 		foreach($updates_result as $updates_row)
 		{
-			echo $updates_row['package_name'] . " ";
+			echo $updates_row->package_name . " ";
 		}
 	}
 	

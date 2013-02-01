@@ -24,165 +24,159 @@ You can contact me at http://www.njcrawford.com/contact
 */
 class Browser extends CI_Controller {
 
-	function index()
+	private function _require_login()
 	{
 		if(!$this->_is_logged_in())
 		{
-			$this->load->helper('url');
 			redirect("browser/login");
 			return;
 		}
+	}
+
+	function index()
+	{
+		$this->_require_login();
+		
 		$this->load->model('forest_db');
 		// this will get all info about all systems
-		$data['systems'] = $this->forest_db->get_systems();
-		foreach($data['systems'] as &$this_system)
+		$data->systems = $this->forest_db->get_systems();
+		foreach($data->systems as &$this_system)
 		{
-			$locked_updates_result = $this->forest_db->get_locked_updates_for_system($this_system['id']);
+			$locked_updates_result = $this->forest_db->get_locked_updates_for_system($this_system->id);
 			$locked_updates = array();
 			foreach($locked_updates_result as $this_lock)
 			{
-				$locked_updates[] = $this_lock['package_name'];
+				$locked_updates[] = $this_lock->package_name;
 			}
-			$this_system['updates'] = $this->forest_db->get_updates_for_system($this_system['id']);
-			$this_system['available_updates'] = 0;
-			$this_system['accepted_updates'] = 0;
-			$this_system['locked_updates'] = 0;
-			foreach($this_system['updates'] as $this_update)
+			$this_system->updates = $this->forest_db->get_updates_for_system($this_system->id);
+			$this_system->available_updates = 0;
+			$this_system->accepted_updates = 0;
+			$this_system->locked_updates = 0;
+			foreach($this_system->updates as $this_update)
 			{
-				if($this_update['accepted'] == 1)
+				if($this_update->accepted-> == 1)
 				{
-					$this_system['accepted_updates']++;
+					$this_system->accepted_updates++;
 				}
-				elseif(in_array($this_update['package_name'], $locked_updates))
+				elseif(in_array($this_update->package_name, $locked_updates))
 				{
-					$this_system['locked_updates']++;
+					$this_system->locked_updates++;
 				}
 				else
 				{
-					$this_system['available_updates']++;
+					$this_system->available_updates++;
 				}
 			}
 			
 			// translate reboot_required value
-			$this_system['reboot_required_class'] = "";
-			if($this_system['reboot_required'] == null)
+			$this_system->reboot_required_class = "";
+			if($this_system->reboot_required == null)
 			{
-				$this_system['reboot_required_text'] = "Unknown";
+				$this_system->reboot_required_text = "Unknown";
 			}
-			elseif($this_system['reboot_required'] == 1)
+			elseif($this_system->reboot_required == 1)
 			{
-				if($this_system['reboot_accepted'] == 1)
+				if($this_system->reboot_accepted == 1)
 				{
-					$this_system['reboot_required_text'] = "Accepted";
+					$this_system->reboot_required_text = "Accepted";
 				}
 				else
 				{
-					$this_system['reboot_required_text'] = "Yes";
-					$this_system['reboot_required_class'] = "class=\"reboot\"";
+					$this_system->reboot_required_text = "Yes";
+					$this_system->reboot_required_class = "class=\"reboot\"";
 				}
 			}
 			else
 			{
-				$this_system['reboot_required_text'] = "No";
+				$this_system->reboot_required_text = "No";
 			}
 			
 			// use CSS class "awal" for display of check-in time of awal systems
-			if(strtotime("-3 days") > strtotime($this_system['last_checkin']))
+			$awol_hours = $this->forest_db->get_setting('awol_hours');
+			if(strtotime("-" . $awol_hours . " hours") > strtotime($this_system->last_checkin))
 			{
-				$this_system['awol_class'] = "class=\"awol\"";
+				$this_system->awol_class = "class=\"awol\"";
 			}
 			else
 			{
-				$this_system['awol_class'] = "";
+				$this_system->awol_class = "";
 			}
 		}
-		$data['page_title'] = "Summary";
+		$data->page_title = "Summary";
 		$this->load->view('overview', $data);
 	}
 
 	function view_system($system_id)
 	{
-		if(!$this->_is_logged_in())
-		{
-			$this->load->helper('url');
-			redirect("browser/login");
-			return;
-		}
+		$this->_require_login();
 		$this->load->model('forest_db');
 		// this will get all info about one system
-		$data['system_info'] = $this->forest_db->get_system_info($system_id);
+		$data->system_info = $this->forest_db->get_system_info($system_id);
 		$locked_updates_result = $this->forest_db->get_locked_updates_for_system($system_id);
 		$locked_updates = array();
 		foreach($locked_updates_result as $this_lock)
 		{
-			$locked_updates[] = $this_lock['package_name'];
+			$locked_updates[] = $this_lock->package_name;
 		} 
-		$data['updates'] = $this->forest_db->get_updates_for_system($system_id);
-		foreach($data['updates'] as &$this_update)
+		$data->updates = $this->forest_db->get_updates_for_system($system_id);
+		foreach($data->updates as &$this_update)
 		{
 			// these are for html controls - they should be opposite of whatever accepted is now
-			if($this_update['accepted'] == '1')
+			if($this_update->accepted == '1')
 			{
-				$this_update['change_state'] = "rejected"; 
-				$this_update['change_button'] = "Reject";
+				$this_update->change_state = "rejected"; 
+				$this_update->change_button = "Reject";
 			}
 			else
 			{
-				$this_update['change_state'] = "accepted"; 
-				$this_update['change_button'] = "Accept";
+				$this_update->change_state = "accepted"; 
+				$this_update->change_button = "Accept";
 			}
 			
-			if(in_array($this_update['package_name'], $locked_updates))
+			if(in_array($this_update->package_name, $locked_updates))
 			{
-				$this_update['is_locked'] = true;
+				$this_update->is_locked = true;
 			}
 			else
 			{
-				$this_update['is_locked'] = false;
+				$this_update->is_locked = false;
 			}
 		}
-		$data['page_title'] = "Details for " . $data['system_info']['name'];
+		$data->page_title = "Details for " . $data->system_info->name;
 		$this->load->view('system', $data);
 	}
 	
 	function view_one_update($system_id, $package_name)
 	{
-		if(!$this->_is_logged_in())
-		{
-			return;
-		}
+		$this->_require_login();
 		$this->load->model('forest_db');
 
 		// Urldecode the package name
 		// GET and REQUEST are automatically urldecoded, but POST is not. 
 		$package_name = urldecode($package_name);
 
-		$data['system_info'] = $this->forest_db->get_system_info($system_id);
+		$data->system_info = $this->forest_db->get_system_info($system_id);
 		
-		$data['update_info'] = $this->forest_db->get_one_update($system_id, $package_name);
-		$data['update_info'] = $data['update_info'][0];
-		if($data['update_info']['accepted'] == '1')
+		$data->update_info = $this->forest_db->get_one_update($system_id, $package_name);
+		if($data->update_info->accepted == '1')
 		{
-			$data['update_info']['change_state'] = "rejected"; 
-			$data['update_info']['change_button'] = "Reject";
+			$data->update_info->change_state = "rejected"; 
+			$data->update_info->change_button = "Reject";
 		}
 		else
 		{
-			$data['update_info']['change_state'] = "accepted"; 
-			$data['update_info']['change_button'] = "Accept";
+			$data->update_info->change_state = "accepted"; 
+			$data->update_info->change_button = "Accept";
 		}
 		
-		$data['update_div'] = "update_" . $data['update_info']['id'];
+		$data->update_div = "update_" . $data->update_info->id;
 		
 		$this->load->view('one_package', $data);
 	}
 
 	function add_update_lock($system_id, $package_name)
 	{
-		if(!$this->_is_logged_in())
-		{
-			return;
-		}
+		$this->_require_login();
 		$this->load->model('forest_db');
 		$this->forest_db->do_something();
 		redirect();
@@ -190,10 +184,7 @@ class Browser extends CI_Controller {
 
 	function remove_update_lock($system_id, $package_name)
 	{
-		if(!$this->_is_logged_in())
-		{
-			return;
-		}
+		$this->_require_login();
 		$this->load->model('forest_db');
 		$this->forest_db->do_something();
 		redirect();
@@ -201,10 +192,7 @@ class Browser extends CI_Controller {
 
 	function clear_updates($system_id)
 	{
-		if(!$this->_is_logged_in())
-		{
-			return;
-		}
+		$this->_require_login();
 		$this->load->model('forest_db');
 		$this->forest_db->do_something();
 		redirect();
@@ -212,10 +200,7 @@ class Browser extends CI_Controller {
 
 	function delete_system($system_id)
 	{
-		if(!$this->_is_logged_in())
-		{
-			return;
-		}
+		$this->_require_login();
 		$this->load->model('forest_db');
 		$this->forest_db->do_something();
 		redirect();
@@ -223,10 +208,7 @@ class Browser extends CI_Controller {
 
 	function mark_accepted_reboot($system_id)
 	{
-		if(!$this->_is_logged_in())
-		{
-			return;
-		}
+		$this->_require_login();
 		$this->load->model('forest_db');
 		$this->forest_db->do_something();
 		redirect();
@@ -234,10 +216,7 @@ class Browser extends CI_Controller {
 
 	function mark_accepted_updates()
 	{
-		if(!$this->_is_logged_in())
-		{
-			return;
-		}
+		$this->_require_login();
 		$system_id = $this->input->post('system_id');
 		$package_name = $this->input->post('package_name');
 		$accepted_state = $this->input->post('accepted_state');
@@ -247,9 +226,9 @@ class Browser extends CI_Controller {
 		if(empty($system_id) && empty($package_name) && empty($accepted_state))
 		{
 			// show an error
-			$data['page_title'] = "Error";
+			$data->page_title = "Error";
 			$this->load->view('header', $data);
-			$data['error_message'] = "System ID and/or package name along with accepted state must be specified.";
+			$data->error_message = "System ID and/or package name along with accepted state must be specified.";
 			$this->load->view('error', $data);
 			$this->load->view('footer');
 			return;
@@ -263,12 +242,12 @@ class Browser extends CI_Controller {
 			$locked_updates = array();
 			foreach($locked_updates_result as $this_lock)
 			{
-				if($package_name == $this_lock['package_name'])
+				if($package_name == $this_lock->package_name)
 				{
 					// show an error
-					$data['page_title'] = "Error";
+					$data->page_title = "Error";
 					$this->load->view('header', $data);
-					$data['error_message'] = "Package is locked";
+					$data->error_message = "Package is locked";
 					$this->load->view('error', $data);
 					$this->load->view('footer');
 					return;
@@ -276,19 +255,19 @@ class Browser extends CI_Controller {
 			} 
 			
 			$accepted_state = ($accepted_state == "accepted");
-			$data['result_text'] = $this->forest_db->mark_accepted_updates($system_id, $package_name, $accepted_state);
-			$data['redirect_location'] = "browser";
+			$data->result_text = $this->forest_db->mark_accepted_updates($system_id, $package_name, $accepted_state);
+			$data->redirect_location = "browser";
 			if(!empty($redirect_location))
 			{
-				$data['redirect_location'] .= "/" . $redirect_location;
+				$data->redirect_location .= "/" . $redirect_location;
 			} 
 			$this->load->view('redirect', $data);
 		}
 		catch(Exception $e)
 		{
-			$data['page_title'] = "Error";
+			$data->page_title = "Error";
 			$this->load->view('header', $data);
-			$data['error_message'] = $e->getMessage();
+			$data->error_message = $e->getMessage();
 			$this->load->view('error', $data);
 			$this->load->view('footer');
 		}
@@ -296,10 +275,7 @@ class Browser extends CI_Controller {
 
 	function save_system_info($system_id)
 	{
-		if(!$this->_is_logged_in())
-		{
-			return;
-		}
+		$this->_require_login();
 		$this->load->model('forest_db');
 		$this->forest_db->do_something();
 		$this->load->view('redirect');
@@ -340,7 +316,7 @@ class Browser extends CI_Controller {
 	
 	public function login()
 	{
-		$data['page_title'] = "Login page";
+		$data->page_title = "Login page";
 		$this->load->view('header', $data);
 		$this->load->view('login');
 		$this->load->view('footer');
@@ -428,7 +404,6 @@ class Browser extends CI_Controller {
 		if($login_success)
 		{
 			// redirect to summary page
-			$this->load->helper('url');
 			redirect();
 		}
 		else
