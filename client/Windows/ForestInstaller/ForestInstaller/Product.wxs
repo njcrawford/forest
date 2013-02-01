@@ -3,7 +3,7 @@
   
   <?include $(sys.CURRENTDIR)Version.wxi ?>
   
-	<Product Id="{8876FCE7-D57B-43E9-9C92-318A839BE93E}" Name="Forest Client" Language="1033" Version="$(var.ProductVersion)" Manufacturer="Nathan Crawford" UpgradeCode="a55bfa54-79c0-419f-b7e4-06646004364a">
+	<Product Id="*" Name="Forest Client" Language="1033" Version="$(var.ProductVersion)" Manufacturer="Nathan Crawford" UpgradeCode="a55bfa54-79c0-419f-b7e4-06646004364a">
 		<Package InstallerVersion="200" Compressed="yes" />
 
 		<Media Id="1" Cabinet="media1.cab" EmbedCab="yes" />
@@ -68,5 +68,13 @@
 
     <MajorUpgrade Schedule="afterInstallValidate" DowngradeErrorMessage="A later version of [ProductName] is already installed. Setup will now exit." />
     
+	<!-- Include MS VC 2010 runtime -->
+	<DirectoryRef Id="TARGETDIR">
+		<Merge Id="VCRedist" SourceFile="MySourceFiles\Microsoft_VC100_CRT_x86.msm" DiskId="1" Language="0"/>
+	</DiectoryRef>
+	<Feature Id="VCRedist" Title="Visual C++ 10.0 Runtime" AllowAdvertise="no" Display="hidden" Level="1">
+		<MergeRef Id="VCRedist"/>
+	</Feature>
+
 	</Product>
 </Wix>
