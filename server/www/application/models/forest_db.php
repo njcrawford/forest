@@ -6,58 +6,48 @@ class Forest_DB extends CI_Model {
 	{
 		// Call the Model constructor
 		parent::__construct();
-
-		$config['hostname'] = $this->config->item('db_hostname');
-		$config['username'] = $this->config->item('db_username');
-		$config['password'] = $this->config->item('db_password');
-		$config['database'] = $this->config->item('db_name');
-		$config['dbdriver'] = "mysql";
-		$config['dbprefix'] = "";
-		$config['pconnect'] = FALSE;
-		$config['db_debug'] = TRUE;
-		$config['cache_on'] = FALSE;
-		$config['cachedir'] = "";
-		$config['char_set'] = "utf8";
-		$config['dbcollat'] = "utf8_general_ci";
-
-		$this->load->database($config);
 	}
 
 	function get_systems()
 	{
 		$query = "select * from systems";
-		return $this->db->query($query);
+		$result = $this->db->query($query);
+		return $result->result();
 	}
 
 	function get_updates_for_system($system_id)
 	{
 		$query = "select * from updates where system_id = '" . $system_id . "' order by package_name";
-		return $this->db->query($query);
+		$result = $this->db->query($query);
+		return $result->result();
 	}
 	
 	function get_one_update($system_id, $package_name)
 	{
 		$query = "select * from updates where system_id = '" . $system_id . "' and package_name = '" . $package_name . "'";
-		return $this->db->query($query);
+		$result = $this->db->query($query);
+		return $result->result();
 	}
 	
 	function get_locked_updates_for_system($system_id)
 	{
 		$query = "select * from update_locks where system_id = '" . $system_id . "'";
-		return $this->db->query($query);
+		$result = $this->db->query($query);
+		return $result->result();
 	}
 
 	function get_accepted_updates_for_system($system_id)
 	{
 		$query = "select * from updates where system_id = '" . $system_id . "' where accepted = '1'";
-		return $this->db->query($query);
+		$result = $this->db->query($query);
+		return $result->result();
 	}
 
 	function get_system_info($system_id)
 	{
 		$query = "select * from systems where id = '" . $system_id . "'";
 		$result = $this->db->query($query);
-		return $result[0];
+		return $result->row();
 	}
 
 	function get_system_id($system_name)
@@ -67,7 +57,7 @@ class Forest_DB extends CI_Model {
 		$result = $this->db->query($query);
 		if($result)
 		{
-			$retval = $result[0]['name'];
+			$retval = $result->row()->id;
 		}
 		return $retval;
 	}
@@ -75,32 +65,37 @@ class Forest_DB extends CI_Model {
 	function add_update_lock($system_id, $package_name)
 	{
 		$query = "insert into update_locks (system_id, package_name) values ('" . $system_id . "', '" . $package_name . "')";
-		return $this->db->query($query);
+		$result = $this->db->query($query);
+		return $result->result();
 	}
 
 	function remove_update_lock($system_id, $package_name)
 	{
 		$query = "delete from update_locks where system_id = '" . $system_id . "' and package_name = '" . $package_name . "'";
-		return $this->db->query($query);
+		$result = $this->db->query($query);
+		return $result->result();
 	}
 
 	function clear_updates($system_id)
 	{
 		$query = "delete from updates where system_id = '" . $system_id . "'";
-		return $this->db->query($query);
+		$result = $this->db->query($query);
+		return $result->result();
 	}
 
 	function delete_system($system_id)
 	{
 		$this->clear_updates($system_id);
 		$query = "delete from systems where id = '" . $system_id . "'";
-		return $this->db->query($query);
+		$result = $this->db->query($query);
+		return $result->result();
 	}
 
 	function mark_accepted_reboot($system_id)
 	{
 		$query = "update systems set reboot_accepted = '1' where system_id = '" . $system_id . "'";
-		return $this->db->query($query);
+		$result = $this->db->query($query);
+		return $result->result();
 	}
 
 	function mark_accepted_updates($system_id, $package_name, $state)
@@ -118,7 +113,8 @@ class Forest_DB extends CI_Model {
 		{
 			$query .= " package_name = '" . $package_name . "'";
 		}
-		return $this->db->query($query);
+		$result = $this->db->query($query);
+		return $result->result();
 	}
 
 	function add_system($system_name)
@@ -132,7 +128,7 @@ class Forest_DB extends CI_Model {
 		{
 			$query = "select LAST_INSERT_ID() as id";
 			$result = $this->db->query($query);
-			$retval = $row[0]['id'];
+			$retval = $result->row()->id;
 		}
 
 		return $retval;
@@ -141,7 +137,8 @@ class Forest_DB extends CI_Model {
 	function system_checkin($system_id)
 	{
 		$query = "update systems set last_checkin = NOW() where id = '" . $system_id . "'";
-		return $this->db->query($query);
+		$result = $this->db->query($query);
+		return $result->result();
 	}
 
 	function save_updates($system_id, $updates)
@@ -150,7 +147,7 @@ class Forest_DB extends CI_Model {
 
 		// start transaction
 		$query = "START TRANSACTION";
-		$data_ok = $this->db->query($query);
+		$transaction_ok = $this->db->query($query);
 
 		// walk through list of updates
 		foreach($updates as $this_update)
@@ -189,19 +186,22 @@ class Forest_DB extends CI_Model {
 	function save_reboot_required($system_id, $reboot_required)
 	{
 		$query = "update systems set reboot_required = '" . $reboot_required . "' where system_id = '" . $system_id . "'";
-		return $this->db->query($query);
+		$result = $this->db->query($query);
+		return $result->result();
 	}
 
 	function save_reboot_accepted($system_id, $reboot_accepted)
 	{
 		$query = "update systems set reboot_accepted = '" . $reboot_accepted . "' where '" . $system_id . "'";
-		return $this->db->query($query);
+		$result = $this->db->query($query);
+		return $result->result();
 	}
 
 	function save_client_capabilities($system_id, $can_apply_updates, $can_apply_reboot)
 	{
 		$query = "update systems set can_apply_updates = '" . $can_apply_updates . "', can_apply_reboot = '" . $can_apply_reboot . "' where '" . $system_id . "'";
-		return $this->db->query($query);
+		$result = $this->db->query($query);
+		return $result->result();
 	}
 }
 

@@ -78,12 +78,33 @@
 $active_group = 'default';
 $query_builder = TRUE;
 
-$db['default'] = array(
+/*$db['default'] = array(
 	'dsn'	=> '',
 	'hostname' => 'localhost',
 	'username' => '',
 	'password' => '',
 	'database' => '',
+	'dbdriver' => 'mysqli',
+	'dbprefix' => '',
+	'pconnect' => TRUE,
+	'db_debug' => TRUE,
+	'cache_on' => FALSE,
+	'cachedir' => '',
+	'char_set' => 'utf8',
+	'dbcollat' => 'utf8_general_ci',
+	'swap_pre' => '',
+	'autoinit' => TRUE,
+	'compress' => TRUE,
+	'stricton' => FALSE,
+	'failover' => array()
+);*/
+
+$db['default'] = array(
+	'dsn'	=> '',
+	'hostname' => $this->config->item('db_hostname'),
+	'username' => $this->config->item('db_username'),
+	'password' => $this->config->item('db_password'),
+	'database' => $this->config->item('db_name'),
 	'dbdriver' => 'mysqli',
 	'dbprefix' => '',
 	'pconnect' => TRUE,
