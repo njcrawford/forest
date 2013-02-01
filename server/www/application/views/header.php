@@ -22,7 +22,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
 A copy of the full GPL 2 license can be found in the docs directory.
 You can contact me at http://www.njcrawford.com/contact
 */
-$this->load->helper('url');
 
 if(!isset($page_title))
 {
@@ -31,8 +30,8 @@ if(!isset($page_title))
 ?>
 <html>
 <head>
-<title><?php echo $page_title ?> - Forest</title>
-<link rel="stylesheet" type="text/css" href="<?php echo $this->config->item('base_url') . "css/forest.css" ?>" />
+<title><?= $page_title ?> - Forest</title>
+<link rel="stylesheet" type="text/css" href="<?= $this->config->item('base_url') . 'css/forest.css' ?>" />
 </head>
 <body>
-<script language="javascript" src="<?php echo $this->config->item('base_url') . "jquery/jquery-1.6.1.min.js" ?>"></script>
+<script language="javascript" src="<?= $this->config->item('base_url') . 'jquery/jquery-1.6.1.min.js' ?>"></script>
