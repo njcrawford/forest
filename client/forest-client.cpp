@@ -67,10 +67,14 @@ using namespace std;
 #include "KernelDifference.h"
 #include "WinRegKey.h"
 
+#define STRINGIFY(x) #x
+#define TOSTRING(x) STRINGIFY(x)
+
 #define RPC_VERSION 2
 #define BUFFER_SIZE 1024
 
 #include "exitcodes.h"
+#include "verboselevels.h"
 
 // callback function for curl
 size_t write_data(void *buffer, size_t size, size_t nmemb, void *userp);
@@ -82,6 +86,11 @@ ForestClient::ForestClient()
 	// ./configure should set a reasonable value for you.
 	packageManager = new PACKAGE_MANAGER();
 	rebootManager = new REBOOT_MANAGER();
+	verboseLevel = VERBOSE_NORMAL;
+	waitMode = false;
+	// set a default for server url
+	serverUrl = DEFAULT_SERVER_URL;
+	myHostname = "NoHostName";
 }
 
 int ForestClient::run()
@@ -91,38 +100,78 @@ int ForestClient::run()
 	bool acceptedReboot = false;
 	bool rebootAttempted = false;
 
-	getHostname();
+	if(verboseLevel >= VERBOSE_NORMAL)
+	{
+		cout << "Starting..." << endl;
+	}
 
-	// set a default for server url
-	serverUrl = DEFAULT_SERVER_URL;
+	getHostname();
 
 	// read config file
 	readConfigFile();
+
+	if(verboseLevel >= VERBOSE_EXTRA)
+	{
+		cout << "Hostname: " << myHostname << endl;
+		cout << "Server URL: " << serverUrl << endl;
+		cout << "Using package manager " << TOSTRING(PACKAGE_MANAGER);
+		cout << " and reboot manager " << TOSTRING(REBOOT_MANAGER) << "." << endl;
+	}
 
 	// get list of packages that have been accepted for update
 	// also check to see if a reboot has been accepted
 	// this should really be split into two rpc calls, but keeping backwards compatible for now
 	if(packageManager->canApplyUpdates() || rebootManager->canApplyReboot())
 	{
+		if(verboseLevel >= VERBOSE_NORMAL)
+		{
+			cout << "Checking for accepted updates from server..." << endl;
+		}
 		getAcceptedUpdates(acceptedUpdates, &acceptedReboot);
+		if(verboseLevel >= VERBOSE_EXTRA)
+		{
+			cout << acceptedUpdates.size() << " updates accepted by server." << endl;
+		}
 	}
 
 	// apply accepted updates (and only available updates) if backend is able
 	if(acceptedUpdates.size() > 0 && packageManager->canApplyUpdates())
 	{
+		if(verboseLevel >= VERBOSE_NORMAL)
+		{
+			cout << "Applying accepted updates..." << endl;
+		}
 		packageManager->applyUpdates(acceptedUpdates);
 	}
 
+
+	if(verboseLevel >= VERBOSE_NORMAL)
+	{
+		cout << "Checking for available updates..." << endl;
+	}
 	// determine what packages are available to update
 	// note that this is done AFTER applying accepted updates
 	packageManager->getAvailableUpdates(availableUpdates);
+	if(verboseLevel >= VERBOSE_EXTRA)
+	{
+		cout << "Package manager found " << availableUpdates.size() << " available updates." << endl;
+	}
 
 	// apply reboot
 	// this is done before reporting updates so that reboot attempted can be reported
 	if(acceptedReboot && rebootManager->canApplyReboot())
 	{
+		if(verboseLevel >= VERBOSE_NORMAL)
+		{
+			cout << "Scheduling reboot..." << endl;
+		}
 		rebootManager->applyReboot();
 		rebootAttempted = true;
+	}
+
+	if(verboseLevel >= VERBOSE_EXTRA)
+	{
+		cout << "HTML encoding available updates to report to server..." << endl;
 	}
 
 	CURL *handle = curl_easy_init();
@@ -138,12 +187,39 @@ int ForestClient::run()
 	}
 	curl_easy_cleanup(handle);
 
+	if(verboseLevel >= VERBOSE_NORMAL)
+	{
+		cout << "Reporting available updates to server..." << endl;
+	}
+
 	// report packages that are available to update
 	// this should also be split into two rpc calls, but keeping backward compatible for now
 	reportAvailableUpdates(availableUpdates, rebootAttempted);
 
-	// for debugging output
-	//cin.get();
+	if(verboseLevel >= VERBOSE_NORMAL)
+	{
+		cout << "Success." << endl;
+	}
+	if(verboseLevel >= VERBOSE_EXTRA)
+	{
+		cout << acceptedUpdates.size() << " accepted updates." << endl;
+		cout << availableUpdates.size() << " available updates." << endl;
+		if(rebootManager->isRebootNeeded())
+		{
+			cout << "Reboot is needed." << endl;
+		}
+		if(rebootAttempted)
+		{
+			cout << "Reboot was scheduled." << endl;
+		}
+	}
+
+	if(waitMode)
+	{
+		// for debugging output
+		cout << "Press enter to exit" << endl;
+		cin.get();
+	}
 
 	return EXIT_CODE_OK;
 }
@@ -384,7 +460,7 @@ void ForestClient::reportAvailableUpdates(vector<updateInfo> & list, bool reboot
 		exit(EXIT_CODE_CURL);
 	}
 
-	if(!quietMode || (quietMode && curlOutput.substr(0, 8) != "data_ok:"))
+	if( (verboseLevel >= VERBOSE_EXTRA) || ((verboseLevel == VERBOSE_QUIET) && curlOutput.substr(0, 8) != "data_ok:"))
 	{
 		cout << curlOutput << endl;
 	}
@@ -461,9 +537,14 @@ void ForestClient::readConfigFile()
 	}
 }
 
-void ForestClient::setQuietMode(bool enabled)
+void ForestClient::setVerboseLevel(unsigned int level)
 {
-	quietMode = enabled;
+	verboseLevel = level;
+}
+
+void ForestClient::setWaitMode(bool enabled)
+{
+	waitMode = enabled;
 }
 
 void ForestClient::getHostname()

@@ -14,7 +14,8 @@ using namespace std;
 class ForestClient
 {
 private:
-	bool quietMode;
+	unsigned int verboseLevel;
+	bool waitMode;
 	string serverUrl;
 	string myHostname;
 	PackageManager * packageManager;
@@ -26,7 +27,8 @@ private:
 	void getHostname();
 public:
 	ForestClient();
-	void setQuietMode(bool enabled);
+	void setVerboseLevel(unsigned int level);
+	void setWaitMode(bool enabled);
 	int run();
 };
 

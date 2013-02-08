@@ -6,51 +6,55 @@ using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 using System.Security.Principal;
+using System.Diagnostics;
 
 namespace ConfigurationGUI
 {
     public partial class frmMain : Form
     {
-        private NJCrawford.IniFile settings;
-
         public frmMain()
         {
             InitializeComponent();
         }
 
-        private void frmMain_Load(object sender, EventArgs e)
+        private void button1_Click(object sender, EventArgs e)
         {
-            settings = new NJCrawford.IniFile("forest-client.conf");
-            // set a default for server url if there is nothing set
-            if (settings.getValue("server_url") == null)
-            {
-                txtServerURL.Text = "http://url-not-set/forest";
-            }
-            else
-            {
-                string removeQuotes = settings.getValue("server_url");
-                txtServerURL.Text = removeQuotes.Replace("\"", "");
-            }
+            frmSettings settings = new frmSettings();
+            settings.ShowDialog();
         }
 
-        private void btnOK_Click(object sender, EventArgs e)
+        private void button2_Click(object sender, EventArgs e)
         {
-            string testURL = txtServerURL.Text.Trim();
-            if (testURL.StartsWith("http"))
-            {
-                settings.setValue("server_url", "\"" + testURL + "\"");
-                settings.save();
-                Application.Exit();
-            }
-            else
-            {
-                MessageBox.Show("Server URL must start with 'http'.");
-            }
+            frmScheduleTask task = new frmScheduleTask();
+            task.ShowDialog();
         }
 
-        private void btnClose_Click(object sender, EventArgs e)
+        private void btnRun_Click(object sender, EventArgs e)
         {
-            Application.Exit();
+            string prevText = btnRun.Text;
+            btnRun.Text = "Running...";
+            btnRun.Enabled = false;
+
+            Process forestClient = new Process();
+            forestClient.StartInfo.FileName = "forest-client.exe";
+            forestClient.StartInfo.UseShellExecute = false;
+            //forestClient.StartInfo.RedirectStandardOutput = true;
+            //forestClient.StartInfo.RedirectStandardError = true;
+            //forestClient.StartInfo.CreateNoWindow = true;
+            forestClient.StartInfo.Arguments = "--wait";
+            if (chkVerbose.Checked)
+            {
+                forestClient.StartInfo.Arguments += " --verbose";
+            }
+            forestClient.Start();
+
+            //frmTextbox output = new frmTextbox();
+            //output.Text = "Forest Client run results";
+            //output.setTextboxText(forestClient.StandardOutput.ReadToEnd() + Environment.NewLine + forestClient.StandardError.ReadToEnd());
+            forestClient.WaitForExit();
+            //output.ShowDialog();
+            btnRun.Text = prevText;
+            btnRun.Enabled = true;
         }
     }
 }

@@ -34,6 +34,7 @@
 #include "forest-client.h"
 #include "version.h"
 #include "exitcodes.h"
+#include "verboselevels.h"
 
 using namespace std;
 
@@ -45,25 +46,30 @@ int main(int argc, char** args)
 	{
 		if(strcmp(args[argNum], "--cron") == 0)
 		{
-			client->setQuietMode(true);
+			client->setVerboseLevel(VERBOSE_QUIET);
 		}
 		else if(strcmp(args[argNum], "--help") == 0)
 		{
 			cout << "Command line switches:" << endl;
 			cout << "--cron    Suppress all output unless an error occurs" << endl;
 			cout << "--help    Show this list" << endl;
-			cout << "--verbose Output extra detail about what forest is doing (not yet implemented)" << endl;
+			cout << "--verbose Output extra detail about actions" << endl;
 			cout << "--version Show forest client version and exit" << endl;
+			cout << "--wait    Wait for enter keypress before terminating" << endl;
 			exit(EXIT_CODE_OK);
 		}
 		else if(strcmp(args[argNum], "--verbose") == 0)
 		{
-			cout << "Verbose mode is not yet implemented" << endl;
+			client->setVerboseLevel(VERBOSE_EXTRA);
 		}
 		else if(strcmp(args[argNum], "--version") == 0)
 		{
 			cout << "Forest client version " << FOREST_VERSION << endl;
 			exit(EXIT_CODE_OK);
+		}
+		else if(strcmp(args[argNum], "--wait") == 0)
+		{
+			client->setWaitMode(true);
 		}
 		else
 		{
