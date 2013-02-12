@@ -79,7 +79,7 @@ switch (ENVIRONMENT)
  * Include the path if the folder is not in the same  directory
  * as this file.
  */
-	$system_path = '/var/lib/codeigniter-30/system';
+	$system_path = '/usr/share/codeigniter-30/system';
 
 /*
  *---------------------------------------------------------------
