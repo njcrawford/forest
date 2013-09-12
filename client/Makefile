@@ -5,14 +5,16 @@ CFLAGS = -Wall
 COMPILE = $(CC) $(CFLAGS) -c
 LINK = $(CC) $(CFLAGS)
 
-OBJFILES := $(patsubst %.cpp,%.o,$(wildcard *.cpp))
+OBJFILES := $(patsubst %.cpp,obj/%.o,$(wildcard *.cpp))
 
-all: forest-client
+all: bin/forest-client
 
-forest-client: $(OBJFILES)
-	$(LINK) $(OBJFILES) -lcurl -o forest-client
+bin/forest-client: $(OBJFILES)
+	[ -d bin ] || mkdir bin
+	$(LINK) $(OBJFILES) -lcurl -o bin/forest-client
 
-%.o: %.cpp
+obj/%.o: %.cpp
+	[ -d obj ] || mkdir obj
 	$(COMPILE) -o $@ $<
 clean:
-	rm *.o forest-client
+	rm *.o bin/forest-client
