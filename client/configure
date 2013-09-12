@@ -16,11 +16,11 @@ echo '#define CONFIG_FILE_PATH "/etc/forest-client.conf"' >> ${config}
 echo '#define DEFAULT_SERVER_URL "http://forest/forest"' >> ${config}
 
 # Detect what OS we're on and set reasonable config options.
-if [ -f /etc/debian-version ] ; then
+if which apt-get; then
 	# Ubuntu/Debian use apt-get
 	echo "#define PACKAGE_MANAGER AptCli" >> ${config}
 	echo "#define REBOOT_MANAGER FilePresence" >> ${config}
-elif [ -f /etc/redhat-release ] ; then
+elif which yum; then
 	# RHEL, CentOS, Fedora, etc. use yum
 	echo "#define PACKAGE_MANAGER Yum" >> ${config}
 	echo "#define REBOOT_MANAGER KernelDifference" >> ${config}
@@ -29,6 +29,8 @@ elif [ `uname -s` = "Darwin" ] ; then
 	echo "#define PACKAGE_MANAGER MacSU" >> ${config}
 	# no reboot manager yet
 	echo "#define REBOOT_MANAGER RebootStub" >> ${config}
+else
+	echo "Unable to detect OS, please generate config.h manually!"
 fi
 
 echo "#endif" >> ${config}
