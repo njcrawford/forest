@@ -1,6 +1,5 @@
 #!/bin/bash
 set -u
-set -e
 
 # Run this script to configure the appliation for the current platform.
 # The bash version is for Ubuntu/Debian, CentOS/RHEL, and Mac OSX.
@@ -16,11 +15,11 @@ echo '#define CONFIG_FILE_PATH "/etc/forest-client.conf"' >> ${config}
 echo '#define DEFAULT_SERVER_URL "http://forest/forest"' >> ${config}
 
 # Detect what OS we're on and set reasonable config options.
-if which apt-get; then
+if which apt-get &> /dev/null; then
 	# Ubuntu/Debian use apt-get
 	echo "#define PACKAGE_MANAGER AptCli" >> ${config}
 	echo "#define REBOOT_MANAGER FilePresence" >> ${config}
-elif which yum; then
+elif which yum &> /dev/null; then
 	# RHEL, CentOS, Fedora, etc. use yum
 	echo "#define PACKAGE_MANAGER Yum" >> ${config}
 	echo "#define REBOOT_MANAGER KernelDifference" >> ${config}
