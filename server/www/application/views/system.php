@@ -1,8 +1,8 @@
 <script type="text/javascript">
 //<!--
 function AcceptButton(system_id, package_name, accepted_state, update_div) {
-        $.post("<?php echo site_url('browser/mark_accepted_updates') ?>", {system_id: system_id, package_name: package_name, accepted_state: accepted_state}, function() {
-            $('#' + update_div).load("<?php echo site_url('browser/view_one_update') ?>" +'/' + system_id + '/' + encodeURIComponent(package_name));
+        $.post("<?= site_url('browser/mark_accepted_updates') ?>", {system_id: system_id, package_name: package_name, accepted_state: accepted_state}, function() {
+            $('#' + update_div).load("<?= site_url('browser/view_one_update') ?>" + '/' + system_id + '/' + encodeURIComponent(package_name));
         });
         return false;
 }
@@ -19,9 +19,9 @@ Client capabilities:
 	<li>can_apply_updates: <?= $system_info['can_apply_updates'] ?></li>
 	<li>can_apply_reboot: <?= $system_info['can_apply_reboot'] ?></li>
 </ul>
-<a href="<?= site_url('browser/confirm/delete_system/' . $system_info['id']) ?>">Delete System</a><br />
+<a href="<?= site_url('browser/confirm_delete_system/' . $system_info['id']) ?>">Delete System</a><br />
 <?php if(count($updates) > 0) { ?>
-<a href="<?= site_url('browser/confirm/clear_updates/' . $system_info['id']) ?>">Clear Updates</a><br />
+<a href="<?= site_url('browser/confirm_clear_updates/' . $system_info['id']) ?>">Clear Updates</a><br />
 <?php } ?>
 <br />
 <?php if(count($updates) > 0) { ?>

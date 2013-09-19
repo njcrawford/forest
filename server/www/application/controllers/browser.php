@@ -174,44 +174,105 @@ class Browser extends CI_Controller {
 		$this->load->view('one_package', $data);
 	}
 
-	function add_update_lock($system_id, $package_name)
+	function add_update_lock()
 	{
 		$this->_require_login();
+
 		$this->load->model('forest_db');
-		$this->forest_db->do_something();
+
+		$system_id = $this->input->post('system_id');
+		$package_name = $this->input->post('package_name');
+
+		$this->forest_db->add_update_lock($system_id, $package_name);
 		redirect();
 	}
 
-	function remove_update_lock($system_id, $package_name)
+	function remove_update_lock()
 	{
 		$this->_require_login();
+
 		$this->load->model('forest_db');
-		$this->forest_db->do_something();
+
+		$system_id = $this->input->post('system_id');
+		$package_name = $this->input->post('package_name');
+
+		$this->forest_db->remove_update_lock($system_id, $package_name);
 		redirect();
 	}
 
-	function clear_updates($system_id)
+	function confirm_clear_updates($system_id)
 	{
 		$this->_require_login();
+
+		$page_data->action = "Clear updates from system " . $system_id . "?";
+		$page_data->system_id = $system_id;
+		$page_data->post_url = site_url("browser/clear_updates");
+		$page_data->back_url = site_url("browser/view_system/" . $system_id);
+
+		$header_data->page_title = "Clear updates from system " . $system_id . "?";
+		$this->load->view('header', $header_data);
+		$this->load->view('confirm', $page_data);
+		$this->load->view('footer');
+	}
+
+	function clear_updates()
+	{
+		$this->_require_login();
+
 		$this->load->model('forest_db');
-		$this->forest_db->do_something();
+
+		$system_id = $this->input->post('system_id');
+
+		$this->forest_db->clear_updates($system_id);
 		redirect();
 	}
 
-	function delete_system($system_id)
+	function confirm_delete_system($system_id)
 	{
 		$this->_require_login();
+
+		$page_data->action = "Delete system " . $system_id . "?";
+		$page_data->system_id = $system_id;
+		$page_data->post_url = site_url("browser/delete_system");
+		$page_data->back_url = site_url("browser/view_system/" . $system_id);
+
+		$header_data->page_title = "Delete system " . $system_id . "?";
+		$this->load->view('header', $header_data);
+		$this->load->view('confirm', $page_data);
+		$this->load->view('footer');
+	}
+
+	function delete_system()
+	{
+		$this->_require_login();
+
 		$this->load->model('forest_db');
-		$this->forest_db->do_something();
+
+		$system_id = $this->input->post('system_id');
+
+		$this->forest_db->delete_system($system_id);
 		redirect();
 	}
 
-	function mark_accepted_reboot($system_id)
+	function mark_accepted_reboot()
 	{
 		$this->_require_login();
+
 		$this->load->model('forest_db');
-		$this->forest_db->do_something();
-		redirect();
+
+		$system_id = $this->input->post('system_id');
+		$state = $this->input->post('state');
+		if($state == "true")
+		{
+			$state = '1';
+		}
+		else
+		{
+			$state = '0';
+		}
+
+		$this->forest_db->save_reboot_accepted($system_id, $state);
+		redirect("browser/view_system/" . $system_id);
 	}
 
 	function mark_accepted_updates()
@@ -412,4 +473,5 @@ class Browser extends CI_Controller {
 		}
 	}
 }
-?>
+/* End of browser.php */
+

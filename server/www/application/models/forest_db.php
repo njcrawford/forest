@@ -91,13 +91,6 @@ class Forest_DB extends CI_Model {
 		return $result->result();
 	}
 
-	function mark_accepted_reboot($system_id)
-	{
-		$query = "update systems set reboot_accepted = '1' where system_id = '" . $system_id . "'";
-		$result = $this->db->query($query);
-		return $result->result();
-	}
-
 	function mark_accepted_updates($system_id, $package_name, $state)
 	{
 		$query = "update updates set accepted = '" . $state . "' where ";
@@ -192,7 +185,7 @@ class Forest_DB extends CI_Model {
 
 	function save_reboot_accepted($system_id, $reboot_accepted)
 	{
-		$query = "update systems set reboot_accepted = '" . $reboot_accepted . "' where '" . $system_id . "'";
+		$query = "update systems set reboot_accepted = '" . $reboot_accepted . "' where system_id = '" . $system_id . "'";
 		$result = $this->db->query($query);
 		return $result->result();
 	}
