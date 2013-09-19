@@ -17,35 +17,35 @@ class Forest_DB extends CI_Model {
 
 	function get_updates_for_system($system_id)
 	{
-		$query = "select * from updates where system_id = '" . $system_id . "' order by package_name";
+		$query = "select * from updates where system_id = " . $this->db->escape($system_id) . " order by package_name";
 		$result = $this->db->query($query);
 		return $result->result();
 	}
 	
 	function get_one_update($system_id, $package_name)
 	{
-		$query = "select * from updates where system_id = '" . $system_id . "' and package_name = '" . $package_name . "'";
+		$query = "select * from updates where system_id = " . $this->db->escape($system_id) . " and package_name = '" . $package_name . "'";
 		$result = $this->db->query($query);
 		return $result->result();
 	}
 	
 	function get_locked_updates_for_system($system_id)
 	{
-		$query = "select * from update_locks where system_id = '" . $system_id . "'";
+		$query = "select * from update_locks where system_id = " . $this->db->escape($system_id);
 		$result = $this->db->query($query);
 		return $result->result();
 	}
 
 	function get_accepted_updates_for_system($system_id)
 	{
-		$query = "select * from updates where system_id = '" . $system_id . "' where accepted = '1'";
+		$query = "select * from updates where system_id = " . $this->db->escape($system_id) . " where accepted = '1'";
 		$result = $this->db->query($query);
 		return $result->result();
 	}
 
 	function get_system_info($system_id)
 	{
-		$query = "select * from systems where id = '" . $system_id . "'";
+		$query = "select * from systems where id = " . $this->db->escape($system_id);
 		$result = $this->db->query($query);
 		return $result->row();
 	}
@@ -53,7 +53,7 @@ class Forest_DB extends CI_Model {
 	function get_system_id($system_name)
 	{
 		$retval = 0;
-		$query = "select id from systems where name = '" . $system_name . "'";
+		$query = "select id from systems where name = " . $this->db->escape($system_name);
 		$result = $this->db->query($query);
 		if($result)
 		{
@@ -64,21 +64,21 @@ class Forest_DB extends CI_Model {
 
 	function add_update_lock($system_id, $package_name)
 	{
-		$query = "insert into update_locks (system_id, package_name) values ('" . $system_id . "', '" . $package_name . "')";
+		$query = "insert into update_locks (system_id, package_name) values (" . $this->db->escape($system_id) . ", " . $this->db->escape($package_name) . ")";
 		$result = $this->db->query($query);
 		return $result->result();
 	}
 
 	function remove_update_lock($system_id, $package_name)
 	{
-		$query = "delete from update_locks where system_id = '" . $system_id . "' and package_name = '" . $package_name . "'";
+		$query = "delete from update_locks where system_id = " . $this->db->escape($system_id) . " and package_name = " . $this->db->escape($package_name);
 		$result = $this->db->query($query);
 		return $result->result();
 	}
 
 	function clear_updates($system_id)
 	{
-		$query = "delete from updates where system_id = '" . $system_id . "'";
+		$query = "delete from updates where system_id = " . $this->db->escape($system_id);
 		$result = $this->db->query($query);
 		return $result->result();
 	}
@@ -86,25 +86,25 @@ class Forest_DB extends CI_Model {
 	function delete_system($system_id)
 	{
 		$this->clear_updates($system_id);
-		$query = "delete from systems where id = '" . $system_id . "'";
+		$query = "delete from systems where id = " . $this->db->escape($system_id);
 		$result = $this->db->query($query);
 		return $result->result();
 	}
 
 	function mark_accepted_updates($system_id, $package_name, $state)
 	{
-		$query = "update updates set accepted = '" . $state . "' where ";
+		$query = "update updates set accepted = " . $this->db->escape($state) . " where ";
 		if(!empty($system_id) && !empty($package_name))
 		{
-			$query .= " system_id = '" . $system_id . "' and package_name = '" . $package_name . "'";
+			$query .= " system_id = " . $this->db->escape($system_id) . " and package_name = " . $this->db->escape($package_name);
 		}
 		elseif(!empty($system_id))
 		{
-			$query .= " system_id = '" . $system_id . "'";
+			$query .= " system_id = " . $this->db->escape($system_id);
 		}
 		elseif(!empty($package_name))
 		{
-			$query .= " package_name = '" . $package_name . "'";
+			$query .= " package_name = " . $this->db->escape($package_name);
 		}
 		$result = $this->db->query($query);
 		return $result->result();
@@ -114,14 +114,12 @@ class Forest_DB extends CI_Model {
 	{
 		$retval = 0;
 
-		$query = "insert into systems (name) values('" . $system_name . "')";
+		$query = "insert into systems (name) values(" . $this->db->escape($system_name) . ")";
 		$result = $this->db->query($query);
 
 		if($result)
 		{
-			$query = "select LAST_INSERT_ID() as id";
-			$result = $this->db->query($query);
-			$retval = $result->row()->id;
+			$retval = $this->db->insert_id();
 		}
 
 		return $retval;
@@ -129,18 +127,14 @@ class Forest_DB extends CI_Model {
 
 	function system_checkin($system_id)
 	{
-		$query = "update systems set last_checkin = NOW() where id = '" . $system_id . "'";
+		$query = "update systems set last_checkin = NOW() where id = " . $this->db->escape($system_id);
 		$result = $this->db->query($query);
 		return $result->result();
 	}
 
 	function save_updates($system_id, $updates)
 	{
-		$transaction_ok = true;
-
-		// start transaction
-		$query = "START TRANSACTION";
-		$transaction_ok = $this->db->query($query);
+		$this->db->trans_start();
 
 		// walk through list of updates
 		foreach($updates as $this_update)
@@ -159,40 +153,29 @@ class Forest_DB extends CI_Model {
 			}
 		}
 
-		// if success, commit transation
-		if($transaction_ok)
-		{
-			$query = "COMMIT";
-			$transaction_ok = $this->db->query($query);
-		}
-		// if fail, rollback transaction
-		else
-		{
-			$query = "ROLLBACK";
-			$this->db->query($query);
-		}
+		$this->db->trans_complete();
 
 		// return true/false to indicate success/fail
-		return $transaction_ok;
+		return $this->db->trans_status();
 	}
 
 	function save_reboot_required($system_id, $reboot_required)
 	{
-		$query = "update systems set reboot_required = '" . $reboot_required . "' where system_id = '" . $system_id . "'";
+		$query = "update systems set reboot_required = " . $this->db->escape($reboot_required) . " where system_id = " . $this->db->escape($system_id);
 		$result = $this->db->query($query);
 		return $result->result();
 	}
 
 	function save_reboot_accepted($system_id, $reboot_accepted)
 	{
-		$query = "update systems set reboot_accepted = '" . $reboot_accepted . "' where system_id = '" . $system_id . "'";
+		$query = "update systems set reboot_accepted = " . $this->db->escape($reboot_accepted) . " where system_id = " . $this->db->escape($system_id);
 		$result = $this->db->query($query);
 		return $result->result();
 	}
 
 	function save_client_capabilities($system_id, $can_apply_updates, $can_apply_reboot)
 	{
-		$query = "update systems set can_apply_updates = '" . $can_apply_updates . "', can_apply_reboot = '" . $can_apply_reboot . "' where '" . $system_id . "'";
+		$query = "update systems set can_apply_updates = " . $this->db->escape($can_apply_updates) . ", can_apply_reboot = " . $this->db->escape($can_apply_reboot) . " where " . $this->db->escape($system_id);
 		$result = $this->db->query($query);
 		return $result->result();
 	}
