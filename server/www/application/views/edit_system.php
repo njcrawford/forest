@@ -1,3 +1,6 @@
+<a href="<?= site_url() ?>">Back to summary page</a><br>
+<a href="<?= site_url('browser/view_system/' . $system_info->id) ?>">Back to updates for <?= $system_info->name ?></a><br>
+<br>
 System info<br>
 <form action="<?= site_url('browser/save_system_info') ?>" method="post">
 	<input type="hidden" name="system_id" value="<?= $system_info->id ?>">
@@ -7,6 +10,7 @@ System info<br>
 </form>
 <br>
 <br>
+Update locks (updates for these package will be locked in Forest)<br>
 <form action="<?= site_url('browser/add_update_lock') ?>" method="post">
 	<input type="hidden" name="system_id" value="<?= $system_info->id ?>">
 	New update lock: <input name="package_name">
