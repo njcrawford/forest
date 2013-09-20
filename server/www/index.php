@@ -61,13 +61,14 @@ switch (ENVIRONMENT)
 
 	case 'testing':
 	case 'production':
-		error_reporting(E_ALL ^ E_NOTICE ^ E_DEPRECATED ^ E_STRICT);
+		error_reporting(E_ALL & ~E_NOTICE & ~E_DEPRECATED & ~E_STRICT);
 		ini_set('display_errors', 0);
 	break;
 
 	default:
 		header('HTTP/1.1 503 Service Unavailable.', TRUE, 503);
-		exit('The application environment is not set correctly.');
+		echo 'The application environment is not set correctly.';
+		exit(1); // EXIT_* constants not yet defined; 1 is EXIT_ERROR, a generic error.
 }
 
 /*
@@ -76,7 +77,7 @@ switch (ENVIRONMENT)
  *---------------------------------------------------------------
  *
  * This variable must contain the name of your "system" folder.
- * Include the path if the folder is not in the same  directory
+ * Include the path if the folder is not in the same directory
  * as this file.
  */
 	$system_path = '/usr/share/codeigniter-30/system';
@@ -190,7 +191,8 @@ switch (ENVIRONMENT)
 	if ( ! is_dir($system_path))
 	{
 		header('HTTP/1.1 503 Service Unavailable.', TRUE, 503);
-		exit('Your system folder path does not appear to be set correctly. Please open the following file and correct this: '.pathinfo(__FILE__, PATHINFO_BASENAME));
+		echo 'Your system folder path does not appear to be set correctly. Please open the following file and correct this: '.pathinfo(__FILE__, PATHINFO_BASENAME);
+		exit(3); // EXIT_* constants not yet defined; 3 is EXIT_CONFIG.
 	}
 
 /*
@@ -225,7 +227,8 @@ switch (ENVIRONMENT)
 		if ( ! is_dir(BASEPATH.$application_folder.'/'))
 		{
 			header('HTTP/1.1 503 Service Unavailable.', TRUE, 503);
-			exit('Your application folder path does not appear to be set correctly. Please open the following file and correct this: '.SELF);
+			echo 'Your application folder path does not appear to be set correctly. Please open the following file and correct this: '.SELF;
+			exit(3); // EXIT_* constants not yet defined; 3 is EXIT_CONFIG.
 		}
 
 		define('APPPATH', BASEPATH.$application_folder.'/');
@@ -241,7 +244,8 @@ switch (ENVIRONMENT)
 		elseif ( ! is_dir(APPPATH.'views/'))
 		{
 			header('HTTP/1.1 503 Service Unavailable.', TRUE, 503);
-			exit('Your view folder path does not appear to be set correctly. Please open the following file and correct this: '.SELF);
+			echo 'Your view folder path does not appear to be set correctly. Please open the following file and correct this: '.SELF;
+			exit(3); // EXIT_* constants not yet defined; 3 is EXIT_CONFIG.
 		}
 		else
 		{
@@ -251,7 +255,7 @@ switch (ENVIRONMENT)
 
 	if (($_temp = realpath($view_folder)) !== FALSE)
 	{
-		$view_folder = realpath($view_folder).'/';
+		$view_folder = $_temp.'/';
 	}
 	else
 	{
