@@ -44,7 +44,7 @@ class Browser extends CI_Controller {
 		$data['systems'] = $this->forest_db->get_systems();
 		foreach($data['systems'] as &$this_system)
 		{
-			$locked_updates_result = $this->forest_db->get_locked_updates_for_system($this_system->id);
+			$locked_updates_result = $this->forest_db->get_update_locks($this_system->id);
 			$locked_updates = array();
 			foreach($locked_updates_result as $this_lock)
 			{
@@ -116,7 +116,7 @@ class Browser extends CI_Controller {
 		$this->load->model('forest_db');
 		// this will get all info about one system
 		$data['system_info'] = $this->forest_db->get_system_info($system_id);
-		$locked_updates_result = $this->forest_db->get_locked_updates_for_system($system_id);
+		$locked_updates_result = $this->forest_db->get_update_locks($system_id);
 		$locked_updates = array();
 		foreach($locked_updates_result as $this_lock)
 		{
@@ -306,7 +306,7 @@ class Browser extends CI_Controller {
 		{
 			$this->load->model('forest_db');
 			
-			$locked_updates_result = $this->forest_db->get_locked_updates_for_system($system_id);
+			$locked_updates_result = $this->forest_db->get_update_locks($system_id);
 			$locked_updates = array();
 			foreach($locked_updates_result as $this_lock)
 			{
