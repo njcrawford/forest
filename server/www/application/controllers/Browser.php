@@ -191,7 +191,7 @@ class Browser extends CI_Controller {
 		$package_name = $this->input->post('package_name');
 
 		$this->forest_db->add_update_lock($system_id, $package_name);
-		redirect();
+		redirect("browser/edit_system_info/" . $system_id);
 	}
 
 	function remove_update_lock()
@@ -204,7 +204,7 @@ class Browser extends CI_Controller {
 		$package_name = $this->input->post('package_name');
 
 		$this->forest_db->remove_update_lock($system_id, $package_name);
-		redirect();
+		redirect("browser/edit_system_info/" . $system_id);
 	}
 
 	function confirm_clear_updates($system_id)
@@ -345,6 +345,7 @@ class Browser extends CI_Controller {
 
 		$data = new stdClass;
 		$data->system_info = $this->forest_db->get_system_info($system_id);
+		$data->update_locks = $this->forest_db->get_update_locks($system_id);
 
 		$this->load->view('header', array('page_title' => "Edit system info"));
 		$this->load->view('edit_system', $data);

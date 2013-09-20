@@ -29,7 +29,7 @@ class Forest_DB extends CI_Model {
 		return $result->row();
 	}
 	
-	function get_locked_updates_for_system($system_id)
+	function get_update_locks($system_id)
 	{
 		$query = "select * from update_locks where system_id = " . $this->db->escape($system_id);
 		$result = $this->db->query($query);
@@ -71,15 +71,13 @@ class Forest_DB extends CI_Model {
 	function add_update_lock($system_id, $package_name)
 	{
 		$query = "insert into update_locks (system_id, package_name) values (" . $this->db->escape($system_id) . ", " . $this->db->escape($package_name) . ")";
-		$result = $this->db->query($query);
-		return $result->result();
+		return $this->db->query($query);
 	}
 
 	function remove_update_lock($system_id, $package_name)
 	{
 		$query = "delete from update_locks where system_id = " . $this->db->escape($system_id) . " and package_name = " . $this->db->escape($package_name);
-		$result = $this->db->query($query);
-		return $result->result();
+		return $this->db->query($query);
 	}
 
 	function clear_updates($system_id)
