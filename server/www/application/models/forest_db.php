@@ -179,6 +179,15 @@ class Forest_DB extends CI_Model {
 		$result = $this->db->query($query);
 		return $result->result();
 	}
+
+	function get_setting($setting_name)
+	{
+		//TODO: Finish implementing this stub function
+		if($setting_name == 'awol_hours')
+		{
+			return 36;
+		}
+	}
 }
 
 /* End of forest_db.php */
