@@ -14,12 +14,12 @@
 	</tr>
 <?php foreach($systems as $this_system) { ?>
 	<tr>
-		<td class="name"><a href="<?= site_url('browser/view_system/' . $this_system['id']) ?>"><?= $this_system['name'] ?></a></td>
-		<td><?= $this_system['available_updates'] ?></td>
-		<td><?= $this_system['accepted_updates'] ?></td>
-		<td><?= $this_system['locked_updates'] ?></td>
-		<td <?= $this_system['reboot_required_class'] ?>><?= $this_system['reboot_required_text'] ?></td>
-		<td <?= $this_system['awol_class'] ?>><?= $this_system['last_checkin'] ?></td>
+		<td class="name"><a href="<?= site_url('browser/view_system/' . $this_system->id) ?>"><?= $this_system->name ?></a></td>
+		<td><?= $this_system->available_updates ?></td>
+		<td><?= $this_system->accepted_updates ?></td>
+		<td><?= $this_system->locked_updates ?></td>
+		<td <?= $this_system->reboot_required_class ?>><?= $this_system->reboot_required_text ?></td>
+		<td <?= $this_system->awol_class ?>><?= $this_system->last_checkin ?></td>
 	</tr>
 <?php } ?>
 </table>
