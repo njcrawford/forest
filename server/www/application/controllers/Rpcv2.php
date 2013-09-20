@@ -1,5 +1,5 @@
 <?php
-class RPCv2 extends Controller {
+class RPCv2 extends CI_Controller {
 
 	function index()
 	{
@@ -61,11 +61,14 @@ class RPCv2 extends Controller {
 			$packages = array();
 			for($i = 0; $i < count($temp_packages); $i++)
 			{
-				$packages[$i]->package_name = $temp_packages[$i];
+				$this_package = new stdClass;
+				// Trim package names to protect against spaces in package names in the database
+				$this_package->package_name = trim($temp_packages[$i]);
 				if($use_versions)
 				{
-					$packages[$i]->version = $versions[$i];
+					$this_package->version = trim($versions[$i]);
 				}
+				$packages[$i] = $this_package;
 			}
 			$data_ok = $this->forest_db->save_updates($system_id, $packages);
 
