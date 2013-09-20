@@ -161,21 +161,22 @@ class Browser extends CI_Controller {
 		// GET and REQUEST are automatically urldecoded, but POST is not. 
 		$package_name = urldecode($package_name);
 
-		$data['system_info'] = $this->forest_db->get_system_info($system_id);
+		$data = new stdClass;
+		$data->system_info = $this->forest_db->get_system_info($system_id);
 		
-		$data['update_info'] = $this->forest_db->get_one_update($system_id, $package_name);
-		if($data['update_info']->accepted == '1')
+		$data->update_info = $this->forest_db->get_one_update($system_id, $package_name);
+		if($data->update_info->accepted == '1')
 		{
-			$data['update_info']->change_state = "rejected"; 
-			$data['update_info']->change_button = "Reject";
+			$data->update_info->change_state = "rejected"; 
+			$data->update_info->change_button = "Reject";
 		}
 		else
 		{
-			$data['update_info']->change_state = "accepted"; 
-			$data['update_info']->change_button = "Accept";
+			$data->update_info->change_state = "accepted"; 
+			$data->update_info->change_button = "Accept";
 		}
 		
-		$data['update_div'] = "update_" . $data['update_info']->id;
+		$data->update_div = "update_" . $data->update_info->id;
 		
 		$this->load->view('one_package', $data);
 	}
@@ -322,13 +323,9 @@ class Browser extends CI_Controller {
 			} 
 			
 			$accepted_state = ($accepted_state == "accepted");
-			$data['result_text'] = $this->forest_db->mark_accepted_updates($system_id, $package_name, $accepted_state);
-			$data['redirect_location'] = "browser";
-			if(!empty($redirect_location))
-			{
-				$data['redirect_location'] .= "/" . $redirect_location;
-			} 
-			$this->load->view('redirect', $data);
+			$db_result = $this->forest_db->mark_accepted_updates($system_id, $package_name, $accepted_state);
+			$redirect_location = "browser/" . $redirect_location;
+			redirect($redirect_location);
 		}
 		catch(Exception $e)
 		{

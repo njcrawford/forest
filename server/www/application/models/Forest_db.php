@@ -24,9 +24,9 @@ class Forest_DB extends CI_Model {
 	
 	function get_one_update($system_id, $package_name)
 	{
-		$query = "select * from updates where system_id = " . $this->db->escape($system_id) . " and package_name = '" . $package_name . "'";
+		$query = "select * from updates where system_id = " . $this->db->escape($system_id) . " and package_name = " . $this->db->escape($package_name);
 		$result = $this->db->query($query);
-		return $result->result();
+		return $result->row();
 	}
 	
 	function get_locked_updates_for_system($system_id)
@@ -106,8 +106,11 @@ class Forest_DB extends CI_Model {
 		{
 			$query .= " package_name = " . $this->db->escape($package_name);
 		}
-		$result = $this->db->query($query);
-		return $result->result();
+		else
+		{
+			die("Must have system_id, package_name or both for mark accepted updates.");
+		}
+		return $this->db->query($query);
 	}
 
 	function add_system($system_name)
