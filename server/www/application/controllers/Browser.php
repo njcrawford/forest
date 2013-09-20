@@ -337,13 +337,40 @@ class Browser extends CI_Controller {
 		}
 	}
 
-	function save_system_info($system_id)
+	function edit_system_info($system_id)
 	{
-		//TODO: Finish this stubbed function
 		$this->_require_login();
+
 		$this->load->model('forest_db');
-		$this->forest_db->do_something();
-		$this->load->view('redirect');
+
+		$data = new stdClass;
+		$data->system_info = $this->forest_db->get_system_info($system_id);
+
+		$this->load->view('header', array('page_title' => "Edit system info"));
+		$this->load->view('edit_system', $data);
+		$this->load->view('footer');
+	}
+
+	function save_system_info()
+	{
+		$this->_require_login();
+
+		$this->load->model('forest_db');
+
+		$system_id = $this->input->post('system_id');
+		$ignore_awol = $this->input->post('ignore_awol');
+		$allow_reboot = $this->input->post('allow_reboot');
+		if($ignore_awol != "1")
+		{
+			$ignore_awol = "0";
+		}
+		if($allow_reboot != "1")
+		{
+			$allow_reboot = "0";
+		}
+
+		$this->forest_db->save_system_info($system_id, $ignore_awol, $allow_reboot);
+		redirect("browser/view_system/" . $system_id);
 	}
 	
 	private function _is_logged_in()

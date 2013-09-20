@@ -9,7 +9,7 @@ function AcceptButton(system_id, package_name, accepted_state, update_div) {
 //-->
 </script>
 <a href="<?= site_url() ?>">Back to summary page</a><br />
-<a href="<?= site_url('browser/edit_system/' . $system_info->id) ?>">Edit system</a><br />
+<a href="<?= site_url('browser/edit_system_info/' . $system_info->id) ?>">Edit system</a><br />
 Name: <?= $system_info->name ?><br />
 Updates: <?= count($updates) ?><br />
 Reboot Needed: <?= $system_info->reboot_required ?><br />

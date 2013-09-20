@@ -50,6 +50,12 @@ class Forest_DB extends CI_Model {
 		return $result->row();
 	}
 
+	function save_system_info($system_id, $ignore_awol, $allow_reboot)
+	{
+		$query = "update systems set ignore_awol = " . $this->db->escape($ignore_awol) . ", allow_reboot = " . $this->db->escape($allow_reboot) . " where id = " . $this->db->escape($system_id);
+		return $this->db->query($query);
+	}
+
 	function get_system_id($system_name)
 	{
 		$retval = 0;
