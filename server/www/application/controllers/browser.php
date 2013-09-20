@@ -22,6 +22,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
 A copy of the full GPL 2 license can be found in the docs directory.
 You can contact me at http://www.njcrawford.com/contact
 */
+defined('BASEPATH') or exit('No direct script access allowed');
+
 class Browser extends CI_Controller {
 
 	private function _require_login()
