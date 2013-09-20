@@ -56,7 +56,7 @@ class Browser extends CI_Controller {
 			$this_system->locked_updates = 0;
 			foreach($this_system->updates as $this_update)
 			{
-				if($this_update->accepted-> == 1)
+				if($this_update->accepted == 1)
 				{
 					$this_system->accepted_updates++;
 				}
