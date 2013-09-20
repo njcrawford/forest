@@ -81,10 +81,10 @@ $query_builder = TRUE;
 
 $db['default'] = array(
 	'dsn'	=> '',
-	'hostname' => $this->config->item('db_hostname'),
-	'username' => $this->config->item('db_username'),
-	'password' => $this->config->item('db_password'),
-	'database' => $this->config->item('db_name'),
+	'hostname' => 'localhost',
+	'username' => 'forest_user',
+	'password' => 'forest_pass',
+	'database' => 'forest',
 	'dbdriver' => 'mysqli',
 	'dbprefix' => '',
 	'pconnect' => TRUE,
@@ -100,6 +100,12 @@ $db['default'] = array(
 	'stricton' => FALSE,
 	'failover' => array()
 );
+
+// now read in any changed values from the config file
+if(file_exists("/etc/forest-server/forest-db.conf"))
+{
+	include "/etc/forest-server/forest-db.conf";
+}
 
 /* End of file database.php */
 /* Location: ./application/config/database.php */

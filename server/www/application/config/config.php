@@ -434,15 +434,7 @@ $config['rewrite_short_tags'] = FALSE;
 */
 $config['proxy_ips'] = '';
 
-/*
-Database config items
-*/
-// set defaults
-$config['db_hostname'] = 'localhost';
-$config['db_username'] = 'forest_user';
-$config['db_password'] = 'forest_pass';
-$config['db_name'] = 'forest';
-
+// Default setting for where to send emails
 $config['email_to'] = 'root';
 
 // now read in any changed values from the config file
