@@ -15,11 +15,13 @@ Minimal build instructions
 --------------------------
 
 Under Linux:
+
 1.  Install dependencies (On Ubuntu: libcurl4-gnutls-dev)
 2.  Run ./configure
 3.  Run make
 
 Under Windows:
+
 1.  Browse to client folder and run configure.bat
 2.  Build curl as a release DLL according to instructions at curl-source/winbuild/BUILD.WINDOWS.txt (solution and post-build.bat expect options to be mode=dll vc=10)
 3.  Open forest-client solution and build
