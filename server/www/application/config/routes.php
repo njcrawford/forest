@@ -76,6 +76,8 @@
 $route['default_controller'] = 'browser';
 $route['404_override'] = '';
 $route['translate_uri_dashes'] = FALSE;
+$route['collect.php'] = 'rpcv2/collect';
+$route['getaccepted.php'] = 'rpcv2/get_accepted';
 
 /* End of file routes.php */
 /* Location: ./application/config/routes.php */

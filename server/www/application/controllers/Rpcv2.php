@@ -118,7 +118,7 @@ class RPCv2 extends CI_Controller {
 		// reset the accepted flag if the system no longer needs a reboot, or a reboot was attempted
 		if($reboot_required != TRUE || (!empty($reboot_attempted) && $reboot_attempted == "true"))
 		{
-			$this->forest_db->save_reboot_accepted($system_id, $reboot_accepted);
+			$this->forest_db->save_reboot_accepted($system_id, FALSE);
 		}
 		// Collect reported client capabilities, if present
 		if(!empty($client_can_apply_updates) && $client_can_apply_updates == "true")
@@ -142,8 +142,9 @@ class RPCv2 extends CI_Controller {
 
 	function get_accepted()
 	{
+		$this->load->model('forest_db');
 
-		$system = $this->input->post('system');
+		$system = $this->input->get('system');
 
 		if(empty($system))
 		{
@@ -158,7 +159,7 @@ class RPCv2 extends CI_Controller {
 		$system_row = $this->forest_db->get_system_info($system_id);
 
 		$updates_result = $this->forest_db->get_accepted_updates_for_system($system_id);
-		if(!$updates_result)
+		if($updates_result === FALSE)
 		{
 			die(RPC_ERROR_TAG . "Mysql error: couldn't get accepted updates");
 		}
@@ -180,4 +181,4 @@ class RPCv2 extends CI_Controller {
 	}
 	
 }
-?>
+/* End of Rpcv2.php */
