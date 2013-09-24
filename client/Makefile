@@ -17,4 +17,4 @@ obj/%.o: %.cpp
 	[ -d obj ] || mkdir obj
 	$(COMPILE) -o $@ $<
 clean:
-	rm *.o bin/forest-client
+	rm obj/*.o bin/forest-client
