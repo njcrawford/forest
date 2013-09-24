@@ -38,7 +38,7 @@ class Forest_DB extends CI_Model {
 
 	function get_accepted_updates_for_system($system_id)
 	{
-		$query = "select * from updates where system_id = " . $this->db->escape($system_id) . " where accepted = '1'";
+		$query = "select * from updates where system_id = " . $this->db->escape($system_id) . " and accepted = '1'";
 		$result = $this->db->query($query);
 		return $result->result();
 	}
@@ -133,8 +133,7 @@ class Forest_DB extends CI_Model {
 	function system_checkin($system_id)
 	{
 		$query = "update systems set last_checkin = NOW() where id = " . $this->db->escape($system_id);
-		$result = $this->db->query($query);
-		return $result->result();
+		return $this->db->query($query);
 	}
 
 	function save_updates($system_id, $updates)
@@ -166,23 +165,20 @@ class Forest_DB extends CI_Model {
 
 	function save_reboot_required($system_id, $reboot_required)
 	{
-		$query = "update systems set reboot_required = " . $this->db->escape($reboot_required) . " where system_id = " . $this->db->escape($system_id);
-		$result = $this->db->query($query);
-		return $result->result();
+		$query = "update systems set reboot_required = " . $this->db->escape($reboot_required) . " where id = " . $this->db->escape($system_id);
+		return $this->db->query($query);
 	}
 
 	function save_reboot_accepted($system_id, $reboot_accepted)
 	{
-		$query = "update systems set reboot_accepted = " . $this->db->escape($reboot_accepted) . " where system_id = " . $this->db->escape($system_id);
-		$result = $this->db->query($query);
-		return $result->result();
+		$query = "update systems set reboot_accepted = " . $this->db->escape($reboot_accepted) . " where id = " . $this->db->escape($system_id);
+		return $this->db->query($query);
 	}
 
 	function save_client_capabilities($system_id, $can_apply_updates, $can_apply_reboot)
 	{
-		$query = "update systems set can_apply_updates = " . $this->db->escape($can_apply_updates) . ", can_apply_reboot = " . $this->db->escape($can_apply_reboot) . " where " . $this->db->escape($system_id);
-		$result = $this->db->query($query);
-		return $result->result();
+		$query = "update systems set can_apply_updates = " . $this->db->escape($can_apply_updates) . ", can_apply_reboot = " . $this->db->escape($can_apply_reboot) . " where id = " . $this->db->escape($system_id);
+		return $this->db->query($query);
 	}
 
 	function get_setting($setting_name)
