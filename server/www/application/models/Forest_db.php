@@ -83,16 +83,14 @@ class Forest_DB extends CI_Model {
 	function clear_updates($system_id)
 	{
 		$query = "delete from updates where system_id = " . $this->db->escape($system_id);
-		$result = $this->db->query($query);
-		return $result->result();
+		return $this->db->query($query);
 	}
 
 	function delete_system($system_id)
 	{
 		$this->clear_updates($system_id);
 		$query = "delete from systems where id = " . $this->db->escape($system_id);
-		$result = $this->db->query($query);
-		return $result->result();
+		return $this->db->query($query);
 	}
 
 	function mark_accepted_updates($system_id, $package_name, $state)
