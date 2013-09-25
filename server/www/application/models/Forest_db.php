@@ -140,10 +140,11 @@ class Forest_DB extends CI_Model {
 	{
 		$this->db->trans_start();
 
+		$data_ok = TRUE;
 		// walk through list of updates
 		foreach($updates as $this_update)
 		{
-			if($transaction_ok)
+			if($data_ok)
 			{
 				$query = "insert into updates
 					(system_id, package_name, version)
