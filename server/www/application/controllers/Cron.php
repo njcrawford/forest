@@ -45,6 +45,7 @@ class Cron extends CI_Controller {
 		$output_message .= $this->config->item('base_url') . "\n";
 		$output_message .= "Forest version " . $this->config->item('forest_version') . "\n\n";
 
+		$update_message = "";
 		$reboot_message = "";
 		$awol_message = "";
 		$awol_hours = $this->forest_db->get_setting('awol_hours');
@@ -52,7 +53,6 @@ class Cron extends CI_Controller {
 		$systems = $this->forest_db->get_systems();
 		if(count($systems) > 0)
 		{
-			$output_message .= "Updates available on these systems:\n";
 			foreach($systems as $this_system)
 			{
 				if($this_system->last_checkin >= (time() - (60 * 60 * $awol_hours)))
@@ -60,7 +60,7 @@ class Cron extends CI_Controller {
 					$updates = $this->forest_db->get_updates_for_system($this_system->id);
 					if(count($updates > 0))
 					{
-						$output_message .= $this_system->name . " (" . count($updates) . ")\n";
+						$update_message .= $this_system->name . " (" . count($updates) . ")\n";
 					}
 
 					if($this_system->reboot_required == 1)
@@ -79,6 +79,15 @@ class Cron extends CI_Controller {
 			$output_message .= "No systems registered\n";
 		}
 		
+		if(empty($update_message))
+		{
+			$output_message .= "No systems have available updates\n";
+		}
+		else
+		{
+			$output_message .= "Updates available on these systems:\n";
+			$output_message .= $update_message;
+		}
 
 		if(!empty($reboot_message))
 		{
@@ -86,6 +95,7 @@ class Cron extends CI_Controller {
 			$output_message .= "These systems need rebooted:\n";
 			$output_message .= $reboot_message;
 		}
+
 		if(!empty($awol_message))
 		{
 			$output_message .= "\n";
