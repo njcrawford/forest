@@ -144,18 +144,19 @@ class Forest_DB extends CI_Model {
 		// walk through list of updates
 		foreach($updates as $this_update)
 		{
-			if($data_ok)
-			{
-				$query = "insert into updates
-					(system_id, package_name, version)
-					values
-					(" . $this->db->escape($system_id) . ", " . $this->db->escape($this_update->package_name) . ", " . $this->db->escape($this_update->version) .")";
-				$data_ok = $this->db->query($query);
-			}
-			else
+			if(!$data_ok)
 			{
 				break;
 			}
+			$query = "insert into updates
+				(system_id, package_name, version)
+				values
+				(" . 
+					$this->db->escape($system_id) . ", " . 
+					$this->db->escape($this_update->package_name) . ", " . 
+					$this->db->escape($this_update->version) . 
+				")";
+			$data_ok = $this->db->query($query);
 		}
 
 		$this->db->trans_complete();

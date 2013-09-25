@@ -30,7 +30,7 @@ class RPCv2 extends CI_Controller {
 
 		$system_id = $this->forest_db->get_system_id($system_name);
 
-		if(empty($system_id))
+		if($system_id == 0)
 		{
 			$system_id = $this->forest_db->add_system($system_name);
 			if($system_id == 0)
@@ -68,7 +68,7 @@ class RPCv2 extends CI_Controller {
 				{
 					$this_package->version = trim($versions[$i]);
 				}
-				$packages[$i] = $this_package;
+				$packages[] = $this_package;
 			}
 			$data_ok = $this->forest_db->save_updates($system_id, $packages);
 
@@ -76,7 +76,7 @@ class RPCv2 extends CI_Controller {
 			if($data_ok)
 			{
 				echo RPC_SUCCESS_TAG;
-				$update_data_ok = true;
+				$update_data_ok = TRUE;
 			}
 			else
 			{
