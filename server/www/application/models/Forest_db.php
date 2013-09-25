@@ -61,7 +61,7 @@ class Forest_DB extends CI_Model {
 		$retval = 0;
 		$query = "select id from systems where name = " . $this->db->escape($system_name);
 		$result = $this->db->query($query);
-		if($result)
+		if(!empty($result) && $result->num_rows() == 1)
 		{
 			$retval = $result->row()->id;
 		}
