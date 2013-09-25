@@ -110,7 +110,10 @@ class Cron extends CI_Controller {
 		$this->email->subject("Forest system report");
 		$this->email->message($output_message);
 
-		$this->email->send();
+		if(!$this->email->send())
+		{
+			die("Failed to send email!\n" . $this->email->print_debugger());
+		}
 	}
 
 }
