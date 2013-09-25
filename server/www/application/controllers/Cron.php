@@ -24,7 +24,7 @@ You can contact me at http://www.njcrawford.com/contact
 */
 defined('BASEPATH') or exit('No direct script access allowed');
 
-class Browser extends CI_Controller {
+class Cron extends CI_Controller {
 
 	public function index()
 	{
@@ -55,7 +55,7 @@ class Browser extends CI_Controller {
 			$output_message .= "Updates available on these systems:\n";
 			foreach($systems as $this_system)
 			{
-				if($this_system->last_checkin >= (time() - (60 * 60 * $awol_hours))
+				if($this_system->last_checkin >= (time() - (60 * 60 * $awol_hours)))
 				{
 					$updates = $this->forest_db->get_updates_for_system($this_system->id);
 					if(count($updates > 0))
@@ -70,13 +70,13 @@ class Browser extends CI_Controller {
 				}
 				elseif($this_system->ignore_awol == 0)
 				{
-					$awol_message = $this_system->name . " (" . $this_system->last_checkin . ")\n";
+					$awol_message .= $this_system->name . " (" . $this_system->last_checkin . ")\n";
 				}
 			}
 		}
 		else
 		{
-			$output_message .= "No systems need updates\n";
+			$output_message .= "No systems registered\n";
 		}
 		
 
@@ -90,7 +90,7 @@ class Browser extends CI_Controller {
 		{
 			$output_message .= "\n";
 			$output_message .= "These systems have not checked in for more than " . $awol_hours . " hours:\n";
-			$output_message .= $awol_message
+			$output_message .= $awol_message;
 		}
 
 
