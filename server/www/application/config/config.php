@@ -436,6 +436,7 @@ $config['proxy_ips'] = '';
 
 // Default setting for where to send emails
 $config['email_to'] = 'root';
+$config['email_from'] = 'forest@localhost';
 
 // now read in any changed values from the config file
 if(file_exists("/etc/forest-server/forest-server.conf"))
