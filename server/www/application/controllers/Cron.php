@@ -34,9 +34,9 @@ class Cron extends CI_Controller {
 	public function summary_email()
 	{
 		if(!$this->input->is_cli_request())
-	    {
-	        die("This function can only be run from CLI!");
-	    }
+		{
+			die("This function can only be run from CLI!");
+		}
 
 		$this->load->model('forest_db');
 		$this->load->library('email');
@@ -104,10 +104,10 @@ class Cron extends CI_Controller {
 		}
 
 
-		$this->email->from($this->config->item('email_from'), 'Forest Server');
-		$this->email->to($this->config->item('email_to'), 'Forest System Administrator');
+		$this->email->from($this->config->item('email_from'), $this->config->item('email_name_from'));
+		$this->email->to($this->config->item('email_to'), $this->config->item('email_name_to'));
 
-		$this->email->subject("Forest system report");
+		$this->email->subject($this->config->item('email_subject'));
 		$this->email->message($output_message);
 
 		if(!$this->email->send())
