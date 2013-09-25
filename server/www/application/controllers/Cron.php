@@ -58,7 +58,7 @@ class Cron extends CI_Controller {
 				if(strtotime($this_system->last_checkin) >= (time() - (60 * 60 * $awol_hours)))
 				{
 					$updates = $this->forest_db->get_updates_for_system($this_system->id);
-					if(count($updates > 0))
+					if(count($updates) > 0)
 					{
 						$update_message .= $this_system->name . " (" . count($updates) . ")\n";
 					}
