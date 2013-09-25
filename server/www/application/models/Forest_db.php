@@ -149,7 +149,7 @@ class Forest_DB extends CI_Model {
 				$query = "insert into updates
 					(system_id, package_name, version)
 					values
-					('" . $system_id . "', '" . $this_update['package_name'] . "', '" . $this_update['version'] ."' )";
+					(" . $this->db->escape($system_id) . ", " . $this->db->escape($this_update->package_name) . ", " . $this->db->escape($this_update->version) .")";
 				$data_ok = $this->db->query($query);
 			}
 			else
