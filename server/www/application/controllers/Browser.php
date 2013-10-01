@@ -450,7 +450,7 @@ class Browser extends CI_Controller {
 		}
 		elseif($this->config->item('login_source') == "ldap")
 		{
-			$ds=ldap_connect($forest_config['ldap_server']);
+			$ds=ldap_connect($this->config->item('ldap_server'));
 			if (!$ds)
 			{
 				die('Cannot connect to LDAP server.');
@@ -466,8 +466,7 @@ class Browser extends CI_Controller {
 				$lderr = ldap_error($ds);
 				if($lderr != "Invalid credentials")
 				{
-					echo "Error: " . ldap_error($ds) . "<br /><br />";
-					die('Check your user name and password and try again.');
+					die("Error: " . ldap_error($ds) . "<br /><br />" . 'Check your user name and password and try again.');
 				}
 			}
 			elseif(!empty($ldap_allowed_users))
