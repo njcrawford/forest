@@ -5,7 +5,8 @@ Forest is a system to manage updates on mixed OS networks.
 
 The client gathers information about available updates and reports them to the
 server over http(s). Updates can then be accepted via a web interface on the
-server. The system can also report that a client needs to be rebooted.
+server. The system can also report that a client needs to be rebooted. For more
+information, visit [http://www.njcrawford.com/programs/forest/](http://www.njcrawford.com/programs/forest/).
 
 Both client and server depend on cron to run daily reports. The server depends
 on Codeigniter 3.0. Codeigniter can be installed anywhere on the server, just
