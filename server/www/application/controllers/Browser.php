@@ -211,12 +211,16 @@ class Browser extends CI_Controller {
 	{
 		$this->_require_login();
 
-		$page_data['action'] = "Clear updates from system " . $system_id . "?";
+		$this->load->model('forest_db');
+
+		$system_info = $this->forest_db->get_system_info($system_id);
+
+		$page_data['action'] = "clear available updates from system '" . $system_info->name . "'?";
 		$page_data['system_id'] = $system_id;
 		$page_data['post_url'] = site_url("browser/clear_updates");
 		$page_data['back_url'] = site_url("browser/view_system/" . $system_id);
 
-		$header_data['page_title'] = "Clear updates from system " . $system_id . "?";
+		$header_data['page_title'] = "Clear available updates from " . $system_info->name . "?";
 		$this->load->view('header', $header_data);
 		$this->load->view('confirm', $page_data);
 		$this->load->view('footer');
@@ -238,12 +242,16 @@ class Browser extends CI_Controller {
 	{
 		$this->_require_login();
 
-		$page_data['action'] = "Delete system " . $system_id . "?";
+		$this->load->model('forest_db');
+
+		$system_info = $this->forest_db->get_system_info($system_id);
+
+		$page_data['action'] = "delete system '" . $system_info->name . "'?";
 		$page_data['system_id'] = $system_id;
 		$page_data['post_url'] = site_url("browser/delete_system");
 		$page_data['back_url'] = site_url("browser/view_system/" . $system_id);
 
-		$header_data['page_title'] = "Delete system " . $system_id . "?";
+		$header_data['page_title'] = "Delete " . $system_info->name . "?";
 		$this->load->view('header', $header_data);
 		$this->load->view('confirm', $page_data);
 		$this->load->view('footer');
