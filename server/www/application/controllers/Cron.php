@@ -41,8 +41,7 @@ class Cron extends CI_Controller {
 		$this->load->model('forest_db');
 		$this->load->library('email');
 
-		$output_message = "";
-		$output_message .= $this->config->item('base_url') . "\n";
+		$output_message = base_url() . "\n";
 		$output_message .= "Forest version " . $this->config->item('forest_version') . "\n\n";
 
 		$update_message = "";

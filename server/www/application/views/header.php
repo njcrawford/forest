@@ -28,10 +28,11 @@ if(!isset($page_title))
 	$page_title = "(Page Title)";
 }
 ?>
+<!DOCTYPE HTML>
 <html>
 <head>
 <title><?= $page_title ?> - Forest</title>
-<link rel="stylesheet" type="text/css" href="<?= $this->config->item('base_url') . 'css/forest.css' ?>" />
+<link rel="stylesheet" type="text/css" href="<?= base_url('css/forest.css') ?>" />
 </head>
 <body>
-<script language="javascript" src="<?= $this->config->item('base_url') . 'jquery/jquery-1.6.1.min.js' ?>"></script>
+<script language="javascript" src="<?= base_url('jquery/jquery-1.6.1.min.js') ?>"></script>
