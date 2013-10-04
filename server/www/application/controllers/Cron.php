@@ -52,14 +52,20 @@ class Cron extends CI_Controller {
 		$systems = $this->forest_db->get_systems();
 		if(count($systems) > 0)
 		{
+			foreach($systems as &$this_system_ref)
+			{
+				$this_system_ref->updates = $this->forest_db->get_updates_for_system($this_system_ref->id);
+			}
+
+			usort($systems, array($this->forest_db, "sort_by_updates_helper");
+
 			foreach($systems as $this_system)
 			{
 				if(strtotime($this_system->last_checkin) >= (time() - (60 * 60 * $awol_hours)))
 				{
-					$updates = $this->forest_db->get_updates_for_system($this_system->id);
-					if(count($updates) > 0)
+					if(count($this_system->updates) > 0)
 					{
-						$update_message .= $this_system->name . " (" . count($updates) . ")\n";
+						$update_message .= $this_system->name . " (" . count($this_system->updates) . ")\n";
 					}
 
 					if($this_system->reboot_required == 1)

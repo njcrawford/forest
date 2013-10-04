@@ -191,6 +191,24 @@ class Forest_DB extends CI_Model {
 			return 36;
 		}
 	}
+
+	// Used with usort() to sort systems with the most updates to the start
+	// of the array.
+	function sort_by_updates_helper($a, $b)
+	{
+		if(count($a->updates) < count($b->updates))
+		{
+			return 1;
+		}
+		elseif(count($a->updates) > count($b->updates))
+		{
+			return -1;
+		}
+		else
+		{
+			return 0;
+		}
+	}
 }
 
 /* End of forest_db.php */

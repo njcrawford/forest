@@ -104,6 +104,9 @@ class Browser extends CI_Controller {
 				$this_system->awol_class = "";
 			}
 		}
+
+		usort($data['systems'], array($this->forest_db, "sort_by_updates_helper");
+
 		$header_data['page_title'] = "Summary";
 		$this->load->view('header', $header_data);
 		$this->load->view('overview', $data);
