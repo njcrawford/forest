@@ -54,6 +54,7 @@ using namespace std;
 #include "config.h"
 
 #include "forest-client.h"
+#include "helpers.h"
 
 // package managers
 #include "aptcli.h"
@@ -70,11 +71,9 @@ using namespace std;
 #define STRINGIFY(x) #x
 #define TOSTRING(x) STRINGIFY(x)
 
-#define RPC_VERSION 2
-#define BUFFER_SIZE 1024
-
 #include "exitcodes.h"
 #include "verboselevels.h"
+#include "defines.h"
 
 // callback function for curl
 size_t write_data(void *buffer, size_t size, size_t nmemb, void *userp);
@@ -604,62 +603,6 @@ void ForestClient::getHostname()
 #endif
 
 	myHostname = temp;
-}
-
-// Works like system(), but returns lines of stdout output in outList and the 
-// command's return value in returnVal.
-#ifndef _WIN32
-void mySystem(string * command, vector<string> & outList, int * returnVal)
-{
-	FILE * pipe;
-	char line[BUFFER_SIZE];
-	char * response = NULL;
-	//int lineLen = 0;
-	char * newlinePtr = NULL;
-
-	line[0] = '\0';
-
-	pipe = popen(command->c_str(), "r");
-
-	do
-	{
-		// read a line
-		response = fgets(line, BUFFER_SIZE, pipe);
-
-		// The last character that fgets reads may be a newline, but we
-		// don't want newlines in our list, so remove it.
-		newlinePtr = strchr(line, '\n');
-		if(newlinePtr != NULL)
-		{
-			*newlinePtr = '\0';
-		}
-
-		// add this line to outList
-		outList.push_back(line);
-		
-	} while (response != NULL);
-	int pcloseVal = pclose(pipe);
-	*returnVal = WEXITSTATUS(pcloseVal);
-}
-#endif
-
-string flattenStringList(vector<string> & list, char delimiter)
-{
-	string retval = "";
-	bool first = true;
-	for(size_t i = 0; i < list.size(); i++)
-	{
-		if(first)
-		{
-			first = false;
-		}
-		else
-		{
-			retval += delimiter;
-		}
-		retval += list[i];
-	}
-	return retval;
 }
 
 // CURL callback

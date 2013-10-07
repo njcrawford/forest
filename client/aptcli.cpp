@@ -6,6 +6,31 @@
 
 #include "aptcli.h"
 #include "forest-client.h"
+#include "helpers.h"
+
+void AptCli::parseUpdates(vector<updateInfo> & outList, vector<string> & input)
+{
+	for(size_t i = 0; i < input.size(); i++)
+	{
+		// example of one output line
+		// Inst libpam-modules [1.1.1-2ubuntu5] (1.1.1-2ubuntu5.3 Ubuntu:10.04/lucid-updates)
+
+		// grep ^Inst | cut -d " " -f 2
+		if(input[i].substr(0, 4) == "Inst")
+		{
+			string::size_type pos = input[i].find(' ', 0);
+			string::size_type len = input[i].find(' ', pos + 1) - pos;
+			updateInfo temp;
+			temp.name = input[i].substr(pos, len);
+			pos = input[i].find('[', 0);
+			pos = input[i].find(']', pos + 1);
+			pos = input[i].find('(', pos + 1);
+			len = input[i].find(' ', pos + 1) - pos;
+			temp.version = input[i].substr(pos + 1, len - 1);
+			outList.push_back(temp);
+		}
+	}
+}
 
 void AptCli::getAvailableUpdates(vector<updateInfo> & outList)
 {
@@ -19,26 +44,7 @@ void AptCli::getAvailableUpdates(vector<updateInfo> & outList)
 
 	if(commandRetval == 0)
 	{
-		for(size_t i = 0; i < commandOutput.size(); i++)
-		{
-			// example of one output line
-			// Inst libpam-modules [1.1.1-2ubuntu5] (1.1.1-2ubuntu5.3 Ubuntu:10.04/lucid-updates)
-
-			// grep ^Inst | cut -d " " -f 2
-			if(commandOutput[i].substr(0, 4) == "Inst")
-			{
-				string::size_type pos = commandOutput[i].find(' ', 0);
-				string::size_type len = commandOutput[i].find(' ', pos + 1) - pos;
-				updateInfo temp;
-				temp.name = commandOutput[i].substr(pos, len);
-				pos = commandOutput[i].find('[', 0);
-				pos = commandOutput[i].find(']', pos + 1);
-				pos = commandOutput[i].find('(', pos + 1);
-				len = commandOutput[i].find(' ', pos + 1) - pos;
-				temp.version = commandOutput[i].substr(pos + 1, len - 1);
-				outList.push_back(temp);
-			}
-		}
+		parseUpdates(outList, commandOutput);
 	}
 	else
 	{

@@ -5,7 +5,29 @@
 #include <iostream>
 
 #include "MacSU.h"
-#include "forest-client.h"
+#include "helpers.h"
+
+void MacSU::parseUpdates(vector<updateInfo> & outList, vector<string> & input)
+{
+	for(size_t i = 0; i < input.size(); i++)
+	{
+		// example of one update output
+		//    * iTunesX-10.4.1
+		//	iTunes (10.4.1), 90665K [recommended]
+
+		// use lines with update name and version mixed together
+		if(input[i].find('*') != string::npos)
+		{
+			string::size_type pos = input[i].find('*') + 2;
+			//string::size_type len = input[i].find('-', pos + 1) - pos;
+			updateInfo temp;
+			temp.name = input[i].substr(pos);
+			pos = input[i].find('-');
+			temp.version = input[i].substr(pos + 1);
+			outList.push_back(temp);
+		}
+	}
+}
 
 void MacSU::getAvailableUpdates(vector<updateInfo> & outList)
 {
@@ -19,24 +41,7 @@ void MacSU::getAvailableUpdates(vector<updateInfo> & outList)
 
 	if(commandRetval == 0)
 	{
-		for(size_t i = 0; i < commandOutput.size(); i++)
-		{
-			// example of one update output
-			//    * iTunesX-10.4.1
-			//	iTunes (10.4.1), 90665K [recommended]
-
-			// use lines with update name and version mixed together
-			if(commandOutput[i].find('*') != string::npos)
-			{
-				string::size_type pos = commandOutput[i].find('*') + 2;
-				//string::size_type len = commandOutput[i].find('-', pos + 1) - pos;
-				updateInfo temp;
-				temp.name = commandOutput[i].substr(pos);
-				pos = commandOutput[i].find('-');
-				temp.version = commandOutput[i].substr(pos + 1);
-				outList.push_back(temp);
-			}
-		}
+		parseUpdates(outList, commandOutput);
 	}
 	else
 	{

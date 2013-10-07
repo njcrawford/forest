@@ -11,6 +11,7 @@ class AptCli : public PackageManager
 {
 public:
     void getAvailableUpdates(vector<updateInfo> & outlist);
+	void parseUpdates(vector<updateInfo> & outlist, vector<string> & input);
     void applyUpdates(vector<string> & list);
     bool canApplyUpdates();
 };

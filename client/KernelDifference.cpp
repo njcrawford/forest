@@ -3,7 +3,7 @@
 #include <vector>
 
 #include "KernelDifference.h"
-#include "forest-client.h"
+#include "helpers.h"
 
 using namespace std;
 
