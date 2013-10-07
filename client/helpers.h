@@ -21,13 +21,6 @@ inline std::string to_string (const T& t)
 	return ss.str();
 }
 
-inline string trim_string(const string& s)
-{
-	std::stringstream trimmer;
-	trimmer << s;
-	string retval;
-	trimmer >> retval;
-	return retval;
-}
+string trim_string(const string& s);
 
 #endif

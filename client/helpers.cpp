@@ -61,3 +61,48 @@ string flattenStringList(vector<string> & list, char delimiter)
 	}
 	return retval;
 }
+
+string trim_string(const string& s)
+{
+	int start = -1;
+	int end = -1;
+	// Find the laft whitespace
+	for(size_t i = 0; i < s.size(); i++)
+	{
+		if(!isspace(s[i]) && start == -1)
+		{
+			start = i;
+			break;
+		}
+	}
+	// Find the right whitespace
+	for(size_t i = s.size() - 1; i >= 0; i--)
+	{
+		if(!isspace(s[i]) && end == -1)
+		{
+			end = i;
+			break;
+		}
+	}
+
+	// No whitespace
+	if(start == -1 && end == -1)
+	{
+		return s;
+	}
+	// Whitespace at end
+	else if(start == -1 && end != -1)
+	{
+		return s.substr(0, (end + 1));
+	}
+	// Whitespace at beginning
+	else if(start != -1 && end == -1)
+	{
+		return s.substr(start, string::npos);
+	}
+	// Whitespace at both beginning and end
+	else
+	{
+		return s.substr(start, (end - start + 1));
+	}
+}
