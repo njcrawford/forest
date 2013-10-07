@@ -7,24 +7,19 @@
 
 void Yum::parseUpdates(vector<updateInfo> & outList, vector<string> & input)
 {
-	for(int line = input.size() - 1; line >= 0; line--)
+	for(size_t line = 0; line < input.size(); line++)
 	{
-		//filter out empty lines
-		//updates=`echo "${updates}" | grep -v " \* \|^$"`
-		//filter out wait messages when other instances of yum are running
-		//updates=`echo "${updates}" | grep -v "^Another app\|^Existing lock"`
+		// Trim all lines
+		input[line] = trim_string(input[line]);
 
-		//filter out HTTP errors when a mirror is down
-		//updates=`echo "${updates}" | grep -v "HTTP Error\|^Trying other mirror.$"`
-		if(trim_string(input[line]).size() == 0 || // empty string, of no use to us
+		if(input[line].size() == 0 || // empty string, of no use to us
 			input[line].substr(0, 11) == "Another app" || // warning that another app already has the yum lock
-			input[line].substr(0, 13) == "Existing lock" || // usually follows previous line
+			input[line].substr(0, 13) == "Existing lock" || // usually follows Another app line
 			input[line].find("HTTP Error", 0) != string::npos || // ignore any kind of http error
-			input[line] == "Trying other mirror." // usually follows previous line
+			input[line] == "Trying other mirror." // usually follows HTTP error line
 		)
 		{
-			// remove this line and don't process it any further
-			input.erase(input.begin() + line);
+			// Don't process this line any further
 			continue;
 		}
 
@@ -40,7 +35,6 @@ void Yum::parseUpdates(vector<updateInfo> & outList, vector<string> & input)
 		if(pos != string::npos)
 		{
 			//keep everything up to the first space (package name and arch)
-			//updates=`echo "${updates}" | cut -d " " -f 1`
 			temp.name = input[line].substr(0, pos);
 		}
 
@@ -48,7 +42,6 @@ void Yum::parseUpdates(vector<updateInfo> & outList, vector<string> & input)
 		if(pos != string::npos)
 		{
 			//remove the architecture (.i386, .x86_64, etc)
-			//updates=`echo "${updates}" | sed 's/\(.*\)\..*/\1/'`
 			temp.name = temp.name.substr(0, pos);
 		}
 
@@ -85,19 +78,6 @@ void Yum::parseUpdates(vector<updateInfo> & outList, vector<string> & input)
 		}
 
 		outList.push_back(temp);
-	}
-	for(int line = input.size() - 1; line >= 0; line--)
-	{
-		//remove duplicates from the list (produced by removing architecture)
-		//the list may need to be sorted before running uniq
-		//updates=`echo "${updates}" | uniq`
-		for(int dupIndex = line - 1; dupIndex >= 0; dupIndex--)
-		{
-			if(input[line] == input[dupIndex])
-			{
-				input.erase(input.begin() + line);
-			}
-		}
 	}
 }
 
