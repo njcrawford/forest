@@ -1,3 +1,4 @@
+<a href="<?= site_url('admin') ?>">Admin</a><br>
 <center>
 <h3>Updates available by system</h3>
 <table>

@@ -110,10 +110,10 @@ define('EXIT__AUTO_MIN', 9); // lowest automatically-assigned error code
 define('EXIT__AUTO_MAX', 125); // highest automatically-assigned error code
 
 // Forest specific defines
-define("RPC_VERSION", 2);
 define("RPC_ERROR_TAG", "error: ");
 define("RPC_SUCCESS_TAG", "data_ok: ");
- 
+define("DB_VERSION", 4);
+
 
 /* End of file constants.php */
 /* Location: ./application/config/constants.php */

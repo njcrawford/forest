@@ -183,13 +183,18 @@ class Forest_DB extends CI_Model {
 		return $this->db->query($query);
 	}
 
+	// Returns the value of one setting
 	function get_setting($setting_name)
 	{
-		//TODO: Finish implementing this stub function
-		if($setting_name == 'absent_hours')
-		{
-			return 36;
-		}
+		$query = $this->db->query("select * from settings where name = " . $this->db->escape($settings_name));
+		return $query->row()->value;
+	}
+
+	// Returns all settings
+	function get_all_settings()
+	{
+		$query = $this->db->query("select * from settings");
+		return $query->result();
 	}
 
 	// Used with usort() to sort systems with the most updates to the start
