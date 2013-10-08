@@ -19,7 +19,7 @@
 		<td><?= $this_system->accepted_updates ?></td>
 		<td><?= $this_system->locked_updates ?></td>
 		<td <?= $this_system->reboot_required_class ?>><?= $this_system->reboot_required_text ?></td>
-		<td <?= $this_system->awol_class ?>><?= $this_system->last_checkin ?></td>
+		<td <?= $this_system->absent_class ?>><?= $this_system->last_checkin ?></td>
 	</tr>
 <?php } ?>
 </table>

@@ -50,9 +50,9 @@ class Forest_DB extends CI_Model {
 		return $result->row();
 	}
 
-	function save_system_info($system_id, $ignore_awol, $allow_reboot)
+	function save_system_info($system_id, $report_absent, $allow_reboot)
 	{
-		$query = "update systems set ignore_awol = " . $this->db->escape($ignore_awol) . ", allow_reboot = " . $this->db->escape($allow_reboot) . " where id = " . $this->db->escape($system_id);
+		$query = "update systems set report_absent = " . $this->db->escape($report_absent) . ", allow_reboot = " . $this->db->escape($allow_reboot) . " where id = " . $this->db->escape($system_id);
 		return $this->db->query($query);
 	}
 
@@ -186,7 +186,7 @@ class Forest_DB extends CI_Model {
 	function get_setting($setting_name)
 	{
 		//TODO: Finish implementing this stub function
-		if($setting_name == 'awol_hours')
+		if($setting_name == 'absent_hours')
 		{
 			return 36;
 		}

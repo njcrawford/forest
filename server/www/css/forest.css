@@ -42,8 +42,8 @@ a, a:link, a:hover, a:visited, a:active {
 	background-color: yellow;
 }
 
-/* Make AWOL systems stand out */
-.awol {
+/* Make absent systems stand out */
+.absent {
 	background-color: yellow;
 }
 

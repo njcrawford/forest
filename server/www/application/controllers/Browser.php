@@ -93,15 +93,18 @@ class Browser extends CI_Controller {
 				$this_system->reboot_required_text = "No";
 			}
 			
-			// use CSS class "awal" for display of check-in time of awal systems
-			$awol_hours = $this->forest_db->get_setting('awol_hours');
-			if(strtotime("-" . $awol_hours . " hours") > strtotime($this_system->last_checkin))
+			if($this_system->report_absent == 1)
 			{
-				$this_system->awol_class = "class=\"awol\"";
-			}
-			else
-			{
-				$this_system->awol_class = "";
+				// use CSS class "absent" for display of check-in time of awal systems
+				$absent_hours = $this->forest_db->get_setting('absent_hours');
+				if(strtotime("-" . $absent_hours . " hours") > strtotime($this_system->last_checkin))
+				{
+					$this_system->absent_class = "class=\"absent\"";
+				}
+				else
+				{
+					$this_system->absent_class = "";
+				}
 			}
 		}
 
@@ -370,18 +373,18 @@ class Browser extends CI_Controller {
 		$this->load->model('forest_db');
 
 		$system_id = $this->input->post('system_id');
-		$ignore_awol = $this->input->post('ignore_awol');
+		$report_absent = $this->input->post('report_absent');
 		$allow_reboot = $this->input->post('allow_reboot');
-		if($ignore_awol != "1")
+		if($report_absent != "1")
 		{
-			$ignore_awol = "0";
+			$report_absent = "0";
 		}
 		if($allow_reboot != "1")
 		{
 			$allow_reboot = "0";
 		}
 
-		$this->forest_db->save_system_info($system_id, $ignore_awol, $allow_reboot);
+		$this->forest_db->save_system_info($system_id, $report_absent, $allow_reboot);
 		redirect("browser/view_system/" . $system_id);
 	}
 	

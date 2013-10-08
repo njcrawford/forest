@@ -46,8 +46,8 @@ class Cron extends CI_Controller {
 
 		$update_message = "";
 		$reboot_message = "";
-		$awol_message = "";
-		$awol_hours = $this->forest_db->get_setting('awol_hours');
+		$absent_message = "";
+		$absent_hours = $this->forest_db->get_setting('absent_hours');
 
 		$systems = $this->forest_db->get_systems();
 		if(count($systems) > 0)
@@ -61,7 +61,7 @@ class Cron extends CI_Controller {
 
 			foreach($systems as $this_system)
 			{
-				if(strtotime($this_system->last_checkin) >= (time() - (60 * 60 * $awol_hours)))
+				if(strtotime($this_system->last_checkin) >= (time() - (60 * 60 * $absent_hours)))
 				{
 					if(count($this_system->updates) > 0)
 					{
@@ -73,9 +73,9 @@ class Cron extends CI_Controller {
 						$reboot_message .= $this_system->name . "\n";
 					}
 				}
-				elseif($this_system->ignore_awol == 0)
+				elseif($this_system->report_absent == 1)
 				{
-					$awol_message .= $this_system->name . " (" . $this_system->last_checkin . ")\n";
+					$absent_message .= $this_system->name . " (" . $this_system->last_checkin . ")\n";
 				}
 			}
 		}
@@ -101,11 +101,11 @@ class Cron extends CI_Controller {
 			$output_message .= $reboot_message;
 		}
 
-		if(!empty($awol_message))
+		if(!empty($absent_message))
 		{
 			$output_message .= "\n";
-			$output_message .= "These systems have not checked in for more than " . $awol_hours . " hours:\n";
-			$output_message .= $awol_message;
+			$output_message .= "These systems have not checked in for more than " . $absent_hours . " hours:\n";
+			$output_message .= $absent_message;
 		}
 
 
