@@ -11,12 +11,13 @@ whether the client can apply updates
 whether the client can apply a reboot
 whether the system needs a reboot (yes, no or unknown)
 whether the client attempted to apply a reboot
+whether last attempt to apply updates succeeded (yes or no, maybe a transcript if not successful?)
 list of available updates (if any)
 for each available update:
-name of the package or component (or update description for Windows)
-version number (if available)
-unique ID for update (the client will expect this when returning accepted updates)
-whether the update will require a reboot (yes, no or unknown)
+	name of the package or component (or update description for Windows) (could be the same as the unique ID)
+	version number (if available)
+	unique ID for update (the client will expect this when returning accepted updates)
+	whether the update will require a reboot (yes, no or unknown)
 
 3. Needs to include the following pieces of data from server to client:
 RPC server token
@@ -24,5 +25,5 @@ RPC client token
 whether a reboot was requested
 list of accepted updates (if any)
 for each accepted update:
-unique ID for update
+	unique ID for update
 
