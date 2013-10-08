@@ -24,6 +24,6 @@ You can contact me at http://www.njcrawford.com/contact
 */
 ?>
 <br />
-<div class="footer-version">Forest <?= $this->config->item('forest_version') ?></div>
+<div class="footer-version">Forest <?= FOREST_VERSION ?></div>
 </body>
 </html>

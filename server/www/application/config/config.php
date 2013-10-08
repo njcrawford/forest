@@ -447,9 +447,6 @@ if(file_exists("/etc/forest-server/forest-server.conf"))
 	include "/etc/forest-server/forest-server.conf";
 }
 
-// forest version
-include "version.php";
-
 
 /* End of file config.php */
 /* Location: ./application/config/config.php */

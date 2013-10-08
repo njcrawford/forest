@@ -35,7 +35,7 @@ REM PHP version
 echo ^<?php > %php_filename%
 echo // %Message1% >> %php_filename%
 echo // %Message2% >> %php_filename%
-echo $config['forest_version'] = "%Version%"; >> %php_filename%
+echo define('FOREST_VERSION', '%Version%'); >> %php_filename%
 
 REM C# version
 echo // %Message1% > %cs_filename%

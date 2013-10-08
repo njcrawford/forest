@@ -39,7 +39,7 @@ echo "VALUE \"ProductVersion\", \"${version}.0\" " >> ${rc2_filename}
 echo "<?php" > ${php_filename}
 echo "// ${message_1}" >> ${php_filename}
 echo "// ${message_2}" >> ${php_filename}
-echo "\$config['forest_version'] = \"${version}\"; " >> ${php_filename}
+echo "define('FOREST_VERSION', '${version}'); " >> ${php_filename}
 
 # C# version
 echo "// ${message_1}" > ${cs_filename}
