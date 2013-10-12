@@ -15,6 +15,11 @@ void AptCli::parseUpdates(vector<updateInfo> & outList, vector<string> & input)
 		// example of one output line
 		// Inst libpam-modules [1.1.1-2ubuntu5] (1.1.1-2ubuntu5.3 Ubuntu:10.04/lucid-updates)
 
+		// example of a line without an existing version number
+		// It appears that we might be better off ignoring these lines, at least when it involves the kernel.
+		// Directly installing these packages means they won't be marked for autoremove later.
+		// Inst linux-image-3.2.0-54-virtual (3.2.0-54.82 Ubuntu:12.04/precise-updates [amd64])
+
 		// grep ^Inst | cut -d " " -f 2
 		if(input[i].substr(0, 4) == "Inst")
 		{
@@ -22,12 +27,14 @@ void AptCli::parseUpdates(vector<updateInfo> & outList, vector<string> & input)
 			string::size_type len = input[i].find(' ', pos + 1) - pos;
 			updateInfo temp;
 			temp.name = input[i].substr(pos, len);
-			pos = input[i].find('[', 0);
-			pos = input[i].find(']', pos + 1);
-			pos = input[i].find('(', pos + 1);
-			len = input[i].find(' ', pos + 1) - pos;
-			temp.version = input[i].substr(pos + 1, len - 1);
-			outList.push_back(temp);
+			// Ignore packages that don't have an existing version number
+			if(input[i][pos + 1] == '[')
+			{
+				pos = input[i].find('(', pos + 1);
+				len = input[i].find(' ', pos + 1) - pos;
+				temp.version = input[i].substr(pos + 1, len - 1);
+				outList.push_back(temp);
+			}
 		}
 	}
 }
