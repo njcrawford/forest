@@ -3,3 +3,11 @@
 *.sdf
 *.opensdf
 */Debug
+ipch
+Win32/Release/*.obj
+Win32/Release/*.tlog
+Win32/Release/*.log
+Win32/Release/*.pdb
+Win32/Release/*.res
+Win32/Release/*.manifest
+Win32/Release/*.lastbuildstate
