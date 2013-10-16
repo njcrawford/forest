@@ -277,7 +277,7 @@ class Browser extends CI_Controller {
 
 		$system_id = $this->input->post('system_id');
 		$state = $this->input->post('state');
-		if($state == "true")
+		if($state == '1')
 		{
 			$state = '1';
 		}
