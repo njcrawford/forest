@@ -12,7 +12,7 @@ function AcceptButton(system_id, package_name, accepted_state, update_div) {
 <a href="<?= site_url('browser/edit_system_info/' . $system_info->id) ?>">Edit system</a><br />
 Name: <?= $system_info->name ?><br />
 Updates: <?= count($updates) ?><br />
-Reboot Needed: <?= ($system_info->reboot_required == 1) ? "Yes" : "No" ?><br>
+Reboot Needed: <?= (empty($system_info->reboot_required)) ? "Unknown" : ($system_info->reboot_required == 1) ? "Yes" : "No" ?><br>
 Reboot Accepted: <?= ($system_info->reboot_accepted == 1) ? "Yes" : "No" ?>
 <?php if($system_info->can_apply_reboot == 1) { ?>
 	<form action="<?= site_url('browser/mark_accepted_reboot') ?>" method="post">
