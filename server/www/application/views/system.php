@@ -25,8 +25,8 @@ Reboot Accepted: <?= ($system_info->reboot_accepted == 1) ? "Yes" : "No" ?>
 Last Check-in: <?= $system_info->last_checkin ?><br />
 Client capabilities:
 <ul>
-	<li>can_apply_updates: <?= $system_info->can_apply_updates ?></li>
-	<li>can_apply_reboot: <?= $system_info->can_apply_reboot ?></li>
+	<li>can_apply_updates: <?= ($system_info->can_apply_updates == 1) ? "Yes" : "No" ?></li>
+	<li>can_apply_reboot: <?= ($system_info->can_apply_reboot == 1) ? "Yes" : "No" ?></li>
 </ul>
 <a href="<?= site_url('browser/confirm_delete_system/' . $system_info->id) ?>">Delete System</a><br />
 <?php if(count($updates) > 0) { ?>
