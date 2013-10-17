@@ -121,7 +121,7 @@ class RPCv2 extends CI_Controller {
 			$this->forest_db->save_reboot_accepted($system_id, FALSE);
 		}
 		// Collect reported client capabilities, if present
-		if(!empty($client_can_apply_updates) && $client_can_apply_updates == "true")
+		if($client_can_apply_updates == "true")
 		{
 			$client_can_apply_updates = TRUE;
 		}
@@ -129,7 +129,7 @@ class RPCv2 extends CI_Controller {
 		{
 			$client_can_apply_updates = FALSE;
 		}
-		if(!empty($client_can_apply_reboot) && $client_can_apply_reboot == "true")
+		if($client_can_apply_reboot == "true")
 		{
 			$client_can_apply_reboot = TRUE;
 		}
@@ -137,7 +137,7 @@ class RPCv2 extends CI_Controller {
 		{
 			$client_can_apply_reboot = FALSE;
 		}
-		$this->forest_db->save_client_capabilities($system_id, $client_can_apply_updates, $client_can_apply_reboot);
+		$this->forest_db->save_client_capabilities($system_id, $client_can_apply_updates, $client_can_apply_reboot, "", "");
 	}
 
 	function get_accepted()

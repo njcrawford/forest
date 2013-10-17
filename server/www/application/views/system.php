@@ -12,7 +12,7 @@ function AcceptButton(system_id, package_name, accepted_state, update_div) {
 <a href="<?= site_url('browser/edit_system_info/' . $system_info->id) ?>">Edit system</a><br />
 Name: <?= $system_info->name ?><br />
 Updates: <?= count($updates) ?><br />
-Reboot Needed: <?= (empty($system_info->reboot_required)) ? "Unknown" : ($system_info->reboot_required == 1) ? "Yes" : "No" ?><br>
+Reboot Needed: <?= ($system_info->reboot_required == 1) ? "Yes" : "No" ?><br>
 Reboot Accepted: <?= ($system_info->reboot_accepted == 1) ? "Yes" : "No" ?>
 <?php if($system_info->can_apply_reboot == 1) { ?>
 	<form action="<?= site_url('browser/mark_accepted_reboot') ?>" method="post">
@@ -27,6 +27,8 @@ Client capabilities:
 <ul>
 	<li>can_apply_updates: <?= ($system_info->can_apply_updates == 1) ? "Yes" : "No" ?></li>
 	<li>can_apply_reboot: <?= ($system_info->can_apply_reboot == 1) ? "Yes" : "No" ?></li>
+	<li>client_version: <?= (empty($system_info->client_version)) ? "Unknown" : $system_info->client_version ?></li>
+	<li>os_version: <?= (empty($system_info->os_version)) ? "Unknown" : $system_info->os_version ?></li>
 </ul>
 <a href="<?= site_url('browser/confirm_delete_system/' . $system_info->id) ?>">Delete System</a><br />
 <?php if(count($updates) > 0) { ?>

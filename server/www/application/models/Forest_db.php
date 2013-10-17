@@ -177,9 +177,14 @@ class Forest_DB extends CI_Model {
 		return $this->db->query($query);
 	}
 
-	function save_client_capabilities($system_id, $can_apply_updates, $can_apply_reboot)
+	function save_client_capabilities($system_id, $can_apply_updates, $can_apply_reboot, $client_version, $os_version)
 	{
-		$query = "update systems set can_apply_updates = " . $this->db->escape($can_apply_updates) . ", can_apply_reboot = " . $this->db->escape($can_apply_reboot) . " where id = " . $this->db->escape($system_id);
+		$query = "update systems set
+			can_apply_updates = " . $this->db->escape($can_apply_updates) . ",
+			can_apply_reboot = " . $this->db->escape($can_apply_reboot) . ",
+			client_version = " . $this->db->escape($client_version) . ",
+			os_version = " . $this->db->escape($os_version) . "
+			where id = " . $this->db->escape($system_id);
 		return $this->db->query($query);
 	}
 
