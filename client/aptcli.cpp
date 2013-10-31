@@ -67,6 +67,9 @@ void AptCli::applyUpdates(vector<string> & list)
 	int commandResponse;
 	vector<string> commandOutput;	
 
+	// TODO: May be able to use something like apt-get --only-upgrade instead of
+	// aptitude to remove extra dependency. Need to check if --only-upgrade flag
+	// is supported on older releases.
 	command = "aptitude -y -o DPkg::Options::\\=--force-confold safe-upgrade ";
 	//cerr << command << endl;
 	command += flattenStringList(list, ' ');
