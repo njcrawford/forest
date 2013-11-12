@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+  
+  <?include $(sys.CURRENTDIR)Version.wxi ?>
+  
+	<Product Id="$(var.ProductUuid)" Name="Forest Client" Language="1033" Version="$(var.ProductVersion)" Manufacturer="Nathan Crawford" UpgradeCode="a55bfa54-79c0-419f-b7e4-06646004364a">
+		<Package InstallerVersion="300" Compressed="yes" />
+
+		<Media Id="1" Cabinet="media1.cab" EmbedCab="yes" />
+
+		<Directory Id="TARGETDIR" Name="SourceDir">
+			<Directory Id="ProgramFilesFolder">
+				<Directory Id="INSTALLLOCATION" Name="forest-client">
+				</Directory>
+			</Directory>
+      <Directory Id="ProgramMenuFolder">
+        <Directory Id="ApplicationProgramsFolder" Name="Forest Client"/>
+      </Directory>
+		</Directory>
+
+    <DirectoryRef Id="ApplicationProgramsFolder">
+      <Component Id="ApplicationShortcut" Guid="C52AAF47-57E8-4F07-A509-6CA90E7206D7">
+        <Shortcut Id="ApplicationStartMenuShortcut"
+          Name="Configuration"
+          Description="Forest client configuration"
+          Target="[INSTALLLOCATION]ConfigurationGUI.exe"
+          WorkingDirectory="INSTALLLOCATION"/>
+        <RemoveFolder Id="ApplicationProgramsFolder" On="uninstall"/>
+        <RegistryValue Root="HKCU" Key="Software\Microsoft\Forest Client" Name="installed" Type="integer" Value="1" KeyPath="yes"/>
+      </Component>
+    </DirectoryRef>
+
+    <DirectoryRef Id="INSTALLLOCATION">
+      <Component Id="ProductComponent" Guid="aed19453-771e-4985-9a9f-fbf7fb4ffb8a">
+        <!-- Forest client and support files -->
+        <File Id="ForestClientExe" Name="forest-client.exe" DiskId="1" Source="../Win32/Release/forest-client.exe" Vital="yes"></File>
+        <File Id="LibCurlDll" Name="libcurl.dll" DiskId="1" Source="../curl-source/builds/libcurl-vc10-x86-release-dll-ipv6-sspi-spnego-winssl/bin/libcurl.dll" Vital="yes"></File>
+        <!-- <File Id="LibEay32Dll" Name="libeay32.dll" DiskId="1" Source="../../cURL/libeay32.dll" Vital="yes"></File>
+        <File Id="OpenLdapDll" Name="openldap.dll" DiskId="1" Source="../../cURL/openldap.dll" Vital="yes"></File>
+        <File Id="SslEay32Dll" Name="ssleay32.dll" DiskId="1" Source="../../cURL/ssleay32.dll" Vital="yes"></File> -->
+
+        <!-- Configuration GUI and support files -->
+        <File Id="ConfigurationGuiExe" Name="ConfigurationGUI.exe" DiskId="1" Source="../ConfigurationGUI/bin/Release/ConfigurationGUI.exe" Vital="yes"></File>
+        <File Id="IniFileDll" Name="IniFile.dll" DiskId="1" Source="../ConfigurationGUI/IniFile.dll" Vital="yes"></File>
+      </Component>
+    </DirectoryRef>
+
+		<Feature Id="ProductFeature" Title="Forest Client" Level="1">
+			<!-- TODO: Remove the comments around this ComponentRef element and the Component above in order to add resources to this installer. -->
+			<ComponentRef Id="ProductComponent" />
+      <ComponentRef Id="ApplicationShortcut" />
+			
+			<!-- Note: The following ComponentGroupRef is required to pull in generated authoring from project references. -->
+			<ComponentGroupRef Id="Product.Generated" />
+		</Feature>
+
+    <!-- seems like these will come in handy some day
+    <WixVariable Id="WixUIBannerBmp" Value="path\banner.bmp" />
+    <WixVariable Id="WixUIDialogBmp" Value="path\dialog.bmp" />
+    <WixVariable Id="WixUIExclamationIco" Value="path\exclamation.ico" />
+    <WixVariable Id="WixUIInfoIco" Value="path\information.ico" />
+    <WixVariable Id="WixUINewIco" Value="path\new.ico" />
+    <WixVariable Id="WixUIUpIco" Value="path\up.ico" />
+    -->
+    <WixVariable Id="WixUILicenseRtf" Value="License.rtf" />
+    <Property Id="WIXUI_INSTALLDIR" Value="INSTALLLOCATION" />
+    <UIRef Id="WixUI_InstallDir" />
+
+    <MajorUpgrade Schedule="afterInstallValidate" DowngradeErrorMessage="A later version of [ProductName] is already installed. Setup will now exit." />
+    
+	<!-- Include MS VC 2010 runtime -->
+	<DirectoryRef Id="TARGETDIR">
+		<Merge Id="VCRedist" SourceFile="C:\Program Files\Common Files\Merge Modules\Microsoft_VC100_CRT_x86.msm" DiskId="1" Language="0"/>
+	</DirectoryRef>
+	<Feature Id="VCRedist" Title="Visual C++ 10.0 Runtime" AllowAdvertise="no" Display="hidden" Level="1">
+		<MergeRef Id="VCRedist"/>
+	</Feature>
+
+	</Product>
+</Wix>

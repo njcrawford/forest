@@ -11,7 +11,7 @@ uuid=`uuidgen`
 c_filename="client/version.h"
 php_filename="server/www/application/config/version.php"
 cs_filename="client/Windows/ConfigurationGUI/Properties/version.cs"
-wix_filename="client/Windows/ForestInstaller/ForestInstaller/Version.wxi"
+wix_filename="client/Windows/ForestInstaller/Version.wxi"
 rc1_filename="client/Windows/version1.rc"
 rc2_filename="client/Windows/version2.rc"
 
