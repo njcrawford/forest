@@ -38,20 +38,22 @@ Client capabilities:
 <?php if(count($updates) > 0) { ?>
 Updates:
 <ul>
-	<li>
-		<form action="<?= site_url('browser/mark_accepted_updates') ?>" method="post">
-			<input type="hidden" name="system_id" value="<?= $system_info->id ?>" />
-			<input type="hidden" name="accepted_state" value="accepted" />
-			<input type="hidden" name="redirect_location" value="view_system/<?= $system_info->id ?>" />
-			<input type="submit" value="Accept all" />
-		</form> | 
-		<form action="<?= site_url('browser/mark_accepted_updates') ?>" method="post">
-			<input type="hidden" name="system_id" value="<?= $system_info->id ?>" />
-			<input type="hidden" name="accepted_state" value="rejected" />
-			<input type="hidden" name="redirect_location" value="view_system/<?= $system_info->id ?>" />
-			<input type="submit" value="Reject all" />
-		</form>
-	</li>
+	<?php if($system_info->can_apply_updates == 1) { ?>
+		<li>
+			<form action="<?= site_url('browser/mark_accepted_updates') ?>" method="post">
+				<input type="hidden" name="system_id" value="<?= $system_info->id ?>" />
+				<input type="hidden" name="accepted_state" value="accepted" />
+				<input type="hidden" name="redirect_location" value="view_system/<?= $system_info->id ?>" />
+				<input type="submit" value="Accept all" />
+			</form> | 
+			<form action="<?= site_url('browser/mark_accepted_updates') ?>" method="post">
+				<input type="hidden" name="system_id" value="<?= $system_info->id ?>" />
+				<input type="hidden" name="accepted_state" value="rejected" />
+				<input type="hidden" name="redirect_location" value="view_system/<?= $system_info->id ?>" />
+				<input type="submit" value="Reject all" />
+			</form>
+		</li>
+	<?php } ?>
 	<?php foreach($updates as $this_update) { ?>
 	<li>
 		<?php if($this_update->is_locked) { ?>
