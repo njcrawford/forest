@@ -1,3 +1,6 @@
 [submodule "client/Windows/curl-source"]
+
 	path = client/Windows/curl-source
+
 	url = git://github.com/bagder/curl.git
+	ignore = dirty

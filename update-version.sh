@@ -6,11 +6,12 @@ set -u
 # to all the proper places.
 
 version=`cat version.txt`
+uuid=`uuidgen`
 
 c_filename="client/version.h"
 php_filename="server/www/application/config/version.php"
 cs_filename="client/Windows/ConfigurationGUI/Properties/version.cs"
-wix_filename="client/Windows/ForestInstaller/ForestInstaller/Version.wxi"
+wix_filename="client/Windows/ForestInstaller/Version.wxi"
 rc1_filename="client/Windows/version1.rc"
 rc2_filename="client/Windows/version2.rc"
 
@@ -54,6 +55,7 @@ echo "<!-- ${message_1} --> " >> ${wix_filename}
 echo "<!-- ${message_2} --> " >> ${wix_filename}
 echo "<Include> " >> ${wix_filename}
 echo "  <?define ProductVersion = \"${version}\"?> " >> ${wix_filename}
+echo "  <?define ProductGuid = \"${uuid}\"?> " >> ${wix_filename}
 echo "</Include> " >> ${wix_filename}
 
 

@@ -56,5 +56,10 @@ namespace ConfigurationGUI
             btnRun.Text = prevText;
             btnRun.Enabled = true;
         }
+
+        private void frmMain_Load(object sender, EventArgs e)
+        {
+            lblVersion.Text = "Version " + Application.ProductVersion.ToString().TrimEnd(new char[]{'.', '0'});
+        }
     }
 }

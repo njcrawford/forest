@@ -2,3 +2,4 @@
 // Any changes will be overwritten next time the script is run. 
 VALUE "FileVersion", "1.3.0.0" 
 VALUE "ProductVersion", "1.3.0.0" 
+
