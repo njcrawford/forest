@@ -3,7 +3,7 @@
   
   <?include $(sys.CURRENTDIR)Version.wxi ?>
   
-	<Product Id="*" Name="Forest Client" Language="1033" Version="$(var.ProductVersion)" Manufacturer="Nathan Crawford" UpgradeCode="a55bfa54-79c0-419f-b7e4-06646004364a">
+	<Product Id="$(var.ProductUuid)" Name="Forest Client" Language="1033" Version="$(var.ProductVersion)" Manufacturer="Nathan Crawford" UpgradeCode="a55bfa54-79c0-419f-b7e4-06646004364a">
 		<Package InstallerVersion="300" Compressed="yes" />
 
 		<Media Id="1" Cabinet="media1.cab" EmbedCab="yes" />

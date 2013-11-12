@@ -6,6 +6,7 @@ set -u
 # to all the proper places.
 
 version=`cat version.txt`
+uuid=`uuidgen`
 
 c_filename="client/version.h"
 php_filename="server/www/application/config/version.php"
@@ -54,6 +55,7 @@ echo "<!-- ${message_1} --> " >> ${wix_filename}
 echo "<!-- ${message_2} --> " >> ${wix_filename}
 echo "<Include> " >> ${wix_filename}
 echo "  <?define ProductVersion = \"${version}\"?> " >> ${wix_filename}
+echo "  <?define ProductGuid = \"${uuid}\"?> " >> ${wix_filename}
 echo "</Include> " >> ${wix_filename}
 
 

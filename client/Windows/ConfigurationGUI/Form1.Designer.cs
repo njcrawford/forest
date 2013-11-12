@@ -97,6 +97,7 @@ namespace ConfigurationGUI
             this.Controls.Add(this.lblVersion);
             this.Name = "frmMain";
             this.Text = "Forest Client for Windows Configuration";
+            this.Load += new System.EventHandler(this.frmMain_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
 
