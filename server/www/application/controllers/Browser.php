@@ -305,12 +305,12 @@ class Browser extends CI_Controller {
 		$redirect_location = $this->input->post('redirect_location');
 		
 		// must have system_id and/or package name, and accepted state
-		if(empty($system_id) && empty($package_name) && empty($accepted_state))
+		if(empty($system_id) || empty($accepted_state))
 		{
 			// show an error
 			$data['page_title'] = "Error";
 			$this->load->view('header', $data);
-			$data['error_message'] = "System ID and/or package name along with accepted state must be specified.";
+			$data['error_message'] = "System ID and accepted state must be specified.";
 			$this->load->view('error', $data);
 			$this->load->view('footer');
 			return;

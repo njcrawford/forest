@@ -95,23 +95,22 @@ class Forest_DB extends CI_Model {
 
 	function mark_accepted_updates($system_id, $package_name, $state)
 	{
-		$query = "update updates set accepted = " . $this->db->escape($state) . " where ";
-		if(!empty($system_id) && !empty($package_name))
+		if(empty($system_id))
 		{
-			$query .= " system_id = " . $this->db->escape($system_id) . " and package_name = " . $this->db->escape($package_name);
+			die("Must have system_id for mark accepted updates.");
 		}
-		elseif(!empty($system_id))
+
+		$query = "UPDATE updates SET accepted = " . $this->db->escape($state) . " WHERE ";
+		$query .= " system_id = " . $this->db->escape($system_id);
+		if(!empty($package_name))
 		{
-			$query .= " system_id = " . $this->db->escape($system_id);
+			// Specify a single update for this system to accept/reject
+			$query .= " AND package_name = " . $this->db->escape($package_name);
 		}
-		elseif(!empty($package_name))
-		{
-			$query .= " package_name = " . $this->db->escape($package_name);
-		}
-		else
-		{
-			die("Must have system_id, package_name or both for mark accepted updates.");
-		}
+
+		// Limit accepting updates to those that are not in the update lock list
+		$query .= " AND package_name NOT IN (SELECT package_name FROM update_locks)";
+
 		return $this->db->query($query);
 	}
 
