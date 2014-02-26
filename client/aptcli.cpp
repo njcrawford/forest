@@ -67,10 +67,10 @@ void AptCli::applyUpdates(vector<string> & list)
 	int commandResponse;
 	vector<string> commandOutput;	
 
-	// TODO: May be able to use something like apt-get --only-upgrade instead of
-	// aptitude to remove extra dependency. Need to check if --only-upgrade flag
-	// is supported on older releases.
-	command = "aptitude -y -o DPkg::Options::\\=--force-confold safe-upgrade ";
+	// DEBIAN_FRONTEND=noninteractive tells ucf not to ask configuration questions.
+	// --force-confdef tells dconf to make config file modifications when it knows what to do.
+	// --force-confold tells dconf to leave the existing config files as-is when it doesn't know what to do.
+	command = "DEBIAN_FRONTEND=noninteractive apt-get -y -o Dpkg::Options::\\=\"--force-confdef\" -o Dpkg::Options::\\=\"--force-confold\" --only-upgrade ";
 	//cerr << command << endl;
 	command += flattenStringList(list, ' ');
 	//cerr << command << endl;
