@@ -132,7 +132,7 @@ int ForestClient::run()
 			cout << acceptedUpdates.size() << " updates accepted by server:" << endl;
 			for(auto itr = acceptedUpdates.begin(); itr != acceptedUpdates.end(); itr++)
 			{
-				cout << *itr;
+				cout << *itr << endl;
 			}
 		}
 	}
