@@ -129,7 +129,11 @@ int ForestClient::run()
 		getAcceptedUpdates(acceptedUpdates, &acceptedReboot);
 		if(verboseLevel >= VERBOSE_EXTRA)
 		{
-			cout << acceptedUpdates.size() << " updates accepted by server." << endl;
+			cout << acceptedUpdates.size() << " updates accepted by server:" << endl;
+			for(auto itr = acceptedUpdates.begin(); itr != acceptedUpdates.end(); itr++)
+			{
+				cout << *itr;
+			}
 		}
 	}
 

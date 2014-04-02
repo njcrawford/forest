@@ -1,7 +1,7 @@
 CC = g++
 DEBUG = -g
-#CFLAGS = -Wall $(DEBUG)
-CFLAGS = -Wall
+#CFLAGS = -std=c++11 -pedantic -Wall $(DEBUG)
+CFLAGS = -std=c++11 -pedantic -Wall
 COMPILE = $(CC) $(CFLAGS) -c
 LINK = $(CC) $(CFLAGS)
 
