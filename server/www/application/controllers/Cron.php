@@ -57,7 +57,7 @@ class Cron extends CI_Controller {
 				$this_system_ref->updates = $this->forest_db->get_updates_for_system($this_system_ref->id);
 			}
 
-			usort($systems, array($this->forest_db, "sort_by_updates_helper");
+			usort($systems, array($this->forest_db, "sort_by_updates_helper"));
 
 			foreach($systems as $this_system)
 			{

@@ -108,7 +108,7 @@ class Browser extends CI_Controller {
 			}
 		}
 
-		usort($data['systems'], array($this->forest_db, "sort_by_updates_helper");
+		usort($data['systems'], array($this->forest_db, "sort_by_updates_helper"));
 
 		$header_data['page_title'] = "Summary";
 		$this->load->view('header', $header_data);
