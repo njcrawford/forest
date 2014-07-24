@@ -24,7 +24,7 @@ You can contact me at http://www.njcrawford.com/contact
 */
 defined('BASEPATH') or exit('No direct script access allowed');
 
-class Forest_DB extends CI_Model {
+class Upgrade_DB extends CI_Model {
 
 	function __construct()
 	{
@@ -81,6 +81,8 @@ class Forest_DB extends CI_Model {
 
 	function upgrade_3_to_4()
 	{
+		// TODO: Find diff from version 3 and write statements to apply
+		// that diff.
 		die("Not yet implemented");
 	}
 
@@ -89,8 +91,8 @@ class Forest_DB extends CI_Model {
 		// Use a direct query instead of the equivelent function, because the
 		// function may change with new versions.
 		$query = $this->db->query("select value from settings where name = 'db_version'");
-		$result = $query->result();
-		$current_db_version = $result->row()->value;
+		$result = $query->row();
+		$current_db_version = $result->value;
 
 		// Using a magic number for the highest schema version this script has been updated to
 		if(DB_VERSION == 4)
@@ -108,17 +110,17 @@ class Forest_DB extends CI_Model {
 			// do updates incrementally
 			if($current_db_version < 2)
 			{
-				upgrade_1_to_2();
+				$this->upgrade_1_to_2();
 				echo "DB schema updated to v2\n";
 			}
 			if($current_db_version < 3)
 			{
-				upgrade_2_to_3();
+				$this->upgrade_2_to_3();
 				echo "DB schema updated to v3\n";
 			}
 			if($current_db_version < 4)
 			{
-				upgrade_3_to_4();
+				$this->upgrade_3_to_4();
 				echo "DB schema updated to v4\n";
 			}
 		}
