@@ -130,10 +130,16 @@ class Upgrade_DB extends CI_Model {
 		}
 
 		// Systems table
-		$result = $this->db->query("alter table systems change ignore_awol ignore_absent tinyint(1) not null");
+		$result = $this->db->query("alter table systems change ignore_awol report_absent tinyint(1) not null");
 		if(!$result)
 		{
-			die("Failed to alter systems.ignore_absent\n");
+			die("Failed to alter systems.report_absent\n");
+		}
+
+		$result = $this->db->query("update systems set report_absent = !report_absent");
+		if(!$result)
+		{
+			die("Failed to update systems.report_absent values\n");
 		}
 
 		$result = $this->db->query("alter table systems add uuid char(36) after can_apply_reboot");

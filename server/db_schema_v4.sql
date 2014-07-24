@@ -50,7 +50,7 @@ CREATE TABLE `systems` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `last_checkin` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `reboot_required` tinyint(1) DEFAULT NULL,
-  `ignore_absent` tinyint(1) NOT NULL,
+  `report_absent` tinyint(1) NOT NULL,
   `reboot_accepted` tinyint(1) NOT NULL DEFAULT '0',
   `allow_reboot` tinyint(1) NOT NULL DEFAULT '0',
   `can_apply_updates` tinyint(1) NOT NULL DEFAULT '0',
@@ -112,4 +112,4 @@ CREATE TABLE `updates` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2014-07-24 11:02:36
+-- Dump completed on 2014-07-24 11:21:42
