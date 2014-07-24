@@ -34,21 +34,16 @@ class Upgrade_DB extends CI_Model {
 
 	function upgrade_1_to_2()
 	{
-		$result = $this->db->query("update settings set value = '2' where name = 'db_version'");
-		if(!$result)
-		{
-			die("Failed setting new db schema version\n");
-		}
-
+		echo "Upgrading schema from 1 to 2\n";
 		$result = $this->db->query("alter table systems add reboot_accepted tinyint(1) NOT NULL DEFAULT '0'");
 		if(!$result)
 		{
-			die("Failed to alter systems table\n");
+			die("Failed to add systems.reboot_accepted\n");
 		}
 		$result = $this->db->query("alter table systems add allow_reboot tinyint(1) NOT NULL DEFAULT '0'");
 		if(!$result)
 		{
-			die("Failed to alter systems table\n");
+			die("Failed to add systems.allow_reboot\n");
 		}
 
 		$result = mysql_query("CREATE TABLE `update_locks` (`system_id` int(11) DEFAULT NULL, `package_name` text) ENGINE=MyISAM DEFAULT CHARSET=latin1");
@@ -56,34 +51,159 @@ class Upgrade_DB extends CI_Model {
 		{
 			die("Failed to add update_locks table\n");
 		}
-	}
 
-	function upgrade_2_to_3()
-	{
-		$result = $this->db->query("update settings set value = '3' where name = 'db_version'");
+		$result = $this->db->query("update settings set value = '2' where name = 'db_version'");
 		if(!$result)
 		{
 			die("Failed setting new db schema version\n");
 		}
+	}
 
+	function upgrade_2_to_3()
+	{
+		echo "Upgrading schema from 2 to 3\n";
 		$result = $this->db->query("alter table systems add can_apply_updates tinyint(1) NOT NULL DEFAULT '0'");
 		if(!$result)
 		{
-			die("Failed to alter systems table\n");
+			die("Failed to add systems.can_apply_updates\n");
 		}
 
 		$result = $this->db->query("alter table systems add can_apply_reboot tinyint(1) NOT NULL DEFAULT '0'");
 		if(!$result)
 		{
-			die("Failed to alter systems table\n");
+			die("Failed to add systems.can_apply_reboot\n");
+		}
+
+		$result = $this->db->query("update settings set value = '3' where name = 'db_version'");
+		if(!$result)
+		{
+			die("Failed setting new db schema version\n");
 		}
 	}
 
 	function upgrade_3_to_4()
 	{
-		// TODO: Find diff from version 3 and write statements to apply
-		// that diff.
-		die("Not yet implemented");
+		echo "Upgrading schema from 3 to 4\n";
+
+		// Make sure tables are InnoDB for foreign keys
+		$result = $this->db->query("alter table settings engine=innodb");
+		if(!$result)
+		{
+			die("Failed to set settings engine=innodb\n");
+		}
+
+		$result = $this->db->query("alter table systems engine=innodb");
+		if(!$result)
+		{
+			die("Failed to set systems engine=innodb\n");
+		}
+
+		$result = $this->db->query("alter table update_locks engine=innodb");
+		if(!$result)
+		{
+			die("Failed to set update_locks engine=innodb\n");
+		}
+
+		$result = $this->db->query("alter table updates engine=innodb");
+		if(!$result)
+		{
+			die("Failed to set updates engine=innodb\n");
+		}
+
+		// Settings table
+		$result = $this->db->query("alter table settings modify name varchar(255) not null");
+		if(!$result)
+		{
+			die("Failed to alter settings.name\n");
+		}
+
+		$result = $this->db->query("alter table settings modify value varchar(255) not null");
+		if(!$result)
+		{
+			die("Failed to alter settings.value\n");
+		}
+
+		$result = $this->db->query("update settings set name = 'absent_hours' where name = 'awol_hours'");
+		if(!$result)
+		{
+			die("Failed to update absent_hours setting\n");
+		}
+
+		// Systems table
+		$result = $this->db->query("alter table systems change ignore_awol ignore_absent tinyint(1) not null");
+		if(!$result)
+		{
+			die("Failed to alter systems.ignore_absent\n");
+		}
+
+		$result = $this->db->query("alter table systems add uuid char(36) after can_apply_reboot");
+		if(!$result)
+		{
+			die("Failed to add systems.uuid\n");
+		}
+
+		$result = $this->db->query("alter table systems change name name varchar(255) after uuid");
+		if(!$result)
+		{
+			die("Failed to alter systems.name\n");
+		}
+
+		$result = $this->db->query("alter table systems add client_version varchar(255) after name");
+		if(!$result)
+		{
+			die("Failed to add systems.client_version\n");
+		}
+
+		$result = $this->db->query("alter table systems add os_version varchar(255) after client_version");
+		if(!$result)
+		{
+			die("Failed to add systems.os_version\n");
+		}
+
+		// Update locks table
+		$result = $this->db->query("alter table update_locks modify package_name varchar(255)");
+		if(!$result)
+		{
+			die("Failed to alter update_locks.package_name\n");
+		}
+
+		$result = $this->db->query("alter table update_locks add constraint update_locks_system_id foreign key system_id_key (system_id) references systems (id)");
+		if(!$result)
+		{
+			die("Failed to add update_locks.system_id foreign key\n");
+		}
+
+		// Updates table
+		$result = $this->db->query("alter table updates change package_name package_name varchar(255) not null after accepted");
+		if(!$result)
+		{
+			die("Failed to alter updates.package_name\n");
+		}
+
+		$result = $this->db->query("alter table updates change version version varchar(255) after package_name");
+		if(!$result)
+		{
+			die("Failed to alter updates.version\n");
+		}
+
+		$result = $this->db->query("alter table updates modify accepted tinyint(1) not null default '0'");
+		if(!$result)
+		{
+			die("Failed to alter updates.accepted\n");
+		}
+
+		$result = $this->db->query("alter table updates add constraint updates_system_id foreign key system_id_key (system_id) references systems (id)");
+		if(!$result)
+		{
+			die("Failed to add updates.system_id foreign key\n");
+		}
+
+		// DB schema version
+		$result = $this->db->query("update settings set value = '4' where name = 'db_version'");
+		if(!$result)
+		{
+			die("Failed setting new db schema version\n");
+		}
 	}
 
 	function run_upgrade()
