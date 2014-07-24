@@ -49,11 +49,19 @@ class Admin extends CI_Controller {
 	{
 		$this->load->model('upgrade_db');
 
-		$doit = $this->input->post('doit');
+		$doit = $this->input->post('system_id');
 
 		if($doit != "yes")
 		{
 			// Display confirmation
+			$data['post_url'] = site_url("admin/upgrade_db");
+			$data['system_id'] = 'yes';
+			$data['action'] = 'upgrade database';
+			$data['back_url'] = site_url("admin");
+
+			$this->load->view('header', array('page_title' => 'Upgrade database?'));
+			$this->load->view('confirm', $data);
+			$this->load->view('footer');
 		}
 		else
 		{
