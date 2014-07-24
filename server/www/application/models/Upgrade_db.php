@@ -173,6 +173,12 @@ class Upgrade_DB extends CI_Model {
 			die("Failed to alter update_locks.package_name\n");
 		}
 
+		$result = $this->db->query("delete from update_locks where not system_id = any (select id from systems)");
+		if(!$result)
+		{
+			die("Failed to clear invalid update_locks\n");
+		}
+
 		$result = $this->db->query("alter table update_locks add constraint update_locks_system_id foreign key system_id_key (system_id) references systems (id)");
 		if(!$result)
 		{
