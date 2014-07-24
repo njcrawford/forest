@@ -214,7 +214,7 @@ class Forest_DB extends CI_Model {
 	// Returns the value of one setting
 	function get_setting($setting_name)
 	{
-		$query = $this->db->query("select * from settings where name = " . $this->db->escape($settings_name));
+		$query = $this->db->query("select * from settings where name = " . $this->db->escape($setting_name));
 		return $query->row()->value;
 	}
 
