@@ -204,6 +204,12 @@ class Upgrade_DB extends CI_Model {
 			die("Failed to alter updates.accepted\n");
 		}
 
+		$result = $this->db->query("delete from updates where not system_id = any (select id from systems)");
+		if(!$result)
+		{
+			die("Failed to clear invalid updates\n");
+		}
+
 		$result = $this->db->query("alter table updates add constraint updates_system_id foreign key system_id_key (system_id) references systems (id)");
 		if(!$result)
 		{
