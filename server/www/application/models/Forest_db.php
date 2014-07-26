@@ -30,6 +30,16 @@ class Forest_DB extends CI_Model {
 	{
 		// Call the Model constructor
 		parent::__construct();
+		
+		// Check DB schema version
+		$query = "select value from settings where name = 'db_version'";
+		$result = $this->db->query($query);
+		$row = $result->row();
+		$db_version = $row->value;
+		if($db_version != DB_VERSION)
+		{
+			die("Database schema is version " . $db_version . ", but application requires version " . DB_VERSION);
+		}
 	}
 
 	function get_systems()
