@@ -28,7 +28,7 @@ class Admin extends CI_Controller {
 
 	public function index()
 	{
-		$this->load->view('header', array('title' => 'Admin options'));
+		$this->load->view('header', array('page_title' => 'Admin options'));
 		$this->load->view('admin_landing');
 		$this->load->view('footer');
 	}
@@ -40,7 +40,7 @@ class Admin extends CI_Controller {
 		$data = new stdClass;
 		$data->settings = $this->forest_db->get_all_settings();
 
-		$this->load->view('header', array('title' => 'View Settings'));
+		$this->load->view('header', array('page_title' => 'View Settings'));
 		$this->load->view('settings', $data);
 		$this->load->view('footer');
 	}

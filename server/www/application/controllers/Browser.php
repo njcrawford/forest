@@ -44,6 +44,8 @@ class Browser extends CI_Controller {
 		$data['systems'] = $this->forest_db->get_systems();
 		foreach($data['systems'] as &$this_system)
 		{
+			$this_system->absent_class = "";
+
 			$locked_updates_result = $this->forest_db->get_update_locks($this_system->id);
 			$locked_updates = array();
 			foreach($locked_updates_result as $this_lock)
@@ -100,10 +102,6 @@ class Browser extends CI_Controller {
 				if(strtotime("-" . $absent_hours . " hours") > strtotime($this_system->last_checkin))
 				{
 					$this_system->absent_class = "class=\"absent\"";
-				}
-				else
-				{
-					$this_system->absent_class = "";
 				}
 			}
 		}
