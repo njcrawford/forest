@@ -6,7 +6,7 @@
 class WinRegKey : public RebootManager
 {
 public:
-    rebootState isRebootNeeded();
+    rebootState isRebootNeeded() override;
 };
 
 #endif

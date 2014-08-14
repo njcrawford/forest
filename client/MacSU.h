@@ -10,10 +10,10 @@ using namespace std;
 class MacSU : public PackageManager
 {
 public:
-    void getAvailableUpdates(vector<updateInfo> & outlist);
+    void getAvailableUpdates(vector<updateInfo> & outlist) override;
 	void parseUpdates(vector<updateInfo> & outlist, vector<string> & input);
-    void applyUpdates(vector<string> & list);
-    bool canApplyUpdates();
+    void applyUpdates(vector<string> & list) override;
+    bool canApplyUpdates() override;
 };
 
 #endif

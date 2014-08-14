@@ -6,7 +6,7 @@
 class KernelDifference : public UnixShutdown 
 {
 public:
-    rebootState isRebootNeeded();
+    rebootState isRebootNeeded() override;
 };
 
 #endif
