@@ -15,11 +15,17 @@ Updates: <?= count($updates) ?><br />
 Reboot Needed: <?= ($system_info->reboot_required == 1) ? "Yes" : "No" ?><br>
 Reboot Accepted: <?= ($system_info->reboot_accepted == 1) ? "Yes" : "No" ?>
 <?php if($system_info->can_apply_reboot == 1) { ?>
+	<?php if($system_info->allow_reboot == 1) { ?>
 	<form action="<?= site_url('browser/mark_accepted_reboot') ?>" method="post">
 		<input type="hidden" name="state" value="<?= ($system_info->reboot_accepted == 1) ? '0' : '1' ?>">
 		<input type="hidden" name="system_id" value="<?= $system_info->id ?>">
 		<input type="submit" value="<?= ($system_info->reboot_accepted == 1) ? 'Cancel reboot request' : 'Request reboot' ?>">
 	</form>
+	<?php } else { ?>
+	(Reboot requests have been disabled for this system)
+	<?php } ?>
+<?php } else { ?>
+	(Client is unable to accept reboot requests)
 <?php } ?>
 <br />
 Last Check-in: <?= $system_info->last_checkin ?><br />

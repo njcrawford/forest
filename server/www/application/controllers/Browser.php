@@ -290,6 +290,18 @@ class Browser extends CI_Controller {
 			$state = '0';
 		}
 
+		$system_info = $this->forest_db->get_system_info($system_id);
+		if($system_info->allow_reboot == 0)
+		{
+			// show an error
+			$data['page_title'] = "Error";
+			$this->load->view('header', $data);
+			$data['error_message'] = "Reboot requests have been disabled for this system";
+			$this->load->view('error', $data);
+			$this->load->view('footer');
+			return;
+		}
+
 		$this->forest_db->save_reboot_accepted($system_id, $state);
 		redirect("browser/view_system/" . $system_id);
 	}
