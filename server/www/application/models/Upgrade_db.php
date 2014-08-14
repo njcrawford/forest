@@ -249,17 +249,17 @@ class Upgrade_DB extends CI_Model {
 			if($current_db_version < 2)
 			{
 				$this->upgrade_1_to_2();
-				echo "DB schema updated to v2\n";
+				echo "DB schema updated to v2<br>\n";
 			}
 			if($current_db_version < 3)
 			{
 				$this->upgrade_2_to_3();
-				echo "DB schema updated to v3\n";
+				echo "DB schema updated to v3<br>\n";
 			}
 			if($current_db_version < 4)
 			{
 				$this->upgrade_3_to_4();
-				echo "DB schema updated to v4\n";
+				echo "DB schema updated to v4<br>\n";
 			}
 		}
 		else
