@@ -86,7 +86,14 @@ class Forest_DB extends CI_Model {
 
 	function save_system_info($system_id, $report_absent, $allow_reboot)
 	{
-		$query = "update systems set report_absent = " . $this->db->escape($report_absent) . ", allow_reboot = " . $this->db->escape($allow_reboot) . " where id = " . $this->db->escape($system_id);
+		$query = "update systems set report_absent = " . $this->db->escape($report_absent) . ", allow_reboot = " . $this->db->escape($allow_reboot);
+		// If disabling reboot requests, cancel potential pending request
+		if($allow_reboot == 0)
+		{
+			$query .= ", reboot_accepted = 0";
+		}
+
+		$query .= " where id = " . $this->db->escape($system_id);
 		return $this->db->query($query);
 	}
 
