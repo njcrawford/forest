@@ -2,7 +2,7 @@
 // Forest - a web-based multi-system update manager
 //
 // Copyright (C) 2013 Nathan Crawford
-// 
+//
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
 // as published by the Free Software Foundation; either version 2
@@ -12,7 +12,7 @@
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
@@ -32,7 +32,7 @@
 #include <winsock2.h>
 #include <WS2tcpip.h>
 #else
-// unix-like systems 
+// unix-like systems
 #include <unistd.h>
 #endif
 
@@ -45,6 +45,7 @@
 
 // cerr, cout
 #include <iostream>
+#include <fstream>
 
 // curl
 #include <curl/curl.h>
@@ -52,7 +53,7 @@
 using namespace std;
 
 #include "config.h"
-
+#include "version.h"
 #include "forest-client.h"
 #include "helpers.h"
 
@@ -68,12 +69,14 @@ using namespace std;
 #include "KernelDifference.h"
 #include "WinRegKey.h"
 
+// RPC managers
+#include "Rpcv2.h"
+
 #define STRINGIFY(x) #x
 #define TOSTRING(x) STRINGIFY(x)
 
 #include "exitcodes.h"
 #include "verboselevels.h"
-#include "defines.h"
 
 // callback function for curl
 size_t write_data(void *buffer, size_t size, size_t nmemb, void *userp);
@@ -98,6 +101,8 @@ int ForestClient::run()
 	vector<string> acceptedUpdates;
 	bool acceptedReboot = false;
 	bool rebootAttempted = false;
+	ForestClientCapabilities clientCaps;
+	ForestRpc * rpcv2 = nullptr;
 
 	if(verboseLevel >= VERBOSE_NORMAL)
 	{
@@ -117,16 +122,20 @@ int ForestClient::run()
 		cout << " and reboot manager " << TOSTRING(REBOOT_MANAGER) << "." << endl;
 	}
 
-	// get list of packages that have been accepted for update
-	// also check to see if a reboot has been accepted
-	// this should really be split into two rpc calls, but keeping backwards compatible for now
+	rpcv2 = new Rpcv2(serverUrl, myHostname);
+
+	// Get list of packages that have been accepted for update
+	// Also check to see if a reboot has been accepted
+	// This should really be split into two rpc calls, but keeping
+	// backwards compatible for now.
 	if(packageManager->canApplyUpdates() || rebootManager->canApplyReboot())
 	{
 		if(verboseLevel >= VERBOSE_NORMAL)
 		{
 			cout << "Checking for accepted updates from server..." << endl;
 		}
-		getAcceptedUpdates(acceptedUpdates, &acceptedReboot);
+		acceptedUpdates = rpcv2->getAcceptedUpdates();
+		acceptedReboot = rpcv2->getRebootAccepted();
 		if(verboseLevel >= VERBOSE_EXTRA)
 		{
 			cout << acceptedUpdates.size() << " updates accepted by server:" << endl;
@@ -155,6 +164,8 @@ int ForestClient::run()
 	// determine what packages are available to update
 	// note that this is done AFTER applying accepted updates
 	packageManager->getAvailableUpdates(availableUpdates);
+	availableUpdates.push_back({"test-name", "test-version"});
+	availableUpdates.push_back({"test-name2", "test-version2"});
 	if(verboseLevel >= VERBOSE_EXTRA)
 	{
 		cout << "Package manager found " << availableUpdates.size() << " available updates." << endl;
@@ -197,7 +208,11 @@ int ForestClient::run()
 
 	// report packages that are available to update
 	// this should also be split into two rpc calls, but keeping backward compatible for now
-	reportAvailableUpdates(availableUpdates, rebootAttempted);
+	clientCaps.canApplyUpdates = packageManager->canApplyUpdates();
+	clientCaps.canApplyReboot = rebootManager->canApplyReboot();
+	clientCaps.clientVersion = FOREST_VERSION;
+	rpcv2->checkInWithServer(clientCaps, availableUpdates, rebootManager->isRebootNeeded(), rebootAttempted, verboseLevel);
+	//reportAvailableUpdates(availableUpdates, rebootAttempted);
 
 	if(verboseLevel >= VERBOSE_NORMAL)
 	{
@@ -227,307 +242,34 @@ int ForestClient::run()
 	return EXIT_CODE_OK;
 }
 
-// fills outList with names of accepted packages
-void ForestClient::getAcceptedUpdates(vector<string> & outList, bool * rebootAccepted)
-{
-	string acceptedUrl;
-	string command;
-
-	// build accepted URL
-	acceptedUrl = serverUrl;
-	if(acceptedUrl[acceptedUrl.size() - 1] != '/')
-	{
-		acceptedUrl += "/";
-	}
-	acceptedUrl += "getaccepted.php?rpc_version=";
-	acceptedUrl += to_string(RPC_VERSION);
-	acceptedUrl += "&system=";
-	acceptedUrl += myHostname;
-
-	// run curl command
-	CURL * curlHandle;
-	CURLcode res;
-	string curlOutput;
-	curlHandle = curl_easy_init();
-	if(curlHandle)
-	{
-		curl_easy_setopt(curlHandle, CURLOPT_URL, acceptedUrl.c_str());
-		curl_easy_setopt(curlHandle, CURLOPT_WRITEFUNCTION, write_data); 
-		curl_easy_setopt(curlHandle, CURLOPT_WRITEDATA, &curlOutput); 
-		res = curl_easy_perform(curlHandle);
-
-		//cleanup
-		curl_easy_cleanup(curlHandle);
-	}
-	
-	// exit if curl fails
-	if(res != CURLE_OK)
-	{
-		cerr << "cURL failed: " << curl_easy_strerror(res) << endl << curlOutput << endl;
-		exit(EXIT_CODE_CURL);
-	}
-
-	// make sure the response was something we expected
-	if(curlOutput.substr(0, 8) != "data_ok:")
-	{
-		// lack of data_ok: is ok if this system is new to the server
-		if(curlOutput.find("System not found in database") != string::npos)
-		{
-			outList.clear();
-		}
-		else
-		{
-			cerr << "Error getting accepted updates: " << curlOutput << endl;
-			exit(EXIT_CODE_RESPONSEDATA);
-		}
-	}
-	else
-	{
-		string::size_type position;
-		string::size_type position2;
-
-		// check for data_ok:
-		if(curlOutput.substr(0,8) != "data_ok:")
-		{
-			cerr << "Error getting accepted updates: " << curlOutput << endl;
-			exit(EXIT_CODE_RESPONSEDATA);
-		}
-
-		// check for reboot-(true|false)
-		position = curlOutput.find(':', 0);
-		position2 = curlOutput.find(':', position + 1);
-		if(position == string::npos)
-		{
-			cerr << "Error getting accepted updates: " << curlOutput << endl;
-			exit(EXIT_CODE_RESPONSEDATA);
-		}
-		// don't die if reboot state isn't present
-		*rebootAccepted = false;
-		if(position2 != string::npos)
-		{
-			string rebootState = trim_string(curlOutput.substr(position + 1, position2 - position - 1));
-			if(rebootState == "reboot-true")
-			{
-				*rebootAccepted = true;
-			}
-		}
-		else
-		{
-			// for trimming output, below
-			position2 = position;
-		}
-		
-		// trim data_ok and reboot state from output
-		curlOutput = curlOutput.substr(position2 + 1);
-
-		outList.clear();
-
-		// if there are no updates, the string will be empty (because of trim_string)
-		if(trim_string(curlOutput).size() == 0)
-		{
-			return;
-		}
-
-		string::size_type startPosition = 0;
-		string acceptedUpdate;
-		for(position = curlOutput.find(' ', 0); position != string::npos; position = curlOutput.find(' ', position + 1))
-		{
-			acceptedUpdate = curlOutput.substr(startPosition, position - startPosition);
-			if(acceptedUpdate.size() > 0)
-			{
-				//cerr << "DEBUG: accepted update " << acceptedUpdate << endl;
-				outList.push_back(acceptedUpdate);
-			}
-			startPosition = position + 1;
-			//curlOutput[0] = curlOutput[0].substr(position + 1);
-		}
-		//add the last item (whatever is after the last space) if it's not empty
-		acceptedUpdate = curlOutput.substr(startPosition);
-		if(trim_string(acceptedUpdate).size() > 0)
-		{
-			//cerr << "DEBUG: accepted update " << acceptedUpdate << endl;
-			outList.push_back(acceptedUpdate);
-		}
-	}
-}
-
-void ForestClient::reportAvailableUpdates(vector<updateInfo> & list, bool rebootAttempted)
-{
-	string command;
-
-	command = "rpc_version=";
-	command += to_string(RPC_VERSION);
-	command += "&system_name=";
-	command += myHostname;
-
-	command += "&client_can_apply_updates=";
-	if(packageManager->canApplyUpdates())
-	{
-		command += "true";
-	}
-	else
-	{
-		command += "false";
-	}
-
-	command += "&client_can_apply_reboot=";
-	if(rebootManager->canApplyReboot())
-	{
-		command += "true";
-	}
-	else
-	{
-		command += "false";
-	}
-
-	if(list.size() == 0)
-	{
-		command += "&no_updates_available=true";
-	}
-	else
-	{
-		// this output also needs to be escaped for HTML
-		command += "&available_updates=";
-		for(size_t i = 0; i < list.size(); i++)
-		{
-			if(i != 0)
-			{
-				command += ",";
-			}
-			command += list[i].name;
-		}
-		// also add version info
-		command += "&versions=";
-		for(size_t i = 0; i < list.size(); i++)
-		{
-			if(i != 0)
-			{
-				command += "|";
-			}
-			command += list[i].version;
-		}
-	}
-
-	command += "&reboot_required=";
-	int rebootNeeded = rebootManager->isRebootNeeded();
-	if(rebootNeeded == 1)
-	{
-		command += "true";
-	}
-	else if(rebootNeeded == 0)
-	{
-		command += "false";
-	}
-	else
-	{
-		command += "unknown";
-	}
-
-	command += "&reboot_attempted=";
-	if(rebootAttempted)
-	{
-		command += "true";
-	}
-	else
-	{
-		command += "false";
-	}
-
-	string collectUrl = serverUrl;
-	if(collectUrl[collectUrl.size() - 1] != '/')
-	{
-		collectUrl += "/";
-	}
-	collectUrl += "collect.php";
-
-	CURL * curlHandle;
-	CURLcode res = CURLE_OK;
-	string curlOutput;
-	curlHandle = curl_easy_init();
-	if(curlHandle)
-	{
-		curl_easy_setopt(curlHandle, CURLOPT_POSTFIELDS, command.c_str());
-		curl_easy_setopt(curlHandle, CURLOPT_URL, collectUrl.c_str());
-		curl_easy_setopt(curlHandle, CURLOPT_WRITEFUNCTION, write_data); 
-		curl_easy_setopt(curlHandle, CURLOPT_WRITEDATA, &curlOutput); 
-		res = curl_easy_perform(curlHandle);
-
-		//cleanup
-		curl_easy_cleanup(curlHandle);
-	}
-	
-	// exit if curl fails
-	if(res != CURLE_OK)
-	{
-		cerr << "cURL failed: " << curl_easy_strerror(res) << endl << curlOutput << endl;
-		exit(EXIT_CODE_CURL);
-	}
-
-	if( (verboseLevel >= VERBOSE_EXTRA) || ((verboseLevel == VERBOSE_QUIET) && curlOutput.substr(0, 8) != "data_ok:"))
-	{
-		cout << curlOutput << endl;
-	}
-}
-
 void ForestClient::readConfigFile()
 {
-	FILE * configFile;
-	char line[BUFFER_SIZE];
-	char * response = line;
-	char * splitPtr;
+	string line;
 	string confName;
 	string confValue;
-	char * cleanupPtr = NULL;
 
-	line[0] = '\0';
+	ifstream configFile(CONFIG_FILE_PATH);
 
-	configFile = fopen(CONFIG_FILE_PATH, "r");
-	if(configFile == NULL)
+	if(!configFile.is_open())
 	{
 		cerr << "Failed to open config file " << CONFIG_FILE_PATH << endl;
 		cerr << "Exiting..." << endl;
 		exit(EXIT_CODE_CONFIGFILE);
 	}
-	while(response)
+	while(getline(configFile, line))
 	{
-		response = fgets(line, BUFFER_SIZE, configFile);
-		if(response == NULL)
+		if(line[0] != '#')
 		{
-			break;
-		}
-		else if(line[0] != '#')
-		{
-			splitPtr = strchr(line, '=');
-			if(splitPtr != NULL)
+            size_t splitIndex = line.find('=', 0);
+
+			if(splitIndex != string::npos)
 			{
-				// remove the equals sign
-				*splitPtr = '\0';
+                confName = line.substr(0, splitIndex);
+                confName = trim_string(confName);
+                confValue = line.substr(splitIndex + 1, line.size() - splitIndex - 1);
+                confValue = trim_string(confValue);
 
-				// remove a newline, if it exists
-				cleanupPtr = strchr(line, '\n');
-				if(cleanupPtr != NULL)
-				{
-					*cleanupPtr = '\0';
-				}
-
-				// remove two double quotes, if they exist
-				cleanupPtr = strchr(splitPtr + 1, '"');
-				if(cleanupPtr != NULL)
-				{
-					*cleanupPtr = '\0';
-					// advance the split pointer to just past where the first double quote was
-					splitPtr = cleanupPtr + 1;
-				}
-				
-				cleanupPtr = strchr(splitPtr, '"');
-				if(cleanupPtr != NULL)
-				{
-					*cleanupPtr = '\0';
-				}
-				
-				confName = line;
-				confValue = (splitPtr);
-				if(confName.substr(0, 10) == "server_url")
+				if(confName.size() >= 10 && confName.substr(0, 10) == "server_url")
 				{
 					serverUrl = confValue;
 				}
@@ -538,6 +280,8 @@ void ForestClient::readConfigFile()
 			}
 		}
 	}
+
+	configFile.close();
 }
 
 void ForestClient::setVerboseLevel(unsigned int level)
@@ -607,14 +351,5 @@ void ForestClient::getHostname()
 #endif
 
 	myHostname = temp;
-}
-
-// CURL callback
-size_t write_data(void *buffer, size_t size, size_t nmemb, void *userp)
-{
-	char * charBuf = (char *)buffer;
-	string * data = (string *)userp;
-	data->append(charBuf, nmemb);
-	return nmemb;
 }
 

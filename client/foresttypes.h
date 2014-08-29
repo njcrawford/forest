@@ -4,10 +4,17 @@
 #include <string>
 using namespace std;
 
-typedef struct updateInfoStruct
+struct updateInfo
 {
 	string name;
 	string version;
-} updateInfo;
+};
+
+enum rebootState
+{
+	unknown = -1,
+	yes = 1,
+	no = 0
+};
 
 #endif

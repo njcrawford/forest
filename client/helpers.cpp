@@ -3,10 +3,10 @@
 #include <string.h>
 
 #include "helpers.h"
-#include "defines.h"
 
+#define BUFFER_SIZE 1024
 
-// Works like system(), but returns lines of stdout output in outList and the 
+// Works like system(), but returns lines of stdout output in outList and the
 // command's return value in returnVal.
 #ifndef _WIN32
 void mySystem(string * command, vector<string> & outList, int * returnVal)
@@ -36,7 +36,7 @@ void mySystem(string * command, vector<string> & outList, int * returnVal)
 
 		// add this line to outList
 		outList.push_back(line);
-		
+
 	} while (response != NULL);
 	int pcloseVal = pclose(pipe);
 	*returnVal = WEXITSTATUS(pcloseVal);
@@ -66,7 +66,7 @@ string trim_string(const string& s)
 {
 	int start = -1;
 	int end = -1;
-	// Find the laft whitespace
+	// Find the left whitespace
 	for(size_t i = 0; i < s.size(); i++)
 	{
 		if(!isspace(s[i]) && start == -1)

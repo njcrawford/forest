@@ -20,8 +20,8 @@ private:
 	PackageManager * packageManager;
 	RebootManager * rebootManager;
 
-	void getAcceptedUpdates(vector<string> & outList, bool * rebootAccepted);
-	void reportAvailableUpdates(vector<updateInfo> & list, bool rebootAttempted);
+	void getAcceptedUpdatesRpcv2(vector<string> & outList, bool * rebootAccepted);
+	void reportAvailableUpdatesRpcv2(vector<updateInfo> & list, bool rebootAttempted);
 	void readConfigFile();
 	void getHostname();
 public:

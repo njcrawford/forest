@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="Forest-client" />
+		<Option makefile_is_custom="1" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Debug">
+				<Option output="bin/forest-client" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Debug/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Option parameters="-w --verbose" />
+				<Compiler>
+					<Add option="-g" />
+				</Compiler>
+			</Target>
+			<Target title="Release">
+				<Option output="bin/forest-client" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Release/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Option parameters="-w --verbose" />
+				<Compiler>
+					<Add option="-O2" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+				</Linker>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-Wall" />
+		</Compiler>
+		<Unit filename="FilePresence.cpp" />
+		<Unit filename="FilePresence.h" />
+		<Unit filename="ForestClientCapabilities.cpp" />
+		<Unit filename="ForestClientCapabilities.h" />
+		<Unit filename="ForestRpc.cpp" />
+		<Unit filename="ForestRpc.h" />
+		<Unit filename="KernelDifference.cpp" />
+		<Unit filename="KernelDifference.h" />
+		<Unit filename="MacSU.cpp" />
+		<Unit filename="MacSU.h" />
+		<Unit filename="PackageManager.cpp" />
+		<Unit filename="PackageManager.h" />
+		<Unit filename="RebootManager.cpp" />
+		<Unit filename="RebootManager.h" />
+		<Unit filename="RebootStub.cpp" />
+		<Unit filename="RebootStub.h" />
+		<Unit filename="Rpcv2.cpp" />
+		<Unit filename="Rpcv2.h" />
+		<Unit filename="Rpcv3.cpp" />
+		<Unit filename="Rpcv3.h" />
+		<Unit filename="UnixShutdown.cpp" />
+		<Unit filename="UnixShutdown.h" />
+		<Unit filename="WinRegKey.cpp" />
+		<Unit filename="WinRegKey.h" />
+		<Unit filename="aptcli.cpp" />
+		<Unit filename="aptcli.h" />
+		<Unit filename="config.h" />
+		<Unit filename="exitcodes.h" />
+		<Unit filename="forest-client.cpp" />
+		<Unit filename="forest-client.h" />
+		<Unit filename="foresttypes.h" />
+		<Unit filename="helpers.cpp" />
+		<Unit filename="helpers.h" />
+		<Unit filename="main.cpp" />
+		<Unit filename="verboselevels.h" />
+		<Unit filename="version.h" />
+		<Unit filename="wuaapi.cpp" />
+		<Unit filename="wuaapi.h" />
+		<Unit filename="yum.cpp" />
+		<Unit filename="yum.h" />
+		<Extensions>
+			<code_completion />
+			<debugger />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>
