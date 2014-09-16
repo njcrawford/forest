@@ -21,14 +21,14 @@ namespace ConfigurationGUI
         {
             settings = new NJCrawford.IniFile("forest-client.conf");
             // set a default for server url if there is nothing set
-            if (settings.getValue("server_url") == null)
+            String serverUrl = settings.getValue("server_url", "");
+            if (String.IsNullOrEmpty(serverUrl))
             {
                 txtServerURL.Text = "http://url-not-set/forest";
             }
             else
             {
-                string removeQuotes = settings.getValue("server_url");
-                txtServerURL.Text = removeQuotes.Replace("\"", "");
+                txtServerURL.Text = serverUrl.Replace("\"", "");
             }
         }
 
