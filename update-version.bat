@@ -51,7 +51,7 @@ echo ^<!-- %Message1% --^> >> %wix_filename%
 echo ^<!-- %Message2% --^> >> %wix_filename%
 echo ^<Include^> >> %wix_filename%
 echo   ^<?define ProductVersion = "%Version%"?^> >> %wix_filename%
-echo   ^<?define ProductUuid = "%Uuid%"?^> >> %wix_filename%
+echo   ^<?define ProductGuid = "%Uuid%"?^> >> %wix_filename%
 echo ^</Include^> >> %wix_filename%
 
 pause
