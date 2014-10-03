@@ -35,6 +35,7 @@
                 </File>
                 <File Id="IniFileDll" Name="IniFile.dll" DiskId="1" Source="../ConfigurationGUI/IniFile.dll" Vital="yes">
                 </File>
+                <File DiskId="1" Id="MicrosoftWin32TaskSchedulerdll" Name="Microsoft.Win32.TaskScheduler.dll" Source="..\ConfigurationGUI\Microsoft.Win32.TaskScheduler.dll" Vital="yes" />
             </Component>
         </DirectoryRef>
         <Feature Id="ProductFeature" Title="Forest Client" Level="1">

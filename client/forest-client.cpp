@@ -52,6 +52,7 @@
 using namespace std;
 
 #include "config.h"
+#include "version.h"
 
 #include "forest-client.h"
 #include "helpers.h"
@@ -101,6 +102,7 @@ int ForestClient::run()
 
 	if(verboseLevel >= VERBOSE_NORMAL)
 	{
+		cout << "Forest client version " << FOREST_VERSION << endl;
 		cout << "Starting..." << endl;
 	}
 

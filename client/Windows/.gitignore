@@ -4,11 +4,5 @@
 *.opensdf
 */Debug
 ipch
-*/Release/*.obj
-*/Release/*.tlog
-*/Release/*.log
-*/Release/*.pdb
-*/Release/*.res
-*/Release/*.manifest
-*/Release/*.lastbuildstate
+*/Release
 

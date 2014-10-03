@@ -15,7 +15,7 @@
         </Directory>
         <DirectoryRef Id="ApplicationProgramsFolder">
             <Component Id="ApplicationShortcut" Guid="C52AAF47-57E8-4F07-A509-6CA90E7206D7">
-                <Shortcut Id="ApplicationStartMenuShortcut" Name="Configuration" Description="Forest client configuration" Target="[INSTALLLOCATION]ConfigurationGUI.exe" WorkingDirectory="INSTALLLOCATION" />
+                <Shortcut Id="ApplicationStartMenuShortcut" Name="Forest Client Configuration" Description="Forest client settings" Target="[INSTALLLOCATION]ConfigurationGUI.exe" WorkingDirectory="INSTALLLOCATION" />
                 <RemoveFolder Id="ApplicationProgramsFolder" On="uninstall" />
                 <RegistryValue Root="HKCU" Key="Software\Microsoft\Forest Client" Name="installed" Type="integer" Value="1" KeyPath="yes" />
             </Component>
@@ -35,6 +35,7 @@
                 </File>
                 <File Id="IniFileDll" Name="IniFile.dll" DiskId="1" Source="../ConfigurationGUI/IniFile.dll" Vital="yes">
                 </File>
+                <File Source="..\ConfigurationGUI\Microsoft.Win32.TaskScheduler.dll" Name="Microsoft.Win32.TaskScheduler.dll" DiskId="1" Id="MicrosoftWin32TaskSchedulerdll" Vital="yes" />
             </Component>
         </DirectoryRef>
         <Feature Id="ProductFeature" Title="Forest Client" Level="1">

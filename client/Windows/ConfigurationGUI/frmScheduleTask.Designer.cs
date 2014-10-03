@@ -39,6 +39,7 @@
             this.dateTimePicker1.Format = System.Windows.Forms.DateTimePickerFormat.Time;
             this.dateTimePicker1.Location = new System.Drawing.Point(67, 38);
             this.dateTimePicker1.Name = "dateTimePicker1";
+            this.dateTimePicker1.ShowUpDown = true;
             this.dateTimePicker1.Size = new System.Drawing.Size(109, 20);
             this.dateTimePicker1.TabIndex = 0;
             // 
@@ -82,6 +83,7 @@
             this.Controls.Add(this.dateTimePicker1);
             this.Name = "frmScheduleTask";
             this.Text = "Schedule Task";
+            this.Load += new System.EventHandler(this.frmScheduleTask_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
 
