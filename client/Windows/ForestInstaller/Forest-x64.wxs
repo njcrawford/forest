@@ -2,7 +2,7 @@
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
     <?include $(sys.CURRENTDIR)Version.wxi ?>
     <Product Id="$(var.ProductGuid)" Name="Forest Client" Language="1033" Version="$(var.ProductVersion)" Manufacturer="Nathan Crawford" UpgradeCode="a55bfa54-79c0-419f-b7e4-06646004364a">
-        <Package InstallerVersion="405" Compressed="yes" />
+        <Package InstallerVersion="405" Compressed="yes" Platform="x64" />
         <Media Id="1" Cabinet="media1.cab" EmbedCab="yes" />
         <Directory Id="TARGETDIR" Name="SourceDir">
             <Directory Id="ProgramFilesFolder">
@@ -23,9 +23,9 @@
         <DirectoryRef Id="INSTALLLOCATION">
             <Component Id="ProductComponent" Guid="aed19453-771e-4985-9a9f-fbf7fb4ffb8a">
                 <!-- Forest client and support files -->
-                <File Id="ForestClientExe" Name="forest-client.exe" DiskId="1" Source="../Win32/Release/forest-client.exe" Vital="yes">
+                <File Id="ForestClientExe" Name="forest-client.exe" DiskId="1" Source="../x64/Release/forest-client.exe" Vital="yes">
                 </File>
-                <File Id="LibCurlDll" Name="libcurl.dll" DiskId="1" Source="../curl-source/builds/libcurl-vc10-x86-release-dll-ipv6-sspi-spnego-winssl/bin/libcurl.dll" Vital="yes">
+                <File Id="LibCurlDll" Name="libcurl.dll" DiskId="1" Source="../curl-source/builds/libcurl-vc10-x64-release-dll-ipv6-sspi-spnego-winssl/bin/libcurl.dll" Vital="yes">
                 </File>
                 <!-- <File Id="LibEay32Dll" Name="libeay32.dll" DiskId="1" Source="../../cURL/libeay32.dll" Vital="yes"></File>
         <File Id="OpenLdapDll" Name="openldap.dll" DiskId="1" Source="../../cURL/openldap.dll" Vital="yes"></File>
@@ -57,7 +57,7 @@
         <MajorUpgrade Schedule="afterInstallValidate" DowngradeErrorMessage="A later version of [ProductName] is already installed. Setup will now exit." />
         <!-- Include MS VC 2010 runtime -->
         <DirectoryRef Id="TARGETDIR">
-            <Merge Id="VCRedist" SourceFile="C:\Program Files\Common Files\Merge Modules\Microsoft_VC120_CRT_x86.msm" DiskId="1" Language="0" />
+            <Merge Id="VCRedist" SourceFile="..\..\..\..\..\..\..\..\Program Files\Common Files\Merge Modules\Microsoft_VC120_CRT_x64.msm" DiskId="1" Language="0" />
         </DirectoryRef>
         <Feature Id="VCRedist" Title="Visual C++ 12.0 Runtime" AllowAdvertise="no" Display="hidden" Level="1">
             <MergeRef Id="VCRedist" />
