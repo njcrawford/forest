@@ -2,7 +2,7 @@
 *.user
 *.sdf
 *.opensdf
-*/Debug
 ipch
-*/Release
+/Win32
+/x64
 
