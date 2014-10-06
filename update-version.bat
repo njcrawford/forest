@@ -12,7 +12,7 @@ set rc1_filename=client\Windows\version1.rc
 set rc2_filename=client\Windows\version2.rc
 set php_filename=server\www\application\config\version.php
 set cs_filename=client\Windows\COnfigurationGUI\Properties\version.cs
-set wix_filename=client\Windows\FOrestInstaller\Version.wxi
+set wix_filename=client\Windows\ForestInstaller\Version.wxi
 
 REM C version
 echo // %Message1% > %c_filename%
