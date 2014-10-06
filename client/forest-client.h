@@ -19,6 +19,7 @@ private:
 	string myHostname;
 	PackageManager * packageManager;
 	RebootManager * rebootManager;
+	string configFilePath;
 
 	void getAcceptedUpdates(vector<string> & outList, bool * rebootAccepted);
 	void reportAvailableUpdates(vector<updateInfo> & list, bool rebootAttempted);
@@ -28,6 +29,7 @@ public:
 	ForestClient();
 	void setVerboseLevel(unsigned int level);
 	void setWaitMode(bool enabled);
+	void setConfigFilePath(const string & path);
 	int run();
 };
 

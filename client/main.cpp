@@ -44,32 +44,38 @@ int main(int argc, char** args)
 	
 	for(int argNum = 1; argNum < argc; argNum++)
 	{
-		if(strcmp(args[argNum], "--cron") == 0)
+		string thisArg = args[argNum];
+		if(thisArg == "--cron")
 		{
 			client->setVerboseLevel(VERBOSE_QUIET);
 		}
-		else if(strcmp(args[argNum], "--help") == 0)
+		else if(thisArg == "--help")
 		{
 			cout << "Command line switches:" << endl;
-			cout << "--cron    Suppress all output unless an error occurs" << endl;
-			cout << "--help    Show this list" << endl;
-			cout << "--verbose Output extra detail about actions" << endl;
-			cout << "--version Show forest client version and exit" << endl;
-			cout << "--wait    Wait for enter keypress before terminating" << endl;
+			cout << "--cron               Suppress all output unless an error occurs" << endl;
+			cout << "--config=config-path Specifiy config file path" << endl;
+			cout << "--help               Show this list" << endl;
+			cout << "--verbose            Output extra detail about actions" << endl;
+			cout << "--version            Show forest client version and exit" << endl;
+			cout << "--wait               Wait for enter keypress before terminating" << endl;
 			exit(EXIT_CODE_OK);
 		}
-		else if(strcmp(args[argNum], "--verbose") == 0)
+		else if(thisArg == "--verbose")
 		{
 			client->setVerboseLevel(VERBOSE_EXTRA);
 		}
-		else if(strcmp(args[argNum], "--version") == 0)
+		else if(thisArg == "--version")
 		{
 			cout << "Forest client version " << FOREST_VERSION << endl;
 			exit(EXIT_CODE_OK);
 		}
-		else if(strcmp(args[argNum], "--wait") == 0)
+		else if(thisArg == "--wait")
 		{
 			client->setWaitMode(true);
+		}
+		else if (thisArg.substr(0, 9) == "--config=")
+		{
+			client->setConfigFilePath(thisArg.substr(9, string::npos));
 		}
 		else
 		{

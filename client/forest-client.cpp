@@ -91,6 +91,7 @@ ForestClient::ForestClient()
 	// set a default for server url
 	serverUrl = DEFAULT_SERVER_URL;
 	myHostname = "NoHostName";
+	configFilePath = CONFIG_FILE_PATH;
 }
 
 int ForestClient::run()
@@ -483,10 +484,10 @@ void ForestClient::readConfigFile()
 
 	line[0] = '\0';
 
-	configFile = fopen(CONFIG_FILE_PATH, "r");
+	configFile = fopen(configFilePath.c_str(), "r");
 	if(configFile == NULL)
 	{
-		cerr << "Failed to open config file " << CONFIG_FILE_PATH << endl;
+		cerr << "Failed to open config file " << configFilePath << endl;
 		cerr << "Exiting..." << endl;
 		exit(EXIT_CODE_CONFIGFILE);
 	}
@@ -550,6 +551,11 @@ void ForestClient::setVerboseLevel(unsigned int level)
 void ForestClient::setWaitMode(bool enabled)
 {
 	waitMode = enabled;
+}
+
+void ForestClient::setConfigFilePath(const string & path)
+{
+	configFilePath = path;
 }
 
 void ForestClient::getHostname()
