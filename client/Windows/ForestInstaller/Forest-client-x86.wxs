@@ -64,5 +64,6 @@
             <MergeRef Id="VCRedist" />
         </Feature>
         <UI />
+        <Condition Message="This version of Forest only requires Windows Vista, Windows Server 2008, or newer."><![CDATA[Installed OR (VersionNT >= 600)]]></Condition>
     </Product>
 </Wix>
