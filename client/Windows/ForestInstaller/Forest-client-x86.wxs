@@ -25,7 +25,7 @@
                 <!-- Forest client and support files -->
                 <File Id="ForestClientExe" Name="forest-client.exe" DiskId="1" Source="../Win32/Release/forest-client.exe" Vital="yes">
                 </File>
-                <File Id="LibCurlDll" Name="libcurl.dll" DiskId="1" Source="../curl-source/builds/libcurl-vc10-x86-release-dll-ipv6-sspi-spnego-winssl/bin/libcurl.dll" Vital="yes">
+                <File Id="LibCurlDll" Name="libcurl.dll" DiskId="1" Source="..\libcurl-build\x86\lib\MinSizeRel\libcurl.dll" Vital="yes">
                 </File>
                 <!-- <File Id="LibEay32Dll" Name="libeay32.dll" DiskId="1" Source="../../cURL/libeay32.dll" Vital="yes"></File>
         <File Id="OpenLdapDll" Name="openldap.dll" DiskId="1" Source="../../cURL/openldap.dll" Vital="yes"></File>
