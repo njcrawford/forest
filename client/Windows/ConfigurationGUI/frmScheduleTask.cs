@@ -23,6 +23,10 @@ namespace ConfigurationGUI
 
         private void btnOk_Click(object sender, EventArgs e)
         {
+            // On some systems this action can take a little bit (several seconds).
+            // Disable the OK button to avoid accedental multiple clicks.
+            btnOk.Enabled = false;
+
             // Create or modify the scheduled task
 
             // Get the service on the local machine
@@ -40,7 +44,7 @@ namespace ConfigurationGUI
 
                 // Create an action that will launch forest-client whenever the trigger fires
                 string forestClientPath = System.IO.Path.Combine(Environment.CurrentDirectory, "forest-client.exe");
-                td.Actions.Add(new ExecAction(forestClientPath, null, null));
+                td.Actions.Add(new ExecAction(forestClientPath, null, Environment.CurrentDirectory));
 
                 // Change some settings of the task to fit our application.
                 // It may make sense to break some of these settings out as controls the user can adjust.
@@ -79,6 +83,9 @@ namespace ConfigurationGUI
 
             //MessageBox.Show("Finished!");
             this.Close();
+
+            // Re-enable OK button
+            btnOk.Enabled = true;
         }
 
         private void frmScheduleTask_Load(object sender, EventArgs e)
