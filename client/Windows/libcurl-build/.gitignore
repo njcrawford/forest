@@ -1,0 +1,5 @@
+// Ignore everything except what's already added
+*
+!.gitignore
+!*/lib/MinSizeRel/*.dll
+!*/lib/MinSizeRel/*.dll
