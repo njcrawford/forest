@@ -31,7 +31,7 @@ void WuaApi::getAvailableUpdates(vector<updateInfo> & outList)
 	{
 		cerr << "Failed to create IUpdateSession COM object, error " << result << endl;
 		cerr << "Exiting..." << endl;
-		exit(EXIT_CODE_WUAAPI);
+		exit(EXIT_CODE_WUAAPI_CREATE_COM);
 	}
 	uSession->CreateUpdateSearcher(&uSearcher);
 	result = uSearcher->Search(searchString, &uResult);
@@ -39,7 +39,7 @@ void WuaApi::getAvailableUpdates(vector<updateInfo> & outList)
 	{
 		cerr << "Failed to get results from IUpdateSearcher COM object, error " << result << endl;
 		cerr << "Exiting..." << endl;
-		exit(EXIT_CODE_WUAAPI);
+		exit(EXIT_CODE_WUAAPI_UPDATE_SEARCH);
 	}
 	
 	result = uResult->get_Updates(&uUpdates);
@@ -47,7 +47,7 @@ void WuaApi::getAvailableUpdates(vector<updateInfo> & outList)
 	{
 		cerr << "Failed to get list of updates from ISearchResult COM object, error " << result << endl;
 		cerr << "Exiting..." << endl;
-		exit(EXIT_CODE_WUAAPI);
+		exit(EXIT_CODE_WUAAPI_UPDATE_LIST);
 	}
 	
 	result = uUpdates->get_Count(&updateCount);
@@ -55,7 +55,7 @@ void WuaApi::getAvailableUpdates(vector<updateInfo> & outList)
 	{
 		cerr << "Failed to get update count from IUpdateCollection COM object, error " << result << endl;
 		cerr << "Exiting..." << endl;
-		exit(EXIT_CODE_WUAAPI);
+		exit(EXIT_CODE_WUAAPI_GET_COUNT);
 	}
 	for (long i = 0; i < updateCount; i++)
 	{
@@ -66,7 +66,7 @@ void WuaApi::getAvailableUpdates(vector<updateInfo> & outList)
 		{
 			cerr << "Failed to get an update from IUpdateCollection COM object, error " << result << endl;
 			cerr << "Exiting..." << endl;
-			exit(EXIT_CODE_WUAAPI);
+			exit(EXIT_CODE_WUAAPI_GET_ITEM);
 		}
 
 		// Query string above doesn't seem to have any effect, so we'll check
@@ -78,14 +78,14 @@ void WuaApi::getAvailableUpdates(vector<updateInfo> & outList)
 		{
 			cerr << "Failed to get AutoSelectOnWebSites from IUpdate COM object, error " << result << endl;
 			cerr << "Exiting..." << endl;
-			exit(EXIT_CODE_WUAAPI);
+			exit(EXIT_CODE_WUAAPI_GET_AUTOSELECT);
 		}
 		thisUpdate->get_IsHidden(&hidden);
 		if(result != S_OK)
 		{
 			cerr << "Failed to get IsHidden from IUpdate COM object, error " << result << endl;
 			cerr << "Exiting..." << endl;
-			exit(EXIT_CODE_WUAAPI);
+			exit(EXIT_CODE_WUAAPI_GET_ISHIDDEN);
 		}
 
 		if(!hidden && autoSelect)
@@ -100,7 +100,7 @@ void WuaApi::getAvailableUpdates(vector<updateInfo> & outList)
 			{
 				cerr << "Failed to get KB title from IStringCollection COM object, error " << result << endl;
 				cerr << "Exiting..." << endl;
-				exit(EXIT_CODE_WUAAPI);
+				exit(EXIT_CODE_WUAAPI_GET_TITLE);
 			}
 			info.version = _bstr_t(desc);
 
@@ -109,7 +109,7 @@ void WuaApi::getAvailableUpdates(vector<updateInfo> & outList)
 			{
 				cerr << "Failed to get list of KB articles from IUpdate COM object, error " << result << endl;
 				cerr << "Exiting..." << endl;
-				exit(EXIT_CODE_WUAAPI);
+				exit(EXIT_CODE_WUAAPI_GET_KB_LIST);
 			}
 
 			result = KBList->get_Count(&KBCount);
@@ -117,7 +117,7 @@ void WuaApi::getAvailableUpdates(vector<updateInfo> & outList)
 			{
 				cerr << "Failed to get KB count from IStringCollection COM object, error " << result << endl;
 				cerr << "Exiting..." << endl;
-				exit(EXIT_CODE_WUAAPI);
+				exit(EXIT_CODE_WUAAPI_GET_KB_COUNT);
 			}
 			if(KBCount > 0)
 			{
@@ -126,7 +126,7 @@ void WuaApi::getAvailableUpdates(vector<updateInfo> & outList)
 				{
 					cerr << "Failed to get KB name from IStringCollection COM object, error " << result << endl;
 					cerr << "Exiting..." << endl;
-					exit(EXIT_CODE_WUAAPI);
+					exit(EXIT_CODE_WUAAPI_GET_KB_ITEM);
 				}
 				info.name = "KB";
 				info.name += _bstr_t(name);
