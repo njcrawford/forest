@@ -22,7 +22,7 @@ Reboot Accepted: <?= ($system_info->reboot_accepted == 1) ? "Yes" : "No" ?>
 		<input type="submit" value="<?= ($system_info->reboot_accepted == 1) ? 'Cancel reboot request' : 'Request reboot' ?>">
 	</form>
 	<?php } else { ?>
-	(Reboot requests have been disabled for this system)
+	(Reboot requests are not enabled for this system)
 	<?php } ?>
 <?php } else { ?>
 	(Client is unable to accept reboot requests)

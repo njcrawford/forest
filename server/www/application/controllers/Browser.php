@@ -296,7 +296,7 @@ class Browser extends CI_Controller {
 			// show an error
 			$data['page_title'] = "Error";
 			$this->load->view('header', $data);
-			$data['error_message'] = "Reboot requests have been disabled for this system";
+			$data['error_message'] = "Reboot requests are not enabled for this system";
 			$this->load->view('error', $data);
 			$this->load->view('footer');
 			return;
