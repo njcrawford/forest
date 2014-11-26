@@ -27,6 +27,8 @@ void AptCli::parseUpdates(vector<updateInfo> & outList, vector<string> & input)
 			string::size_type len = input[i].find(' ', pos + 1) - pos;
 			updateInfo temp;
 			temp.name = input[i].substr(pos, len);
+
+			pos = input[i].find(' ', pos + 1);
 			// Ignore packages that don't have an existing version number
 			if(input[i][pos + 1] == '[')
 			{
