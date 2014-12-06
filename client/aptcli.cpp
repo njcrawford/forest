@@ -83,8 +83,8 @@ void AptCli::applyUpdates(vector<string> & list)
 	
 	if(commandResponse != 0)
 	{
-		cerr << "Error in applyUpdates: Package manager failed to apply updates:\n"; 
-		cerr << flattenStringList(commandOutput, ' ');
+		cerr << "Error in applyUpdates: Package manager failed to apply updates:" << endl; 
+		cerr << flattenStringList(commandOutput, ' ') << endl;
 		exit(1);
 	}
 }
