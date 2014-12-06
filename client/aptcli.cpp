@@ -72,7 +72,7 @@ void AptCli::applyUpdates(vector<string> & list)
 	// DEBIAN_FRONTEND=noninteractive tells ucf not to ask configuration questions.
 	// --force-confdef tells dconf to make config file modifications when it knows what to do.
 	// --force-confold tells dconf to leave the existing config files as-is when it doesn't know what to do.
-	command = "DEBIAN_FRONTEND=noninteractive apt-get -y -o Dpkg::Options::\\=\"--force-confdef\" -o Dpkg::Options::\\=\"--force-confold\" --only-upgrade ";
+	command = "DEBIAN_FRONTEND=noninteractive /usr/bin/apt-get install --yes -o Dpkg::Options::\\=\"--force-confdef\" -o Dpkg::Options::\\=\"--force-confold\" --only-upgrade ";
 	//cerr << command << endl;
 	command += flattenStringList(list, ' ');
 	//cerr << command << endl;
