@@ -97,7 +97,7 @@ class Cron extends CI_Controller {
 		if(!empty($reboot_message))
 		{
 			$output_message .= "\n";
-			$output_message .= "These systems need rebooted:\n";
+			$output_message .= "These systems need a reboot to finish installing updates:\n";
 			$output_message .= $reboot_message;
 		}
 
