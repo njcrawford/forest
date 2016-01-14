@@ -1,11 +1,11 @@
 #include "FilePresence.h"
 #include <unistd.h>
 
-rebootState FilePresence::isRebootNeeded()
+RebootState FilePresence::isRebootNeeded()
 {
 	if(access( "/var/run/reboot-required", F_OK ) == 0)
 	{
-		return yes;
+		return RebootState::Yes;
 	}
-	return no;
+	return RebootState::No;
 }

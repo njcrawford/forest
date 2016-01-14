@@ -6,7 +6,7 @@
 class FilePresence : public UnixShutdown 
 {
 public:
-    rebootState isRebootNeeded() override;
+    RebootState isRebootNeeded() override;
 };
 
 #endif

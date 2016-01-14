@@ -6,7 +6,7 @@
 class RebootStub : public RebootManager
 {
 public:
-    rebootState isRebootNeeded() override;
+    RebootState isRebootNeeded() override;
 };
 
 #endif

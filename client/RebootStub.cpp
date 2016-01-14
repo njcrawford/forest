@@ -1,6 +1,6 @@
 #include "RebootStub.h"
 
-rebootState RebootStub::isRebootNeeded()
+RebootState RebootStub::isRebootNeeded()
 {
-	return unknown;
+	return RebootState::Unknown;
 }

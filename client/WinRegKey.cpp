@@ -7,7 +7,7 @@
 #include <tchar.h>
 using namespace std;
 
-rebootState WinRegKey::isRebootNeeded()
+RebootState WinRegKey::isRebootNeeded()
 {
 	// found this on a forum, may be able to use this key for our purposes
 	// presence of this key indicates a reboot is needed and keys inside it indicate
@@ -22,11 +22,11 @@ rebootState WinRegKey::isRebootNeeded()
 	if( RegOpenKey(HKEY_LOCAL_MACHINE,subkey,&hKey) == ERROR_SUCCESS)
 	{
 		RegCloseKey(hKey);	
-		return yes;
+		return RebootState::Yes;
 	}
 	else
 	{
-		return no;
+		return RebootState::No;
 	}
 
 }

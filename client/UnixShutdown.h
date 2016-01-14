@@ -6,7 +6,7 @@
 class UnixShutdown : public RebootManager
 {
 public:
-    virtual rebootState isRebootNeeded() override = 0;
+    virtual RebootState isRebootNeeded() override = 0;
     void applyReboot() override;
     bool canApplyReboot() override;
 };

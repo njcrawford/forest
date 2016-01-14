@@ -210,7 +210,7 @@ int ForestClient::run()
 	{
 		cout << acceptedUpdates.size() << " accepted updates." << endl;
 		cout << availableUpdates.size() << " available updates." << endl;
-		if(rebootManager->isRebootNeeded())
+		if(rebootManager->isRebootNeeded() == RebootState::Yes)
 		{
 			cout << "Reboot is needed." << endl;
 		}
@@ -412,12 +412,12 @@ void ForestClient::reportAvailableUpdates(vector<updateInfo> & list, bool reboot
 	}
 
 	command += "&reboot_required=";
-	int rebootNeeded = rebootManager->isRebootNeeded();
-	if(rebootNeeded == 1)
+	RebootState rebootNeeded = rebootManager->isRebootNeeded();
+	if(rebootNeeded == RebootState::Yes)
 	{
 		command += "true";
 	}
-	else if(rebootNeeded == 0)
+	else if(rebootNeeded == RebootState::No)
 	{
 		command += "false";
 	}

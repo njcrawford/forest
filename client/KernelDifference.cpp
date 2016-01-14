@@ -7,7 +7,7 @@
 
 using namespace std;
 
-rebootState KernelDifference::isRebootNeeded()
+RebootState KernelDifference::isRebootNeeded()
 {
 	// Get the currently running kernel
 	utsname kernelInfo;
@@ -39,17 +39,17 @@ rebootState KernelDifference::isRebootNeeded()
 	// know for sure what kernels are installed.
 	if(rpmRetval != 0 || kernelList.empty())
 	{
-		return unknown;
+		return RebootState::Unknown;
 	}
 
 	// Compare the running kernel with the newest kernel.
 	// The last one in the list should be the most recent.
 	if(runningKernel == kernelList[kernelList.size() - 1])
 	{
-		return no;
+		return RebootState::No;
 	}
 	else
 	{
-		return yes;
+		return RebootState::Yes;
 	}
 }
