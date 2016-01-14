@@ -9,36 +9,42 @@ using namespace std;
 
 rebootState KernelDifference::isRebootNeeded()
 {
-	// get the currently running kernel
+	// Get the currently running kernel
 	utsname kernelInfo;
 	uname(&kernelInfo);
-	//vector<string> kernelList;
-	//mySystem("uname -r", kernelList);
 	string runningKernel = kernelInfo.release;
-	// On centos 6, uname returns the kernel arch but yum doesn't.
-	// If a system is configured kernels for more than 1 arch then the kernel 
+
+	// On centos 6, uname returns the kernel arch as part of the version
+	// but yum doesn't. So, we need to remove the arch if it's present in the
+	// version string.
+	// NOTE: If a system is configured kernels for more than 1 arch then the kernel 
 	// diff method may not be accurate for determining whether a reboot is needed.
-	//kernelList.clear();
-	//mySystem("uname -m", kernelList);
 	string kernelArch = ".";
 	kernelArch += kernelInfo.machine;
 	string::size_type archPos = runningKernel.find(kernelArch);
 	if(archPos != string::npos)
 	{
+		// Remove arch from kernel version
 		runningKernel = runningKernel.substr(0, archPos);
 	}
 
-	// find the highest installed kernel
-	// TODO: make this use the current package manager instead of hard coding yum
+	// Find the highest installed kernel
+	// TODO: make this use the current package manager instead of hard coding rpm
 	vector<string> kernelList;
-	string newestKernel = "";
-	kernelList.clear();
-	string command = "rpm --query kernel --queryformat \"%{VERSION}-%{RELEASE}\\n\"";
-	int junk;
-	mySystem(&command, kernelList, &junk); 
-	newestKernel = kernelList[kernelList.size() - 1];
+	string command = "rpm --query kernel --queryformat %{VERSION}-%{RELEASE}\\n";
+	int rpmRetval = 0;
+	mySystem(&command, kernelList, &rpmRetval);
 
-	if(runningKernel == newestKernel)
+	// If rpm command wasn't successful or returned zero results, we don't
+	// know for sure what kernels are installed.
+	if(rpmRetval != 0 || kernelList.empty())
+	{
+		return unknown;
+	}
+
+	// Compare the running kernel with the newest kernel.
+	// The last one in the list should be the most recent.
+	if(runningKernel == kernelList[kernelList.size() - 1])
 	{
 		return no;
 	}
