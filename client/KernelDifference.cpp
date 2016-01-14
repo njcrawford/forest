@@ -31,7 +31,9 @@ RebootState KernelDifference::isRebootNeeded()
 	// Find the highest installed kernel
 	// TODO: make this use the current package manager instead of hard coding rpm
 	vector<string> kernelList;
-	string command = "rpm --query kernel --queryformat %{VERSION}-%{RELEASE}\\n";
+	// Double-double escaped backslash is to deal with C++ and shell escapes - only
+	// one backslash actually makes it through to the command, to produce a newline.
+	string command = "rpm --query kernel --queryformat %{VERSION}-%{RELEASE}\\\\n";
 	int rpmRetval = 0;
 	mySystem(&command, kernelList, &rpmRetval);
 
