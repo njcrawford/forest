@@ -13,7 +13,6 @@ void mySystem(string * command, vector<string> & outList, int * returnVal)
 {
 	FILE * pipe;
 	char line[BUFFER_SIZE];
-	char * response = NULL;
 	//int lineLen = 0;
 	char * newlinePtr = NULL;
 
@@ -21,10 +20,11 @@ void mySystem(string * command, vector<string> & outList, int * returnVal)
 
 	pipe = popen(command->c_str(), "r");
 
-	do
+	// Read lines until end of file or an error occurs
+	for(char * response = fgets(line, BUFFER_SIZE, pipe);
+		response != NULL;
+		response = fgets(line, BUFFER_SIZE, pipe))
 	{
-		// read a line
-		response = fgets(line, BUFFER_SIZE, pipe);
 
 		// The last character that fgets reads may be a newline, but we
 		// don't want newlines in our list, so remove it.
@@ -37,7 +37,7 @@ void mySystem(string * command, vector<string> & outList, int * returnVal)
 		// add this line to outList
 		outList.push_back(line);
 		
-	} while (response != NULL);
+	}
 	int pcloseVal = pclose(pipe);
 	*returnVal = WEXITSTATUS(pcloseVal);
 }
