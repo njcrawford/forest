@@ -1,5 +1,7 @@
 #include "UnixShutdown.h"
 #include <stdlib.h>
+#include "config.h"
+#include <unistd.h>
 
 void UnixShutdown::applyReboot()
 {
