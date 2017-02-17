@@ -11,17 +11,20 @@
 #endif
 #define DEFAULT_SERVER_URL "http://forest/forest"
 
-// for now, define what PM to use at compile time 
-// this should be the name of the class to use
+// For now, define what PM to use at compile time.
+// This should be the name of the class to use.
 //#define PACKAGE_MANAGER AptGet
 //#define PACKAGE_MANAGER Yum
 //#define PACKAGE_MANAGER WuaApi
 //#define PACKAGE_MANAGER MacSU
 
-// RebootStub can be used if there isn't a working manager for this OS
+// RebootStub can be used if there isn't a working manager for this OS.
 //#define REBOOT_MANAGER FilePresence
 //#define REBOOT_MANAGER KernelDifference
 //#define REBOOT_MANAGER WinRegKey
 //#define REBOOT_MANAGER RebootStub
+
+// Location of the 'at' command for Unix-based systems.
+//#define AT_COMMAND "/usr/bin/at"
 
 #endif
