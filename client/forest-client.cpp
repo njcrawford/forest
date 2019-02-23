@@ -242,9 +242,11 @@ void ForestClient::getAcceptedUpdates(vector<string> & outList, bool * rebootAcc
 	{
 		acceptedUrl += "/";
 	}
-	acceptedUrl += "getaccepted.php?rpc_version=";
-	acceptedUrl += to_string(RPC_VERSION);
-	acceptedUrl += "&system=";
+	//acceptedUrl += "getaccepted.php?rpc_version=";
+	//acceptedUrl += to_string(RPC_VERSION);
+	//acceptedUrl += "&system=";
+	//acceptedUrl += myHostname;
+	acceptedUrl += "rpcv2/get_accepted?system=";
 	acceptedUrl += myHostname;
 
 	// run curl command
