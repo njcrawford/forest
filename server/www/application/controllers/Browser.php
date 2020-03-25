@@ -479,9 +479,16 @@ class Browser extends CI_Controller {
 			{
 				die('Cannot connect to LDAP server.');
 			}
-			$dn = $this->config->item('ldap_auth_var') . "=" . $username . ", " . $this->config->item('ldap_base');
+            if($this->config->item('ldap_start_tls') == true)
+            {
+                ldap_set_option($ds, LDAP_OPT_PROTOCOL_VERSION, 3);
+                ldap_set_option($ds, LDAP_OPT_REFERRALS, 0);
+                ldap_start_tls($ds);
+            }
+
+            $dn = sprintf($this->config->item('ldap_user_format'), $username);
 		
-			$result=@ldap_bind($ds,$dn,$password);
+			$result = @ldap_bind($ds, $dn, $password);
 			
 			$ldap_allowed_users = $this->config->item('ldap_allowed_users');
 			if (!$result)
