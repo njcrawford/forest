@@ -127,9 +127,16 @@ class Forest_DB extends CI_Model {
 		return $this->db->query($query);
 	}
 
+    function clear_update_locks($system_id)
+    {
+        $query = "delete from update_locks where system_id = ?";
+        return $this->db->query($query, array($system_id));
+    }
+
 	function delete_system($system_id)
 	{
 		$this->clear_updates($system_id);
+        $this->clear_update_locks($system_id);
 		$query = "delete from systems where id = " . $this->db->escape($system_id);
 		return $this->db->query($query);
 	}
